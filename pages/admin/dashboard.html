@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de administración · Barbería Kraft</title>
+  <meta name="description" content="Panel de administración de Barbería Kraft: gestión de servicios, promociones y ocupación del local.">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <meta name="robots" content="noindex">
+</head>
+<body class="pagina-admin">
+
+  <a class="skip-link" href="#principal">Saltar al contenido</a>
+
+  <!-- Navbar general (rutas hacia la raíz de pages/) -->
+  <header class="navbar">
+    <div class="contenedor navbar__interior">
+      <a class="navbar__brand" href="../index.html" aria-label="Barbería Kraft — inicio">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="../assets/sprite.svg#icon-tijeras"></use>
+        </svg>
+        <span class="navbar__logo">KRAFT</span>
+      </a>
+      <button class="navbar__hamburguesa" type="button" aria-expanded="false" aria-controls="menu-admin" aria-label="Abrir menú">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="../assets/sprite.svg#icon-menu"></use>
+        </svg>
+      </button>
+      <nav id="menu-admin" class="navbar__menu" aria-label="Navegación del panel">
+        <a class="navbar__enlace" href="../index.html">Ver página pública</a>
+        <a class="navbar__enlace" href="../index.html#servicios">Servicios</a>
+        <button class="navbar__enlace navbar__enlace--boton" type="button" id="btn-cerrar-sesion">Cerrar sesión</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- El shell se muestra SOLO tras pasar el guard admin (pagina-admin.js, S-RF03-6) -->
+  <main id="principal" class="contenedor admin-main" hidden>
+    <div class="admin-cabecera">
+      <h1>Panel de administración</h1>
+      <p class="admin-cabecera__rol" id="usuario-rol" aria-live="polite"></p>
+    </div>
+
+    <!-- visible solo cuando falta configuración de Supabase (js/config.js) -->
+    <p id="aviso-config" class="nota" role="status" hidden>
+      Configuración pendiente: agrega la URL y la anon key de tu proyecto Supabase en js/config.js.
+    </p>
+
+    <!-- Tabs del panel (design §8.3.8): Servicios | Promociones | Ocupación;
+         Clientes/Historial quedan deshabilitados → Hito 2 (CA-RF08-5). -->
+    <div class="admin-tabs" role="tablist" aria-label="Secciones del panel">
+      <button class="admin-tabs__tab" type="button" role="tab" id="tab-servicios" data-tab="servicios"
+              aria-selected="true" aria-controls="panel-servicios">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="../assets/sprite.svg#icon-navaja"></use>
+        </svg>
+        Servicios
+      </button>
+      <button class="admin-tabs__tab" type="button" role="tab" id="tab-promociones" data-tab="promociones"
+              aria-selected="false" aria-controls="panel-promociones" tabindex="-1">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="../assets/sprite.svg#icon-estrella"></use>
+        </svg>
+        Promociones
+      </button>
+      <button class="admin-tabs__tab" type="button" role="tab" id="tab-ocupacion" data-tab="ocupacion"
+              aria-selected="false" aria-controls="panel-ocupacion" tabindex="-1">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="../assets/sprite.svg#icon-silla"></use>
+        </svg>
+        Ocupación
+      </button>
+      <button class="admin-tabs__tab" type="button" disabled title="Disponible en el Hito 2">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="../assets/sprite.svg#icon-usuario"></use>
+        </svg>
+        Clientes <span class="admin-tabs__placeholder">Hito 2</span>
+      </button>
+      <button class="admin-tabs__tab" type="button" disabled title="Disponible en el Hito 2">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="../assets/sprite.svg#icon-reloj"></use>
+        </svg>
+        Historial <span class="admin-tabs__placeholder">Hito 2</span>
+      </button>
+    </div>
+
+    <!-- Paneles por tab: los módulos CRUD se montan aquí (T25/T26/T27) -->
+    <section id="panel-servicios" class="admin-panel" role="tabpanel" aria-labelledby="tab-servicios"></section>
+    <section id="panel-promociones" class="admin-panel" role="tabpanel" aria-labelledby="tab-promociones" hidden></section>
+    <section id="panel-ocupacion" class="admin-panel" role="tabpanel" aria-labelledby="tab-ocupacion" hidden></section>
+  </main>
+
+  <footer class="footer">
+    <div class="contenedor">
+      <p>© <span id="anio">2026</span> Barbería Kraft · Callao, Perú</p>
+    </div>
+  </footer>
+
+  <!-- SDK de Supabase (UMD global) ANTES de los módulos -->
+  <script src="../js/vendor/supabase.js"></script>
+  <script type="module" src="../js/pagina-admin.js"></script>
+</body>
+</html>

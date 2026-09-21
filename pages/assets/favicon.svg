@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Favicon Barbería Kraft: tijeras sobre fondo negro, acento rojo -->
+  <rect width="64" height="64" rx="12" fill="#0A0A0A"/>
+  <circle cx="32" cy="32" r="20" fill="none" stroke="#C1121F" stroke-width="3" opacity="0.55"/>
+  <!-- Hoja superior de tijeras -->
+  <path d="M20 26 L44 44" stroke="#F8F9FA" stroke-width="4" stroke-linecap="round"/>
+  <!-- Hoja inferior de tijeras -->
+  <path d="M44 20 L20 38" stroke="#E5383B" stroke-width="4" stroke-linecap="round"/>
+  <!-- Pivote -->
+  <circle cx="32" cy="32" r="3.5" fill="#C1121F"/>
+</svg>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página no encontrada · Barbería Kraft</title>
+  <meta name="description" content="La página que buscas no existe. Vuelve al inicio de Barbería Kraft.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body class="pagina-404">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <!-- Navbar por defecto (sin sesión) -->
+  <header class="navbar">
+    <div class="contenedor navbar__interior">
+      <a class="navbar__brand" href="index.html" aria-label="Barbería Kraft — inicio">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="assets/sprite.svg#icon-tijeras"></use>
+        </svg>
+        <span class="navbar__logo">KRAFT</span>
+      </a>
+      <button class="navbar__hamburguesa" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="assets/sprite.svg#icon-menu"></use>
+        </svg>
+      </button>
+      <nav id="menu-principal" class="navbar__menu" aria-label="Navegación principal">
+        <a class="navbar__enlace" href="index.html#servicios">Servicios</a>
+        <a class="navbar__enlace" href="index.html#promociones">Promociones</a>
+        <a class="navbar__enlace" href="login.html">Iniciar sesión</a>
+        <a class="btn btn--primario btn--sm" href="registro.html">Registrarse</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido" class="contenedor pagina-404__contenido">
+    <svg class="icono pagina-404__icono" role="img" aria-hidden="true" focusable="false">
+      <use href="assets/sprite.svg#icon-alerta"></use>
+    </svg>
+    <h1 class="pagina-404__titulo">404</h1>
+    <p class="pagina-404__texto">Ups... la página que buscas no existe o fue movida.</p>
+    <a class="btn btn--primario" href="index.html">Volver al inicio</a>
+  </main>
+
+  <footer class="footer">
+    <div class="contenedor">
+      <p>© <span id="anio">2026</span> Barbería Kraft · Callao, Perú</p>
+    </div>
+  </footer>
+
+  <!-- Módulos externos (CSP: script-src 'self' — sin scripts inline) -->
+  <script type="module" src="js/pagina-404.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# Redirecciones — Cloudflare Pages (_redirects)
+# /admin y /admin/ sirven el dashboard sin 404 (D1: sitio multi-página estático)
+
+/admin /admin/dashboard.html 200
+/admin/ /admin/dashboard.html 200

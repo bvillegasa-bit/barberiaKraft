@@ -1,0 +1,69 @@
+-- =============================================================================
+-- Barbería Kraft — migración 0002_promote_admin.sql
+-- Fecha: 2026-09-21 · Hito 1 · Proyecto: calidad-de-software-g6
+--
+-- ⚠️ ARCHIVO 100% INOFENSIVO: TODO está comentado. Ejecutarlo NO cambia nada.
+-- Es una GUÍA controlada para promover a un usuario como administrador.
+--
+-- Por qué existe (CA-RF03-6): el rol admin NUNCA se auto-asigna en el registro.
+-- El payload del registro jamás transporta rol y el trigger `prevent_role_change`
+-- (0001_init.sql) bloquea cambios de rol hechos por no-admin.
+-- La promoción de admin es una operación del LÍDER DEL GRUPO, no del cliente.
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- PASO 0 · Requisitos previos
+-- -----------------------------------------------------------------------------
+-- 1. La migración 0001_init.sql ya está aplicada (tablas + triggers + RLS).
+-- 2. El usuario ya se registró desde la página pública (registro.html) → su fila
+--    en `profiles` existe con rol 'cliente' (creada por el trigger handle_new_user).
+-- 3. Ejecutar como propietario/owner de la base (rol postgres) o como superusuario,
+--    NUNCA con la anon key. (En el SQL editor del dashboard de Supabase se
+--    ejecuta con privilegios de owner: correcto.)
+-- 4. Conocer el EMAIL exacto del usuario que será admin (el del líder del grupo).
+
+-- -----------------------------------------------------------------------------
+-- PASO 1 · VERIFICAR que el usuario existe y su rol actual (solo lectura)
+-- -----------------------------------------------------------------------------
+-- select id, email, rol from public.profiles where email = '<correo-lider>';
+--   → Debe devolver 1 fila con rol = 'cliente'. Si no devuelve filas, el usuario
+--     aún no se registró (o el correo es distinto).
+
+-- -----------------------------------------------------------------------------
+-- PASO 2 · PROMOVER a admin (DESCOMENTAR y reemplazar <correo-lider>)
+-- -----------------------------------------------------------------------------
+-- update public.profiles
+--    set rol = 'admin'
+--  where email = '<correo-lider>';
+--
+-- Notas:
+--   * Con la RLS + policy "profiles_admin_all", el UPDATE funciona porque corre
+--     como owner (las policies no aplican al owner salvo FORCE RLS).
+--   * El trigger `prevent_role_change` permite el cambio porque
+--     public.is_admin() devuelve true para el owner (fuera de rol anon/auth).
+--   * Alternativa por ID de auth.users (si no conoces el email exacto):
+--       update public.profiles
+--          set rol = 'admin'
+--        where id = '<uuid-de-auth.users>';
+--     Para obtener el UUID: select id, email from auth.users;
+
+-- -----------------------------------------------------------------------------
+-- PASO 3 · VERIFICAR (solo lectura)
+-- -----------------------------------------------------------------------------
+-- select public.is_admin();                       -- esperado: true (tras login)
+-- select id, email, rol from public.profiles where email = '<correo-lider>';
+--   → Debe mostrar rol = 'admin'.
+--
+-- Prueba E2E: iniciar sesión con esas credenciales en login.html →
+-- debe redirigir a /admin/dashboard.html (S-RF03-5).
+
+-- -----------------------------------------------------------------------------
+-- SEGURIDAD / BUENAS PRÁCTICAS
+-- -----------------------------------------------------------------------------
+-- * `service_role` NO se usa jamás desde el frontend; esta operación se hace
+--   solo con el SQL editor o CLI del líder.
+-- * Promover admin NO crea clientes adicionales ni cambia contraseñas.
+-- * Si necesitas DES-promover: update ... set rol = 'cliente' where email = ...;
+-- * No compartas esta migración en foros/PRs: el correo del líder es un dato
+--   interno del grupo.
+-- =============================================================================

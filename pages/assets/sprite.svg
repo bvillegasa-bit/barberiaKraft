@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <!-- =========================================================================
+       Barbería Kraft — sprite de iconos (design D2)
+       Consumo: <svg class="icono"><use href="assets/sprite.svg#icon-tijeras"></use></svg>
+       Color controlado por CSS vía currentColor; cero requests externos.
+       ========================================================================= -->
+
+  <!-- Tijeras -->
+  <symbol id="icon-tijeras" viewBox="0 0 24 24">
+    <circle cx="6" cy="6" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <circle cx="6" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M8.5 7.7 20 17M8.5 16.3 20 7M9.5 9.2 14 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- Navaja (barbería) -->
+  <symbol id="icon-navaja" viewBox="0 0 24 24">
+    <path d="M4 20 12 12l3 3-8 8H4v-3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M14 10l2-2 4 4-2 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M12 6l2-2 2 2-2 2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+  </symbol>
+
+  <!-- Poste de barbero (barber pole) -->
+  <symbol id="icon-barber-pole" viewBox="0 0 24 24">
+    <rect x="9" y="3" width="6" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M9 8h6M9 12h6M9 16h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- Peine -->
+  <symbol id="icon-peine" viewBox="0 0 24 24">
+    <rect x="3" y="10" width="18" height="4" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M7 10V6M11 10V6M15 10V6M19 10V6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- Bigote -->
+  <symbol id="icon-bigote" viewBox="0 0 24 24">
+    <path d="M4 10c2.5 2 4.5 4.5 8 4.5S17.5 12 20 10c1.5-.6 1 2-1.5 3.5C16 15 13.5 16.5 12 16.5S8 15 5.5 13.5C3 12 2.5 9.4 4 10z" fill="currentColor"/>
+  </symbol>
+
+  <!-- Rayo (rápido / servicio express) -->
+  <symbol id="icon-rayo" viewBox="0 0 24 24">
+    <path d="M13 2 4.5 13.5H11L9.5 22 19.5 9.5H13L13 2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+  </symbol>
+
+  <!-- Estrella (promo) -->
+  <symbol id="icon-estrella" viewBox="0 0 24 24">
+    <path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9 2.9-6z" fill="currentColor"/>
+  </symbol>
+
+  <!-- Usuario -->
+  <symbol id="icon-usuario" viewBox="0 0 24 24">
+    <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M4 20c1.6-3.4 4.6-5 8-5s6.4 1.6 8 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- Candado -->
+  <symbol id="icon-candado" viewBox="0 0 24 24">
+    <rect x="5" y="10.5" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="12" cy="15.5" r="1.4" fill="currentColor"/>
+  </symbol>
+
+  <!-- Menú hamburguesa -->
+  <symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 6.5h16M4 12h16M4 17.5h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- Cerrar (X) -->
+  <symbol id="icon-x" viewBox="0 0 24 24">
+    <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- Chevron (abajo / desplegar) -->
+  <symbol id="icon-chevron" viewBox="0 0 24 24">
+    <path d="M6 9.5 12 15.5 18 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </symbol>
+
+  <!-- Reloj (tiempo de espera / duración) -->
+  <symbol id="icon-reloj" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- Silla -->
+  <symbol id="icon-silla" viewBox="0 0 24 24">
+    <rect x="7" y="5" width="10" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M8 13v8M16 13v8M8 21h8M10 13 9 5M14 13l1-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- Check (éxito) -->
+  <symbol id="icon-check" viewBox="0 0 24 24">
+    <path d="M5 12.5 10 17.5 19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </symbol>
+
+  <!-- Alerta (error / 404) -->
+  <symbol id="icon-alerta" viewBox="0 0 24 24">
+    <path d="M12 3 1.8 20.5h20.4L12 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M12 10v4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="12" cy="17.2" r="1.3" fill="currentColor"/>
+  </symbol>
+
+  <!-- Editar (lápiz) -->
+  <symbol id="icon-editar" viewBox="0 0 24 24">
+    <path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17l-1 4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M13.5 6.5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+
+  <!-- Borrar (papelera) -->
+  <symbol id="icon-borrar" viewBox="0 0 24 24">
+    <path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10 11v5.5M14 11v5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+</svg>

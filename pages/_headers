@@ -1,0 +1,17 @@
+# Cabeceras de seguridad — Cloudflare Pages
+# Aplicadas a todas las rutas del sitio (patrón /*). Basadas en el design §9.
+#
+# IMPORTANTE (TODO para el líder del grupo):
+# Reemplazar <TU-PROYECTO> por la referencia real del proyecto Supabase, ej.:
+#   connect-src https://abcdefghijk.supabase.co
+# La referencia aparece en Project Settings → API → Project URL.
+# El CSP es estricto y sin CDN de terceros (iconos y fuentes son self-host).
+
+# TODO: reemplazar <TU-PROYECTO> antes del deploy
+/*
+    Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src https://<TU-PROYECTO>.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'
+    X-Content-Type-Options: nosniff
+    X-Frame-Options: DENY
+    Referrer-Policy: strict-origin-when-cross-origin
+    Permissions-Policy: camera=(), microphone=(), geolocation=()
+*/

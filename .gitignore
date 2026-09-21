@@ -1,0 +1,27 @@
+# Infraestructura SDD (specs, diseño, tareas) — NO versionar
+.atl/
+
+# Secretos y variables de entorno — NUNCA versionar
+.env
+*.env
+.env.local
+!.env.example
+
+# Dependencias y artefactos locales
+node_modules/
+*.local
+
+# Salida del build — el pipeline (CI o `npm run build`) siempre regenera dist/
+dist/
+
+# Configuración generada por build.js — la fuente versionada es
+# pages/js/config.template.js (tokens); el archivo generado NO se versiona
+pages/js/config.js
+
+# Logs de npm
+npm-debug.log*
+npm-error.log*
+
+# Archivos temporales del sistema
+.DS_Store
+Thumbs.db

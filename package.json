@@ -1,0 +1,14 @@
+{
+  "name": "barberia-kraft",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plataforma web de Barbería Kraft — build estático (Node puro) + CI/CD con GitHub Actions y Cloudflare Pages",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --dev"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

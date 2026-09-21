@@ -1,0 +1,336 @@
+/* =============================================================================
+   Barbería Kraft — admin.css (design §8.3.8: panel admin)
+   Tabs, tablas CRUD, grid de sillas, formularios, indicador de inactivo.
+   Usable en 360/768/1280 sin desbordes (CA-RNF05-1).
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   Tabs del panel
+   ----------------------------------------------------------------------------- */
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  border-bottom: 2px solid var(--color-plomo);
+  margin-bottom: var(--sp-5);
+}
+
+.admin-tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 44px;               /* área táctil (RNF05) */
+  padding: var(--sp-2) var(--sp-4);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--color-texto-sec);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-tabs__tab:hover {
+  color: var(--color-texto);
+}
+
+.admin-tabs__tab[aria-selected="true"] {
+  color: var(--color-texto);
+  border-bottom-color: var(--color-rojo);
+}
+
+.admin-tabs__tab .icono {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* Tab inactiva / placeholder (Clientes, Historial → Hito 2) */
+.admin-tabs__tab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-tabs__placeholder {
+  color: var(--color-texto-sec);
+  font-size: var(--texto-sm);
+}
+
+/* -----------------------------------------------------------------------------
+   Tabla CRUD
+   ----------------------------------------------------------------------------- */
+.tabla-crud {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texto-sm);
+}
+
+.tabla-crud th,
+.tabla-crud td {
+  padding: var(--sp-2) var(--sp-3);
+  text-align: left;
+  border-bottom: 1px solid var(--color-plomo);
+  vertical-align: middle;
+}
+
+.tabla-crud th {
+  color: var(--color-texto-sec);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+.tabla-crud td {
+  color: var(--color-texto);
+}
+
+.tabla-crud__acciones {
+  display: flex;
+  gap: var(--sp-2);
+  justify-content: flex-end;
+}
+
+/* Botones de acción compactos pero ≥ 40px de alto */
+.btn-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-plomo);
+  background: var(--color-negro-alt);
+  color: var(--color-texto);
+  cursor: pointer;
+}
+
+.btn-icono:hover {
+  border-color: var(--color-rojo-texto);
+  color: var(--color-rojo-texto);
+}
+
+.btn-icono--peligro:hover {
+  background: var(--color-rojo);
+  color: #ffffff;
+  border-color: var(--color-rojo);
+}
+
+.btn-icono .icono {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* Indicador de registro inactivo: texto + estilo (no solo color — RNF08) */
+.inactivo {
+  opacity: 0.6;
+}
+
+.badge-estado {
+  display: inline-block;
+  padding: 2px var(--sp-2);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-estado--activo {
+  background: rgba(45, 198, 83, 0.15);
+  color: var(--color-exito);
+  border: 1px solid var(--color-exito);
+}
+
+.badge-estado--inactivo {
+  background: rgba(108, 117, 125, 0.15);
+  color: var(--color-texto-sec);
+  border: 1px solid var(--color-plomo);
+}
+
+/* -----------------------------------------------------------------------------
+   Formularios dentro del panel (modal / inline)
+   ----------------------------------------------------------------------------- */
+.panel-form {
+  background: var(--color-negro-alt);
+  border: 1px solid var(--color-plomo);
+  border-radius: var(--radius);
+  padding: var(--sp-5);
+  margin-bottom: var(--sp-5);
+}
+
+.panel-form__titulo {
+  font-size: var(--texto-md);
+  margin-bottom: var(--sp-4);
+}
+
+.panel-form__fila {
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: 1fr;
+}
+
+.panel-form__acciones {
+  display: flex;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-top: var(--sp-4);
+}
+
+/* -----------------------------------------------------------------------------
+   Grid de sillas admin (reusa .grid-sillas de components.css)
+   ----------------------------------------------------------------------------- */
+.card-silla__barbero {
+  font-size: var(--texto-sm);
+  color: var(--texto-sec, var(--color-texto-sec));
+}
+
+/* -----------------------------------------------------------------------------
+   Cabecera del dashboard
+   ----------------------------------------------------------------------------- */
+.admin-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-4);
+}
+
+.admin-cabecera h1 {
+  font-size: var(--texto-lg);
+}
+
+/* Responsive: tabla con desbordamiento controlado en móvil */
+@media (max-width: 767px) {
+  .tabla-crud {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Shell del dashboard (T24)
+   ----------------------------------------------------------------------------- */
+/* El guard deja <main> hidden hasta confirmar rol admin (CA-RF03-5) */
+[hidden] {
+  display: none !important;
+}
+
+.admin-main {
+  padding-block: var(--sp-6);
+}
+
+.admin-cabecera__rol {
+  color: var(--color-texto-sec);
+  font-size: var(--texto-sm);
+}
+
+/* Barra superior de cada panel: título + botón de acción */
+.admin-panel__herramientas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-4);
+}
+
+.admin-panel__herramientas h2 {
+  font-size: var(--texto-md);
+  margin: 0;
+}
+
+/* Botón "Cerrar sesión" con estilo de enlace (navbar del panel) */
+.navbar__enlace--boton {
+  background: none;
+  border: none;
+  color: var(--color-texto);
+  font: inherit;
+  cursor: pointer;
+}
+
+.navbar__enlace--boton:hover {
+  color: var(--color-rojo-texto);
+}
+
+/* -----------------------------------------------------------------------------
+   Tabla CRUD: nombre + detalle secundario bajo el nombre
+   ----------------------------------------------------------------------------- */
+.tabla-crud__nombre {
+  font-weight: 600;
+}
+
+.tabla-crud__detalle {
+  color: var(--color-texto-sec);
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+/* -----------------------------------------------------------------------------
+   Formularios del panel (T25/T26): filas de 2 columnas en escritorio
+   ----------------------------------------------------------------------------- */
+.panel-form__fila--2 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .panel-form__fila--2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Campo que ocupa el ancho completo de la fila de 2 columnas */
+.campo--completo {
+  grid-column: 1 / -1;
+}
+
+/* -----------------------------------------------------------------------------
+   Vista previa de ocupación (T27)
+   ----------------------------------------------------------------------------- */
+.vista-previa {
+  border: 1px solid var(--color-plomo);
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+
+.vista-previa__titulo {
+  font-size: var(--texto-md);
+  margin-bottom: var(--sp-3);
+}
+
+.vista-previa__resumen {
+  margin-top: var(--sp-3);
+  color: var(--color-texto-sec);
+}
+
+/* Título de cada tarjeta de silla (icono + nombre) */
+.card-silla__titulo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-titulos);
+  font-size: var(--texto-md);
+  margin: 0;
+}
+
+.card-silla__titulo .icono {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--color-rojo-texto);
+}
+
+.card-silla__acciones {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-top: var(--sp-2);
+}
+
+/* Mini-formulario inline "Ocupar" dentro de la tarjeta */
+.ocupar-mini {
+  display: grid;
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--color-plomo);
+}

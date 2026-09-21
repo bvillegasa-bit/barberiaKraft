@@ -1,0 +1,82 @@
+# =============================================================================
+# Barbería Kraft — CI/CD: build + deploy a Cloudflare Pages
+# -----------------------------------------------------------------------------
+# Modelo de secretos (patrón industria — NINGUNA clave en el código fuente):
+#   1. El repo SOLO contiene placeholders: pages/js/config.template.js con los
+#      tokens __SUPABASE_URL__ / __SUPABASE_ANON_KEY__ (sin valores reales).
+#   2. Los valores reales viven en GitHub Secrets (repo → Settings → Secrets and
+#      variables → Actions) y se inyectan como env vars SOLO en este workflow.
+#   3. `npm run build` (build.js) genera dist/js/config.js sustituyendo los
+#      tokens y reescribe dist/_headers con el host real de SUPABASE_URL.
+#   4. cloudflare/wrangler-action despliega dist/ a Cloudflare Pages.
+#
+#   SEGURIDAD: GitHub enmascara automáticamente los secrets en los logs y este
+#   workflow NUNCA hace echo de variables de entorno ni imprime sus valores
+#   (wrangler tampoco los imprime). No agregar pasos que impriman env.
+#
+#   Secrets requeridos (repo → Settings → Secrets and variables → Actions):
+#     SUPABASE_URL        → Project Settings → API → Project URL
+#     SUPABASE_ANON_KEY   → Project Settings → API → anon public
+#     CF_API_TOKEN        → Cloudflare → My Profile → API Tokens → Pages:Edit
+#     CF_ACCOUNT_ID       → Cloudflare dashboard → URL de la cuenta
+#   Variable requerida (Settings → Secrets and variables → Actions → Variables):
+#     CF_PROJECT_NAME     → nombre del proyecto en Cloudflare Pages
+#   Detalle completo: docs/README.md → "Publicar en Cloudflare Pages".
+# =============================================================================
+
+name: Build y deploy a Cloudflare Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+# Un solo build+deploy a la vez para la rama master; si llega otro push mientras
+# corre, espera en cola (no cancela el que está en curso).
+concurrency:
+  group: deploy-master
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # Permisos mínimos: solo lectura del contenido del repo.
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 20 (con caché de npm)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # El proyecto no tiene dependencias (build.js es Node puro).
+      # Si existe package-lock.json se usa `npm ci`; si no (primer push sin
+      # lockfile), `npm install --ignore-scripts` es el equivalente seguro.
+      - name: Instalar dependencias (npm ci si hay lockfile)
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --ignore-scripts --no-audit --no-fund
+          else
+            npm install --ignore-scripts --no-audit --no-fund
+          fi
+
+      # NUNCA imprimir estas variables en logs: GitHub enmascara los secrets,
+      # pero por política del grupo no agregamos echo de env vars.
+      - name: Build (genera dist/ con la config inyectada desde los Secrets)
+        run: npm run build
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Deploy a Cloudflare Pages (wrangler)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=${{ vars.CF_PROJECT_NAME }}

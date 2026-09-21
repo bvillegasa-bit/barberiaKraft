@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión · Barbería Kraft</title>
+  <meta name="description" content="Accede a tu cuenta de Barbería Kraft en Callao.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <meta name="robots" content="noindex">
+</head>
+<body class="pagina-login">
+
+  <a class="skip-link" href="#principal">Saltar al contenido</a>
+
+  <!-- Navbar general -->
+  <header class="navbar">
+    <div class="contenedor navbar__interior">
+      <a class="navbar__brand" href="index.html" aria-label="Barbería Kraft — inicio">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="assets/sprite.svg#icon-tijeras"></use>
+        </svg>
+        <span class="navbar__logo">KRAFT</span>
+      </a>
+      <button class="navbar__hamburguesa" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="assets/sprite.svg#icon-menu"></use>
+        </svg>
+      </button>
+      <nav id="menu-principal" class="navbar__menu" aria-label="Navegación principal">
+        <a class="navbar__enlace" href="index.html#servicios">Servicios</a>
+        <a class="navbar__enlace" href="index.html#promociones">Promociones</a>
+        <a class="navbar__enlace" href="registro.html">Registrarse</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="principal" class="pagina-auth">
+    <div class="contenedor">
+      <div class="panel-auth tarjeta">
+        <h1>Iniciar sesión</h1>
+
+        <!-- visible solo cuando falta configuración de Supabase (js/config.js) -->
+        <p id="aviso-config" class="nota" role="status" hidden>
+          Configuración pendiente: agrega la URL y la anon key de tu proyecto Supabase en js/config.js.
+        </p>
+
+        <form id="form-login" class="formulario" novalidate>
+          <div class="campo">
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" name="email" autocomplete="email" inputmode="email" required>
+          </div>
+
+          <div class="campo">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" minlength="8" required>
+            <p class="ayuda" id="ayuda-password">Mínimo 8 caracteres.</p>
+          </div>
+
+          <button class="btn btn--primario btn--bloque" id="btn-login" type="submit">
+            Ingresar
+          </button>
+        </form>
+
+        <p class="panel-auth__pie">
+          ¿No tienes cuenta? <a href="registro.html">Regístrate</a><br>
+          <a href="index.html">Volver al inicio</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="contenedor">
+      <p>© <span id="anio">2026</span> Barbería Kraft · Callao, Perú</p>
+    </div>
+  </footer>
+
+  <!-- SDK de Supabase (UMD global) ANTES de los módulos -->
+  <script src="js/vendor/supabase.js"></script>
+  <script type="module" src="js/pagina-login.js"></script>
+</body>
+</html>

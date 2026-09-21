@@ -1,0 +1,675 @@
+/* =============================================================================
+   Barbería Kraft — components.css (design §8.3: navbar, hero, cards, semáforo,
+   forms, botones, toast, footer). Mobile-first; <768px menú hamburguesa.
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   Navbar
+   ----------------------------------------------------------------------------- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: var(--color-negro);
+  border-bottom: 1px solid var(--color-plomo);
+}
+
+.navbar__interior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  min-height: 60px;
+}
+
+.navbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--color-texto);
+  font-family: var(--font-titulos);
+  font-weight: 600;
+  font-size: var(--texto-md);
+  letter-spacing: 0.08em;
+}
+
+.navbar__brand:hover {
+  color: var(--color-rojo-texto);
+  text-decoration: none;
+}
+
+.navbar__brand .icono {
+  color: var(--color-rojo);
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.navbar__hamburguesa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;               /* área táctil ≥ 44px (RNF05/CA-RNF05-2) */
+  height: 48px;
+  border: 1px solid var(--color-plomo);
+  background: var(--color-negro-alt);
+  color: var(--color-texto);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.navbar__hamburguesa .icono {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Menú: móvil colapsado por defecto; se abre con clase .abierto */
+.navbar__menu {
+  display: none;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-3) 0 var(--sp-4);
+}
+
+.navbar__menu.abierto {
+  display: flex;
+}
+
+.navbar__enlace {
+  display: block;
+  padding: var(--sp-3);
+  border-radius: var(--radius);
+  color: var(--color-texto);
+  font-weight: 500;
+  min-height: 44px;          /* área táctil mínima */
+}
+
+.navbar__enlace:hover {
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  text-decoration: none;
+}
+
+/* -----------------------------------------------------------------------------
+   Botones (área táctil ≥ 44px — RNF05/CA-RNF05-2)
+   ----------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 44px;
+  padding: var(--sp-2) var(--sp-5);
+  border-radius: var(--radius);
+  border: 2px solid transparent;
+  font-weight: 600;
+  font-size: var(--texto-base);
+  text-align: center;
+  cursor: pointer;
+  transition: background-color var(--transicion), border-color var(--transicion);
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn .icono {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.btn--primario {
+  background-color: var(--color-rojo);
+  color: #ffffff;            /* blanco sobre rojo ≈ 5.1:1 AA */
+}
+
+.btn--primario:hover {
+  background-color: var(--color-rojo-hover);
+  color: #ffffff;
+}
+
+.btn--secundario {
+  background-color: transparent;
+  color: var(--color-texto);
+  border-color: var(--color-plomo);
+}
+
+.btn--secundario:hover {
+  border-color: var(--color-texto-sec);
+  color: var(--color-texto);
+}
+
+.btn--peligro {
+  background-color: transparent;
+  color: var(--color-rojo-texto);
+  border-color: var(--color-rojo);
+}
+
+.btn--peligro:hover {
+  background-color: var(--color-rojo);
+  color: #ffffff;
+}
+
+.btn--sm {
+  min-height: 44px;            /* RNF05: nunca < 44px de área táctil */
+  padding: var(--sp-1) var(--sp-3);
+  font-size: var(--texto-sm);
+}
+
+.btn--bloque {
+  width: 100%;
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* -----------------------------------------------------------------------------
+   Hero barbería (design §8.3.2)
+   ----------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  background-color: var(--color-negro);
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(193, 18, 31, 0.28), transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(193, 18, 31, 0.18), transparent 45%),
+    repeating-linear-gradient(45deg, rgba(108, 117, 125, 0.05) 0 2px, transparent 2px 14px);
+  padding: var(--sp-8) 0;
+  text-align: center;
+  border-bottom: 3px solid var(--color-rojo);
+}
+
+.hero__cont {
+  display: grid;
+  gap: var(--sp-5);
+  justify-items: center;
+}
+
+.hero__icono {
+  width: 3.5rem;
+  height: 3.5rem;
+  color: var(--color-rojo);
+}
+
+.hero__titulo {
+  font-family: var(--font-titulos);
+  font-size: clamp(1.9rem, 6vw, 3rem);
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hero__titulo span {
+  color: var(--color-rojo-texto);
+}
+
+.hero__sub {
+  max-width: 34rem;
+  margin-inline: auto;
+}
+
+.hero__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  justify-content: center;
+}
+
+/* -----------------------------------------------------------------------------
+   Badge semáforo de ocupación (design §8.3.3 — texto SIEMPRE visible, RNF08)
+   Umbrales: <50% verde · 50–79% ámbar · ≥80% rojo
+   ----------------------------------------------------------------------------- */
+.semaforo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--radius);
+  background: var(--color-negro-alt);
+  border: 1px solid var(--color-plomo);
+}
+
+.semaforo__bolita {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-exito);
+  box-shadow: 0 0 10px currentColor;
+  flex-shrink: 0;
+}
+
+.semaforo--verde  .semaforo__bolita { background: var(--color-exito);   color: var(--color-exito); }
+.semaforo--ambar  .semaforo__bolita { background: var(--color-alerta);  color: var(--color-alerta); }
+.semaforo--rojo   .semaforo__bolita { background: var(--color-ocupado); color: var(--color-ocupado); }
+
+.semaforo__texto {
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.semaforo__detalle {
+  color: var(--color-texto-sec);
+  font-size: var(--texto-sm);
+}
+
+/* -----------------------------------------------------------------------------
+   Secciones genéricas
+   ----------------------------------------------------------------------------- */
+.seccion {
+  padding: var(--sp-7) 0;
+}
+
+.seccion__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+
+.seccion__titulo .icono {
+  color: var(--color-rojo);
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+/* -----------------------------------------------------------------------------
+   Grid de tarjetas
+   ----------------------------------------------------------------------------- */
+.grid-tarjetas {
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: 1fr;
+}
+
+/* -----------------------------------------------------------------------------
+   Card servicio (design §8.3.4)
+   ----------------------------------------------------------------------------- */
+.card-servicio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.card-servicio__nombre {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-md);
+  margin-bottom: var(--sp-1);
+}
+
+.card-servicio__desc {
+  font-size: var(--texto-sm);
+  flex: 1;
+}
+
+.card-servicio__pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--color-superficie);
+}
+
+.card-servicio__precio {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-lg);
+  font-weight: 600;
+  color: var(--color-rojo-texto);  /* rojo texto AA sobre fondo oscuro */
+}
+
+.card-servicio__duracion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  color: var(--color-texto-sec);
+  font-size: var(--texto-sm);
+}
+
+.card-servicio__duracion .icono {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* -----------------------------------------------------------------------------
+   Card promoción (design §8.3.5 — chip "PROMO")
+   ----------------------------------------------------------------------------- */
+.card-promo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  border-left: 4px solid var(--color-rojo);
+}
+
+.card-promo__chip {
+  align-self: flex-start;
+  background: var(--color-rojo);
+  color: #ffffff;
+  font-family: var(--font-titulos);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 2px var(--sp-2);
+  border-radius: 4px;
+}
+
+.card-promo__titulo {
+  font-size: var(--texto-md);
+}
+
+.card-promo__desc {
+  font-size: var(--texto-sm);
+  flex: 1;
+}
+
+.card-promo__beneficio {
+  font-weight: 600;
+  color: var(--color-exito);       /* beneficio destacado en verde AA  */
+}
+
+.card-promo__oferta {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-lg);
+  color: var(--color-rojo-texto);
+  font-weight: 600;
+}
+
+/* -----------------------------------------------------------------------------
+   Card silla (design §8.3.6 — texto SIEMPRE + color, RNF08/CA-RNF08-3)
+   ----------------------------------------------------------------------------- */
+.grid-sillas {
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: 1fr;
+}
+
+.card-silla {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  border: 1px solid var(--color-plomo);
+}
+
+.card-silla__estado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: 600;
+}
+
+.card-silla__estado::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.card-silla--libre .card-silla__estado { color: var(--color-exito); }
+.card-silla--libre .card-silla__estado::before { background: var(--color-exito); }
+
+.card-silla--ocupada .card-silla__estado { color: var(--color-rojo-texto); }
+.card-silla--ocupada .card-silla__estado::before { background: var(--color-ocupado); }
+
+.card-silla__meta {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+/* -----------------------------------------------------------------------------
+   Forms (labels visibles + errores junto al campo — RNF04/CA-RNF04-3)
+   ----------------------------------------------------------------------------- */
+.formulario {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.campo {
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.campo label {
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  width: 100%;
+  min-height: 44px;               /* área táctil (RNF05) */
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-plomo);
+  border-radius: var(--radius);
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+}
+
+.campo textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  outline: 3px solid var(--color-rojo-texto);
+  outline-offset: 1px;
+  border-color: var(--color-rojo-texto);
+}
+
+.campo .ayuda {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.campo .error {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--color-rojo-texto);
+}
+
+.campo input.invalido {
+  border-color: var(--color-rojo-texto);
+}
+
+.campo--checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+}
+
+.campo--checkbox input {
+  width: 22px;
+  height: 22px;
+  min-height: 22px;
+  flex-shrink: 0;
+  margin-top: 3px;
+  accent-color: var(--color-rojo);
+}
+
+.campo--checkbox label {
+  font-weight: 400;
+  color: var(--color-texto-sec);
+}
+
+/* -----------------------------------------------------------------------------
+   Toast (design §8.3.9)
+   ----------------------------------------------------------------------------- */
+.toast {
+  position: fixed;
+  bottom: var(--sp-4);
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  z-index: 2000;
+  max-width: min(92vw, 420px);
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: transform 0.25s ease;
+}
+
+.toast.visible {
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast--exito {
+  background: var(--color-exito);
+  color: #06150a;
+}
+
+.toast--error {
+  background: var(--color-rojo);
+  color: #ffffff;
+}
+
+.toast--info {
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  border: 1px solid var(--color-plomo);
+}
+
+/* -----------------------------------------------------------------------------
+   Footer
+   ----------------------------------------------------------------------------- */
+.footer {
+  margin-top: auto;
+  background-color: var(--color-negro-alt);
+  border-top: 1px solid var(--color-plomo);
+  padding: var(--sp-5) 0;
+  text-align: center;
+}
+
+.footer p {
+  font-size: var(--texto-sm);
+}
+
+/* -----------------------------------------------------------------------------
+   Página 404 (T06)
+   ----------------------------------------------------------------------------- */
+.pagina-404__contenido {
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-4);
+  text-align: center;
+  padding-block: var(--sp-8);
+}
+
+.pagina-404__icono {
+  width: 4rem;
+  height: 4rem;
+  color: var(--color-rojo-texto);
+}
+
+.pagina-404__titulo {
+  font-size: var(--texto-xl);
+  color: var(--color-rojo-texto);
+}
+
+.pagina-404__texto {
+  max-width: 26rem;
+}
+
+/* -----------------------------------------------------------------------------
+   Responsive ≥ 768px (navbar expandida, grids multi-columna)
+   ----------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .navbar__hamburguesa {
+    display: none;
+  }
+
+  .navbar__menu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: 0;
+    margin-left: auto;
+  }
+
+  .navbar__enlace {
+    padding: var(--sp-2) var(--sp-3);
+    min-height: 44px;
+  }
+
+  .grid-tarjetas--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-sillas--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-tarjetas--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid-sillas--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Páginas de autenticación (T22 login / T23 registro)
+   ----------------------------------------------------------------------------- */
+.pagina-auth {
+  display: grid;
+  place-items: center;
+  padding-block: var(--sp-8);
+}
+
+.panel-auth {
+  width: 100%;
+  max-width: 26rem;
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.panel-auth h1 {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-lg);
+}
+
+.panel-auth__pie {
+  text-align: center;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.panel-auth__pie a {
+  color: var(--color-rojo-texto);
+  font-weight: 600;
+}
+
+/* Avisos (config pendiente, confirmación) — accesible vía [hidden] */
+.nota {
+  padding: var(--sp-3);
+  border-radius: var(--radius);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-plomo);
+  color: var(--color-texto-sec);
+  font-size: var(--texto-sm);
+}
+
+/* Estado / vacío / error de una sección con datos (RNF07) */
+.estado {
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-6);
+  text-align: center;
+  color: var(--color-texto-sec);
+}
+
+.estado .icono {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.estado__accion .btn {
+  margin-top: var(--sp-2);
+}

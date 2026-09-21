@@ -1,0 +1,270 @@
+/* =============================================================================
+   Barbería Kraft — base.css (design §8: tokens, reset, tipografía, utilidades)
+   Paleta exacta del design §8.1. Mobile-first, cero dependencias externas.
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   Design tokens (paleta EXACTA — design §8.1)
+   REGLAS DE CONTRASTE (RNF08 / CA-RNF08-1, WCAG 2.1 AA):
+   - Texto sobre negro #0A0A0A: #F8F9FA (~18:1) y #ADB5BD (~8.4:1) ✓ AA.
+   - Rojo #C1121F sobre negro ≈ 3.6:1 → NUNCA para texto normal.
+     Para texto rojo SIEMPRE usar --color-rojo-texto (#E5383B, ~4.6:1 AA).
+   - Blanco sobre rojo #C1121F ≈ 5.1:1 ✓ AA (badges/CTA).
+   - #6C757D (plomo) ≈ 4.6:1 sobre negro pero se reserva SOLO para
+     bordes/divisores/iconos inactivos (NO para texto).
+   ----------------------------------------------------------------------------- */
+:root {
+  /* Colores base */
+  --color-negro:        #0A0A0A;  /* fondo principal */
+  --color-negro-alt:    #141414;  /* superficie cards/panel  */
+  --color-superficie:   #1E1E1E;  /* inputs, bordes, hover   */
+  --color-rojo:         #C1121F;  /* acentos, CTA, badges    */
+  --color-rojo-texto:   #E5383B;  /* rojo para TEXTO sobre negro (AA ≥4.5) */
+  --color-rojo-hover:   #D62828;
+  --color-plomo:        #6C757D;  /* bordes/divisores/iconos inactivos (NO texto) */
+  --color-texto:        #F8F9FA;  /* texto principal sobre oscuro (≈18:1 AA) */
+  --color-texto-sec:    #ADB5BD;  /* texto secundario sobre negro (≈8.4:1 AA) */
+  --color-exito:        #2DC653;  /* semáforo verde (libre / <50%) */
+  --color-alerta:       #FFB703;  /* semáforo ámbar (50–79%)    */
+  --color-ocupado:      #C1121F;  /* semáforo rojo (≥80%)       */
+
+  /* Radios y espaciado */
+  --radius: 8px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+
+  /* Layout */
+  --container: 1100px;
+
+  /* Tipografía (escala 1.25: 16/20/25/31; line-height 1.5) */
+  --font-titulos: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-cuerpo: 'Inter', 'Segoe UI', Arial, sans-serif;
+  --texto-sm: 0.875rem;    /* 14px  */
+  --texto-base: 1rem;      /* 16px  */
+  --texto-md: 1.25rem;     /* 20px  */
+  --texto-lg: 1.5625rem;   /* 25px  */
+  --texto-xl: 1.9375rem;   /* 31px  */
+
+  /* Transiciones */
+  --transicion: 0.18s ease;
+}
+
+/* -----------------------------------------------------------------------------
+   @font-face — fuentes self-host (design D3; sin CDN; font-display: swap)
+   Los woff2 viven en assets/fonts/ (Oswald 400/500/600 + Inter 400/500/600).
+   ----------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Oswald';
+  src: url('../assets/fonts/Oswald-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Oswald';
+  src: url('../assets/fonts/Oswald-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Oswald';
+  src: url('../assets/fonts/Oswald-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/Inter-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/Inter-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/Inter-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* -----------------------------------------------------------------------------
+   Reset
+   ----------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-cuerpo);
+  font-size: var(--texto-base);
+  line-height: 1.5;
+  color: var(--color-texto);
+  background-color: var(--color-negro);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--color-rojo-texto);
+  text-decoration: none;
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--color-rojo-hover);
+  text-decoration: underline;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-titulos);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-texto);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+h1 { font-size: var(--texto-xl); }
+h2 { font-size: var(--texto-lg); }
+h3 { font-size: var(--texto-md); }
+
+p { color: var(--color-texto-sec); }
+
+/* Foco visible para navegación por teclado (RNF08 / CA-RNF08-2) */
+:focus-visible {
+  outline: 3px solid var(--color-rojo-texto);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* -----------------------------------------------------------------------------
+   Utilidades
+   ----------------------------------------------------------------------------- */
+.contenedor {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--sp-4);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Enlace para saltar al contenido (a11y) */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--sp-3);
+  z-index: 9999;
+  background: var(--color-rojo);
+  color: #fff;
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: 0 0 var(--radius) var(--radius);
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Iconos del sprite SVG (design D2): tamaño controlado por CSS */
+.icono {
+  width: 1.25em;
+  height: 1.25em;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+/* Tarjetas base */
+.tarjeta {
+  background-color: var(--color-negro-alt);
+  border: 1px solid var(--color-plomo);
+  border-radius: var(--radius);
+  padding: var(--sp-5);
+}
+
+/* Estados de carga / error / vacío (RNF07) */
+.estado {
+  text-align: center;
+  padding: var(--sp-6) var(--sp-4);
+  color: var(--color-texto-sec);
+}
+
+.estado__icono {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-inline: auto;
+  margin-bottom: var(--sp-2);
+}
+
+.estado__mensaje {
+  margin-bottom: var(--sp-3);
+}
+
+/* Spinner ligero de carga */
+.spinner {
+  width: 2rem;
+  height: 2rem;
+  margin-inline: auto;
+  border: 3px solid var(--color-superficie);
+  border-top-color: var(--color-rojo);
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+/* Contenedor principal flex (footer abajo) */
+main {
+  flex: 1;
+  width: 100%;
+}

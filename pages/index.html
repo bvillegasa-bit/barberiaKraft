@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barbería Kraft · Estilo que habla por ti</title>
+  <meta name="description" content="Barbería Kraft en Callao: cortes de cabello y afeitado clásico. Consulta la ocupación del local en tiempo real, servicios y promociones.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body class="pagina-inicio">
+
+  <a class="skip-link" href="#principal">Saltar al contenido</a>
+
+  <!-- Navbar general (sin sesión en Hito 1) -->
+  <header class="navbar">
+    <div class="contenedor navbar__interior">
+      <a class="navbar__brand" href="index.html" aria-label="Barbería Kraft — inicio">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="assets/sprite.svg#icon-tijeras"></use>
+        </svg>
+        <span class="navbar__logo">KRAFT</span>
+      </a>
+      <button class="navbar__hamburguesa" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="assets/sprite.svg#icon-menu"></use>
+        </svg>
+      </button>
+      <nav id="menu-principal" class="navbar__menu" aria-label="Navegación principal">
+        <a class="navbar__enlace" href="#servicios">Servicios</a>
+        <a class="navbar__enlace" href="#promociones">Promociones</a>
+        <a class="navbar__enlace" href="login.html">Iniciar sesión</a>
+        <a class="btn btn--primario btn--sm" href="registro.html">Registrarse</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="principal">
+
+    <!-- Hero: ocupación en tiempo real (RF02) + CTA -->
+    <section class="hero">
+      <div class="contenedor hero__cont">
+        <svg class="icono hero__icono" role="img" aria-hidden="true" focusable="false">
+          <use href="assets/sprite.svg#icon-tijeras"></use>
+        </svg>
+        <h1 class="hero__titulo">Estilo que <span>habla</span> por ti</h1>
+        <p class="hero__sub">Cortes de cabello y afeitado clásico en Callao. Consulta la ocupación y pide tu cita sin esperas.</p>
+        <!-- Semáforo renderizado por pagina-inicio.js (SIEMPRE desde el rpc) -->
+        <div id="contenedor-ocupacion" aria-live="polite" role="status"></div>
+        <div class="hero__acciones">
+          <a class="btn btn--primario" href="#servicios">
+            Ver servicios
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="assets/sprite.svg#icon-chevron"></use>
+            </svg>
+          </a>
+          <!-- Reservas: Hito 2 (fuera de alcance) — visible pero deshabilitado -->
+          <button class="btn btn--secundario" type="button" disabled title="Las reservas estarán disponibles en el Hito 2">
+            Reservar
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Catálogo de servicios (RF01) -->
+    <section id="servicios" class="seccion" aria-labelledby="titulo-servicios">
+      <div class="contenedor">
+        <h2 class="seccion__titulo" id="titulo-servicios">
+          <svg class="icono" role="img" aria-hidden="true" focusable="false">
+            <use href="assets/sprite.svg#icon-navaja"></use>
+          </svg>
+          Servicios
+        </h2>
+        <!-- Tarjetas renderizadas por pagina-inicio.js -->
+        <div id="contenedor-servicios"></div>
+      </div>
+    </section>
+
+    <!-- Promociones activas (RF05) -->
+    <section id="promociones" class="seccion" aria-labelledby="titulo-promociones">
+      <div class="contenedor">
+        <h2 class="seccion__titulo" id="titulo-promociones">
+          <svg class="icono" role="img" aria-hidden="true" focusable="false">
+            <use href="assets/sprite.svg#icon-estrella"></use>
+          </svg>
+          Promociones
+        </h2>
+        <!-- Tarjetas renderizadas por pagina-inicio.js -->
+        <div id="contenedor-promociones"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="contenedor">
+      <p>© <span id="anio">2026</span> Barbería Kraft · Callao, Perú</p>
+    </div>
+  </footer>
+
+  <!-- SDK de Supabase (UMD global) ANTES de los módulos; los módulos son diferidos -->
+  <script src="js/vendor/supabase.js"></script>
+  <script type="module" src="js/pagina-inicio.js"></script>
+</body>
+</html>
