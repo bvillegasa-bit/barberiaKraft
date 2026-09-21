@@ -53,6 +53,31 @@ function errorYSalir(mensaje) {
   process.exit(1);
 }
 
+/** Imprime un diagnóstico del entorno. NUNCA imprime valores de secretos: solo nombres/presencia. */
+function diagnosticarEnv() {
+  /** Devuelve los nombres de variables de entorno que empiecen con el prefijo dado. */
+  function nombresConPrefijo(prefijo) {
+    return Object.keys(process.env).filter(function (k) {
+      return k.indexOf(prefijo) === 0;
+    });
+  }
+  const primeraKey = Object.keys(process.env).sort(function (a, b) {
+    return a.localeCompare(b);
+  })[0];
+
+  console.error('[build.js] DIAG cwd: ' + process.cwd());
+  console.error('[build.js] DIAG node: ' + process.version);
+  console.error('[build.js] DIAG total env vars: ' + Object.keys(process.env).length);
+  console.error('[build.js] DIAG SUPABASE_URL presente: ' + (process.env.SUPABASE_URL ? 'si' : 'no'));
+  console.error('[build.js] DIAG SUPABASE_ANON_KEY presente: ' + (process.env.SUPABASE_ANON_KEY ? 'si' : 'no'));
+  console.error('[build.js] DIAG CF_PAGES presente: ' + (process.env.CF_PAGES ? 'si' : 'no') + ' (valor: ' + (process.env.CF_PAGES || '(vacio)') + ')');
+  console.error('[build.js] DIAG CF_PAGES_BRANCH: ' + (process.env.CF_PAGES_BRANCH || '(vacio)'));
+  console.error('[build.js] DIAG names_SUPABASE_* : ' + (nombresConPrefijo('SUPABASE').join(',') || '(ninguna)'));
+  console.error('[build.js] DIAG names_CF_PAGES* : ' + (nombresConPrefijo('CF_PAGES').join(',') || '(ninguna)'));
+  console.error('[build.js] DIAG names_TEST* : ' + (nombresConPrefijo('TEST').join(',') || '(ninguna)'));
+  console.error('[build.js] DIAG primera key del env (ordinal alfabetico): ' + (primeraKey || '(vacio)'));
+}
+
 /** True si el nombre corresponde a un archivo de entorno (.env, .env.*, *.env). */
 function esArchivoEnv(nombre) {
   return nombre.startsWith('.env') || nombre.endsWith('.env');
@@ -234,6 +259,7 @@ function main() {
     supabaseUrl = process.env.SUPABASE_URL || '';
     anonKey = process.env.SUPABASE_ANON_KEY || '';
     if (!supabaseUrl || !anonKey) {
+      diagnosticarEnv();
       errorYSalir('Faltan SUPABASE_URL o SUPABASE_ANON_KEY. Configúralas como variables de entorno (en CI: GitHub Secrets del workflow .github/workflows/deploy.yml).');
     }
     let url;
