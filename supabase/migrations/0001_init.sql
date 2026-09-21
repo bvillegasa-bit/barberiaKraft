@@ -77,7 +77,7 @@ create table public.clientes (
   consentimiento_datos boolean not null default false,
   creado_en           timestamptz not null default now()
 );
-create index idx_clientes_profile on public.clientes (profile_id);
+create unique index idx_clientes_profile on public.clientes (profile_id);
 
 -- Historial de atención (RF09) — esquema+RLS en Hito 1; pantallas admin en Hito 2
 create table public.historial_atencion (
@@ -274,3 +274,18 @@ on conflict (clave) do nothing;
 insert into public.sillas (nombre) values
   ('Silla 1'), ('Silla 2'), ('Silla 3'), ('Silla 4')
 on conflict (nombre) do nothing;
+
+-- ============================================================
+-- FIX 2026-09-21: ON CONFLICT (profile_id) requiere indice UNIQUE
+-- simple (NO parcial). Leccion aprendida en produccion:
+--   * Antes: idx_clientes_profile NO unico -> 42P10 en cada signup
+--     (trigger handle_new_user, ON CONFLICT sin arbnitro).
+--   * Intento 2: indice UNIQUE parcial (WHERE profile_id IS NOT NULL)
+--     SIGUE fallando: PostgreSQL no infiere un indice parcial como
+--     arbnitro de ON CONFLICT (col) si el INSERT no tiene WHERE que
+--     implique el predicado.
+--   * Fix final: indice UNIQUE simple sobre (profile_id). PostgreSQL
+--     permite multiples NULL en indices unicos, preservando el
+--     ON DELETE SET NULL de clientes.profile_id.
+-- Aplicado en produccion via SQL Editor 2026-09-21.
+-- ============================================================

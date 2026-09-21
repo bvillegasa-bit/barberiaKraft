@@ -17,8 +17,26 @@ import {
 import { cargarServiciosActivos, cargarPromocionesActivas, mensajeErrorSeccion } from './api.js';
 import { cargarOcupacion } from './ocupacion.js';
 import { esConfigPlaceholder } from './config.js';
+import { cerrarSesion, observarSesion } from './auth.js';
 
 iniciarNavbar();
+
+/* -----------------------------------------------------------------------------
+   Botón "Cerrar sesión" (CA-RF03-3): oculto sin sesión, visible con sesión.
+   onAuthStateChange emite INITIAL_SESSION al cargar con la sesión actual (o
+   null) → mostrar/ocultar. El clic reutiliza cerrarSesion() de auth.js
+   (signOut + redirección a index). No bloqueante si Supabase no está cargado.
+   ----------------------------------------------------------------------------- */
+function configurarCierreDeSesion() {
+  const botonSalir = $('#btn-cerrar-sesion');
+  if (!botonSalir) return;
+  observarSesion((evento, sesion) => {
+    botonSalir.hidden = !sesion;
+  });
+  botonSalir.addEventListener('click', () => cerrarSesion());
+}
+
+configurarCierreDeSesion();
 
 // Año del footer
 const anioFooter = $('#anio');

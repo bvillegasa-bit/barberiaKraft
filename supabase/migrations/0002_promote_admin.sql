@@ -32,20 +32,20 @@
 -- -----------------------------------------------------------------------------
 -- PASO 2 · PROMOVER a admin (DESCOMENTAR y reemplazar <correo-lider>)
 -- -----------------------------------------------------------------------------
--- update public.profiles
---    set rol = 'admin'
---  where email = '<correo-lider>';
+-- VIA CORRECTA DE PROMOCION (verificado 2026-09-21):
+-- El UPDATE directo falla con P0001 rol_no_modificable porque el
+-- trigger prevent_role_change usa is_admin() que depende de auth.uid()
+-- (NULL dentro del SQL Editor). Desactiva el guard temporalmente:
 --
--- Notas:
---   * Con la RLS + policy "profiles_admin_all", el UPDATE funciona porque corre
---     como owner (las policies no aplican al owner salvo FORCE RLS).
---   * El trigger `prevent_role_change` permite el cambio porque
---     public.is_admin() devuelve true para el owner (fuera de rol anon/auth).
---   * Alternativa por ID de auth.users (si no conoces el email exacto):
---       update public.profiles
---          set rol = 'admin'
---        where id = '<uuid-de-auth.users>';
---     Para obtener el UUID: select id, email from auth.users;
+--   alter table public.profiles disable trigger trg_prevent_role_change;
+--   update public.profiles set rol = 'admin' where email = 'TU_EMAIL';
+--   alter table public.profiles enable trigger trg_prevent_role_change;
+--
+-- NO olvides reactivar el trigger (anti auto-escalada de roles).
+-- La RLS profiles_update_own sigue impidiendo auto-cambios desde la app.
+-- Alternativa por ID de auth.users:
+--   update public.profiles set rol = 'admin' where id = '<uuid-de-auth.users>';
+--   (obtener el UUID con: select id, email from auth.users;)
 
 -- -----------------------------------------------------------------------------
 -- PASO 3 · VERIFICAR (solo lectura)
@@ -63,7 +63,8 @@
 -- * `service_role` NO se usa jamás desde el frontend; esta operación se hace
 --   solo con el SQL editor o CLI del líder.
 -- * Promover admin NO crea clientes adicionales ni cambia contraseñas.
--- * Si necesitas DES-promover: update ... set rol = 'cliente' where email = ...;
+-- * Si necesitas DES-promover: desactiva primero el trigger y luego
+--   update ... set rol = 'cliente' where email = ...; (leer PASO 2).
 -- * No compartas esta migración en foros/PRs: el correo del líder es un dato
 --   interno del grupo.
 -- =============================================================================

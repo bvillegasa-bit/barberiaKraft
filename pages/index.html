@@ -32,6 +32,8 @@
         <a class="navbar__enlace" href="#promociones">Promociones</a>
         <a class="navbar__enlace" href="login.html">Iniciar sesión</a>
         <a class="btn btn--primario btn--sm" href="registro.html">Registrarse</a>
+        <!-- Visible solo con sesión activa (pagina-inicio.js via onAuthStateChange) -->
+        <button class="btn btn--secundario btn--sm" type="button" id="btn-cerrar-sesion" hidden>Cerrar sesión</button>
       </nav>
     </div>
   </header>
