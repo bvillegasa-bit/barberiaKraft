@@ -25,7 +25,7 @@ Basado en la matriz de trazabilidad de `REQUIREMENTS.md`.
 | F-08 | CRUD de servicios: crear, editar, desactivar, eliminar (RF06, S-RF06-1/2/3) | | |
 | F-09 | CRUD de promociones: crear, editar, desactivar, eliminar (RF07, S-RF07-1/2) | | |
 | F-10 | El panel de sillas permite ocupar/liberar y muestra el límite (RF10, S-RF10-3) | | |
-| F-11 | Las tabs "Clientes" y "Historial" están presentes pero deshabilitadas con aviso "Hito 2" (CA-RF08-5) | | |
+| F-11 | Las tabs "Clientes" y "Historial" están habilitadas: listan los clientes registrados (sin cuentas exclusivamente admin) y el historial de atención del cliente seleccionado (HU13/HU14, CA-RF08-5) | | |
 
 ## 2. Usabilidad (Usability — RNF04)
 

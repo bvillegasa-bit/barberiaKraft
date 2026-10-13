@@ -251,10 +251,11 @@ El registro mensual de disponibilidad se lleva en `docs/QUALITY.md` (§8.2).
 | Registro/login cliente y admin (Supabase Auth + RLS) | ✅ | — |
 | Panel admin: CRUD servicios y promociones | ✅ | — |
 | Panel admin: gestión de sillas (ocupar/liberar) | ✅ | — |
-| Panel admin: consulta de **clientes** y **historial** | 🔜 tabs deshabilitadas | ✅ |
+| Panel admin: consulta de **clientes** y **historial** | ✅ (HU13/HU14) | — |
 
 El esquema SQL de `clientes` e `historial_atencion` **ya existe** con RLS (CA-RF08-1/3);
-solo faltan las pantallas admin de consulta (diferido explícito, ver `REQUIREMENTS.md` §5).
+las pantallas admin de consulta (HU13/HU14) están implementadas en
+`pages/js/admin-clientes.js` y `pages/js/admin-historial.js`.
 
 ---
 

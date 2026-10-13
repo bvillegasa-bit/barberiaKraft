@@ -73,8 +73,8 @@ Spec del cambio `plataforma-barberia-kraft` (§3–§6).
 | RF05 | Promociones activas visibles | CA-RF05-1..4: solo `activa=true`, título/descripción/beneficio |
 | RF06 | CRUD admin de servicios | CA-RF06-1..5: crear/editar/desactivar/eliminar, validación precio>0 y nombre≠vacío, RLS |
 | RF07 | CRUD admin de promociones | CA-RF07-1..4: crear/editar/desactivar/eliminar, RLS |
-| RF08 | Esquema `clientes` (UI admin → Hito 2) | CA-RF08-1..5: esquema + RLS + fila al registrarse |
-| RF09 | Esquema `historial_atencion` (UI admin → Hito 2) | CA-RF08-3: RLS por cliente/admin |
+| RF08 | Esquema `clientes` + UI admin de consulta (HU13) | CA-RF08-1..5: esquema + RLS + fila al registrarse; listado y total de clientes registrados (sin cuentas admin) |
+| RF09 | Esquema `historial_atencion` + UI admin (HU14) | CA-RF08-3: RLS por cliente/admin; historial de atención por cliente |
 | RF10 | Ocupación automática (decisión B) | CA-RF10-1..5: una fila por silla, update admin, nunca `ocupadas > totales` |
 
 ---
@@ -99,7 +99,7 @@ Spec del cambio `plataforma-barberia-kraft` (§3–§6).
 
 ## 5. Diferido explícito (fuera del Hito 1)
 
-- **RF08/RF09**: pantallas admin de clientes e historial de atención → Hito 2 (tabs deshabilitadas en el panel con aviso).
+- ~~**RF08/RF09**: pantallas admin de clientes e historial de atención~~ ✅ Implementado en Hito 2 (HU13/HU14): tabs activas, listado de clientes registrados e historial por cliente.
 - Perfil de cliente completo (edición de datos propios visible) → Hito 2.
 - Cálculo de `tiempo_servicio_promedio_min` desde datos históricos (SHOULD futuro; hoy parámetro configurable).
 - Pagos online, agenda de citas, módulo de barberos individuales, multi-sucursal, PWA/i18n/notificaciones.

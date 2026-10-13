@@ -3,9 +3,9 @@
    Shell del panel de administración (S-RF03-6 / design §8.3.8):
    - GUARD: sin sesión → login.html · cliente → ../index.html · admin → sigue
    - <main> permanece hidden hasta que el guard confirma rol admin (CA-RF03-5)
-   - Tabs: Servicios | Promociones | Ocupación (carga perezosa por módulo
-     admin-servicios.js / admin-promociones.js / admin-ocupacion.js)
-   - Clientes | Historial → deshabilitados, badge "Hito 2" (CA-RF08-5)
+   - Tabs: Servicios | Promociones | Ocupación | Clientes | Historial (carga
+     perezosa por módulo admin-servicios.js / admin-promociones.js /
+     admin-ocupacion.js / admin-clientes.js / admin-historial.js)
    - Navegación por teclado de tabs: flechas ←/→, Home/End (RNF08)
    ============================================================================= */
 
@@ -22,11 +22,13 @@ import { configurarNavbarAdmin } from './admin-ui.js';
 const MODULOS = {
   servicios: () => import('./admin-servicios.js'),
   promociones: () => import('./admin-promociones.js'),
-  ocupacion: () => import('./admin-ocupacion.js')
+  ocupacion: () => import('./admin-ocupacion.js'),
+  clientes: () => import('./admin-clientes.js'),
+  historial: () => import('./admin-historial.js')
 };
 
-/** Tabs navegables por teclado (los placeholders Hito 2 quedan fuera) */
-const TABS_ACTIVOS = ['servicios', 'promociones', 'ocupacion'];
+/** Orden de tabs navegables por teclado (←/→, Home/End) */
+const TABS_ACTIVOS = ['servicios', 'promociones', 'ocupacion', 'clientes', 'historial'];
 const panelesCargados = new Set();
 
 const $tab = (nombre) => $(`#tab-${nombre}`);
