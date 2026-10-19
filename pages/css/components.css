@@ -532,6 +532,59 @@
 }
 
 /* -----------------------------------------------------------------------------
+   Badge de sesión (HU04 · usabilidad) — sesion-ui.js
+   Indicador fijo en la esquina inferior derecha: "Sesión: {nombre}".
+   - pointer-events: none → NUNCA bloquea clics de la interfaz.
+   - z-index 1500: sobre el contenido, por DEBAJO del toast (2000), que es
+     transitorio y centrado (convivencia sin pisarse).
+   - [hidden] necesita display:none explícito: la clase fija display:inline-flex.
+   ----------------------------------------------------------------------------- */
+.badge-sesion {
+  position: fixed;
+  bottom: var(--sp-4);
+  right: var(--sp-4);
+  z-index: 1500;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  max-width: min(72vw, 280px);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--color-negro-alt);
+  color: var(--color-texto);          /* #F8F9FA sobre #141414 ≈ 17:1 AA */
+  border: 1px solid var(--color-plomo);
+  border-radius: var(--radius);
+  font-family: var(--font-cuerpo);
+  font-size: var(--texto-sm);
+  pointer-events: none;
+}
+
+.badge-sesion[hidden] {
+  display: none;
+}
+
+/* Punto verde de "conectado" (icono, no solo color: RNF08 — el texto ya indica estado) */
+.badge-sesion .icono {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-exito);
+}
+
+.badge-sesion__texto {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Móvil: deja pasar el toast centrado (bottom 16px + altura ≈50px) */
+@media (max-width: 560px) {
+  .badge-sesion {
+    bottom: 72px;
+  }
+}
+
+
+/* -----------------------------------------------------------------------------
    Footer
    ----------------------------------------------------------------------------- */
 .footer {

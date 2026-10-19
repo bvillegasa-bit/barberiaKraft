@@ -13,6 +13,7 @@ import { guardAdmin, cerrarSesion, obtenerRol } from './auth.js';
 import { $, $$, estadoCarga } from './ui.js';
 import { esConfigPlaceholder } from './config.js';
 import { configurarNavbarAdmin } from './admin-ui.js';
+import { montarBadgeSesion } from './sesion-ui.js';
 
 /* -----------------------------------------------------------------------------
    Registro de módulos por tab. Cada módulo exporta iniciar(contenedor).
@@ -122,6 +123,11 @@ async function iniciar() {
       cerrarSesion();
     });
   }
+
+  // 3-bis) Badge "Sesión: {nombre}" (HU04 · usabilidad): esquina inferior
+  // derecha, actualización en vivo vía observarSesion(). rutaSprite '../assets'
+  // porque el documento vive en /admin/ (mismo criterio que admin-ui.js).
+  montarBadgeSesion({ rutaSprite: '../assets/sprite.svg' });
 
   // 4) Aviso de configuración pendiente (js/config.js sin reemplazar)
   const aviso = $('#aviso-config');

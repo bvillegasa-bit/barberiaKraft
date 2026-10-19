@@ -18,6 +18,7 @@ import { cargarServiciosActivos, cargarPromocionesActivas, mensajeErrorSeccion }
 import { cargarOcupacion } from './ocupacion.js';
 import { esConfigPlaceholder } from './config.js';
 import { cerrarSesion, observarSesion } from './auth.js';
+import { montarBadgeSesion } from './sesion-ui.js';
 
 iniciarNavbar();
 
@@ -37,6 +38,11 @@ function configurarCierreDeSesion() {
 }
 
 configurarCierreDeSesion();
+
+/* Badge "Sesión: {nombre}" (HU04 · usabilidad): esquina inferior derecha,
+   se muestra/oculta en vivo con observarSesion() y convive con el botón
+   de cerrar sesión del navbar (esquina superior). */
+montarBadgeSesion();
 
 // Año del footer
 const anioFooter = $('#anio');
