@@ -7,17 +7,28 @@
    - Cada atención muestra fecha y servicio; el importe solo cuando forma parte
      del registro (null → '—', NUNCA 'S/ 0.00' como valor inventado).
    - Ordenadas de la más reciente a la más antigua (fecha_atencion DESC).
-   - FK historial_atencion.servicio_id ON DELETE SET NULL: si el servicio fue
-     retirado del catálogo, la atención NO desaparece y se muestra como
-     "Servicio retirado".
-   - Si el cliente no tiene atenciones → estado vacío; si falla la consulta →
-     estado de error con reintento.
+    - FK historial_atencion.servicio_id ON DELETE SET NULL: si el servicio fue
+      retirado del catálogo, la atención NO desaparece y se muestra como
+      "Servicio retirado".
+    - Si el cliente no tiene atenciones → estado vacío; si falla la consulta →
+      estado de error con reintento.
+    - Arquitectura testeable: la lógica pura (filtrarClientesNoAdmin,
+      ordenarAtencionesDesc, formatearImporte, etiquetaServicio,
+      formatearFechaHora) vive en logica/*-logica.js y se testea con
+      node:test (docs/TEST-UNIT.md). Este módulo SOLO hace consultas + DOM.
    ============================================================================= */
 
 import { getSupabase } from './supabase-client.js';
-import { $, estadoCarga, escaparHtml, formatoSoles } from './ui.js';
+import { $, estadoCarga, escaparHtml } from './ui.js';
 import { mensajeErrorAdmin } from './api.js';
 import { svgUse, estadoVacioAdmin, estadoErrorAdmin } from './admin-ui.js';
+import { filtrarClientesNoAdmin } from './logica/clientes-logica.js';
+import {
+  ordenarAtencionesDesc,
+  formatearImporte,
+  etiquetaServicio,
+  formatearFechaHora
+} from './logica/historial-logica.js';
 
 let clientes = [];
 
@@ -80,14 +91,9 @@ async function cargarClientes() {
     if (resClientes.error) throw resClientes.error;
     if (resProfiles.error) throw resProfiles.error;
 
-    const idsAdministrativos = new Set(
-      (resProfiles.data ?? [])
-        .filter((perfil) => perfil.rol === 'admin')
-        .map((perfil) => perfil.id)
-    );
-    clientes = (resClientes.data ?? []).filter(
-      (cliente) => !(cliente.profile_id && idsAdministrativos.has(cliente.profile_id))
-    );
+    // Mismo criterio HU13 (lógica pura testeada — CP-07): excluye cuentas
+    // admin; conserva clientes sin profile_id (perfil borrado → SET NULL).
+    clientes = filtrarClientesNoAdmin(resClientes.data ?? [], resProfiles.data ?? []);
 
     poblarSelector(select);
 
@@ -141,7 +147,8 @@ async function cargarHistorial(clienteId) {
       .order('fecha_atencion', { ascending: false });
 
     if (error) throw error;
-    renderizarHistorial(data ?? []);
+    // Orden garantizado por lógica pura (CP-11), no solo por el .order() SQL
+    renderizarHistorial(ordenarAtencionesDesc(data ?? []));
   } catch (error) {
     console.error('admin-historial.js — cargarHistorial:', error);
     estadoErrorAdmin(zona, mensajeErrorAdmin(error), () => cargarHistorial(clienteId));
@@ -174,16 +181,17 @@ function renderizarHistorial(atenciones) {
   atenciones.forEach((atencion) => {
     const fila = document.createElement('tr');
 
-    // Servicio: nombre embebido si existe; si el FK quedó NULL por ON DELETE
-    // SET NULL, la atención se conserva y se marca como retirada.
-    const nombreServicio = atencion.servicios?.nombre;
-    const servicio = nombreServicio ? escaparHtml(nombreServicio) : 'Servicio retirado';
+    // Servicio (lógica pura CP-13): nombre embebido si existe; si el FK quedó
+    // NULL por ON DELETE SET NULL, la atención se conserva y se marca como
+    // retirada. El escapeo HTML sigue siendo responsabilidad de la UI.
+    const servicio = escaparHtml(etiquetaServicio(atencion));
     const notas = atencion.notas
       ? `<div class="tabla-crud__detalle">${escaparHtml(atencion.notas)}</div>`
       : '';
 
-    // Importe solo si forma parte del registro (null → '—', no 'S/ 0.00')
-    const importe = atencion.importe != null ? formatoSoles(atencion.importe) : '—';
+    // Importe (lógica pura CP-12): solo si forma parte del registro
+    // (null/vacío/inválido → '—', no 'S/ 0.00')
+    const importe = formatearImporte(atencion.importe);
 
     fila.innerHTML = `
       <td>${formatearFechaHora(atencion.fecha_atencion)}</td>
@@ -219,12 +227,5 @@ function limpiarHistorial() {
   zona.appendChild(aviso);
 }
 
-function formatearFechaHora(valor) {
-  if (!valor) return '—';
-  const fecha = new Date(valor);
-  if (Number.isNaN(fecha.getTime())) return '—';
-  return fecha.toLocaleString('es-PE', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit'
-  });
-}
+/* Fecha/hora: la formatea la lógica pura importada
+   (logica/historial-logica.js → formatearFechaHora). */

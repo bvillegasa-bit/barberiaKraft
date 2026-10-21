@@ -12,30 +12,15 @@
    si falta el nombre se usa solo la parte local (antes de "@").
    CSP estricto (pages/_headers): SIN estilos ni handlers inline — solo clases
    CSS y addEventListener. El texto se escribe con textContent (anti-XSS).
+
+   Arquitectura testeable: la lógica de texto (nombreAMostrar /
+   construirTextoBadge) vive en logica/sesion-logica.js (funciones puras,
+   sin DOM ni Supabase) y se testea con node:test (docs/TEST-UNIT.md).
+   Este módulo SOLO hace montaje DOM + eventos.
    ============================================================================= */
 
 import { observarSesion } from './auth.js';
-
-/**
- * Texto del usuario a mostrar para la sesión actual.
- * Prioridad: user_metadata.nombre → parte local del email → "Sesión activa".
- * @param {object|null} sesion Sesión de Supabase Auth
- * @returns {string|null} null si no hay sesión (ocultar el badge)
- */
-function nombreAMostrar(sesion) {
-  const usuario = sesion?.user;
-  if (!usuario) return null;
-
-  const nombre = String(usuario.user_metadata?.nombre || '').trim();
-  if (nombre) return nombre;
-
-  // Fallback: solo la parte antes de "@" (nunca el email completo)
-  const email = String(usuario.email || '').trim();
-  const local = email.split('@')[0].trim();
-  if (local) return local;
-
-  return 'Sesión activa';
-}
+import { construirTextoBadge } from './logica/sesion-logica.js';
 
 /**
  * Monta (idempotente — una sola vez por página) el badge fijo de sesión y lo
@@ -73,13 +58,13 @@ export function montarBadgeSesion({ rutaSprite = 'assets/sprite.svg' } = {}) {
 
   /** Aplica la sesión al badge: muestra "Sesión: {nombre}" u oculta. */
   const actualizar = (sesion) => {
-    const nombre = nombreAMostrar(sesion);
-    if (!nombre) {
+    const textoBadge = construirTextoBadge(sesion); // lógica pura testeada (CP-05)
+    if (!textoBadge) {
       badge.hidden = true;
       if (texto) texto.textContent = '';
       return;
     }
-    if (texto) texto.textContent = `Sesión: ${nombre}`;
+    if (texto) texto.textContent = textoBadge; // textContent (anti-XSS)
     badge.hidden = false;
   };
 

@@ -34,10 +34,14 @@ las tablas.
 ```
 barberia-kraft/
 ├── build.js                   ← build estático (Node puro): pages/ → dist/ + inyección de config
-├── package.json               ← scripts: build / dev (sin dependencias)
+├── package.json               ← scripts: build / dev / test (sin dependencias)
 ├── .env.example               ← documentación de env vars (sin valores reales)
 ├── .github/
 │   └── workflows/deploy.yml   ← CI/CD: push a master → build → Cloudflare Pages (wrangler)
+├── tests/                     ← pruebas unitarias (node:test nativo, sin dependencias)
+│   ├── sesion-logica.test.js  ← CP-01…CP-05 (HU04: texto del badge de sesión)
+│   ├── clientes-logica.test.js ← CP-06…CP-10 (HU13: admin excluido, mapeo público, orden)
+│   └── historial-logica.test.js ← CP-11…CP-14 (HU14: orden DESC, importe, servicio retirado)
 ├── pages/                     ← fuente del sitio (lo que el build copia a dist/)
 │   ├── index.html             ← catálogo público (servicios, promos, ocupación)
 │   ├── login.html             ← inicio de sesión cliente/admin
@@ -64,7 +68,14 @@ barberia-kraft/
 │   │   ├── admin-ui.js        ← estados admin (rutas ../assets/sprite.svg)
 │   │   ├── admin-servicios.js ← CRUD servicios
 │   │   ├── admin-promociones.js ← CRUD promociones
-│   │   └── admin-ocupacion.js ← toggle de sillas + límite
+│   │   ├── admin-ocupacion.js ← toggle de sillas + límite
+│   │   ├── sesion-ui.js       ← badge "Sesión: {nombre}" (HU04)
+│   │   ├── admin-clientes.js  ← listado de clientes registrados (HU13)
+│   │   ├── admin-historial.js ← historial de atención por cliente (HU14)
+│   │   └── logica/            ← lógica PURA testeable (sin DOM ni Supabase)
+│   │       ├── sesion-logica.js    ← nombreAMostrar / construirTextoBadge
+│   │       ├── clientes-logica.js  ← esCuentaAdmin / filtrar / mapear / ordenar
+│   │       └── historial-logica.js ← orden DESC / importe / etiqueta de servicio
 │   └── assets/
 │       ├── sprite.svg         ← sprite de iconos (~18 símbolos)
 │       └── fonts/             ← Oswald + Inter (woff2 self-host)
@@ -77,6 +88,7 @@ barberia-kraft/
     ├── README.md              ← este documento
     ├── REQUIREMENTS.md        ← trazabilidad RF/RNF ↔ ISO/IEC 25010 ↔ estándares
     ├── QUALITY.md             ← plan de pruebas (RLS, auth, cálculo, UI, a11y, secretos)
+    ├── TEST-UNIT.md           ← pruebas unitarias HU04/HU13/HU14 (npm test) + refactor
     └── QA-AUDIT-CHECKLIST.md  ← checklist de auditoría por características ISO 25010
 ```
 

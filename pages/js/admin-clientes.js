@@ -5,18 +5,28 @@
    - Excluye cuentas EXCLUSIVAMENTE administrativas: el trigger handle_new_user
      (0001_init.sql) crea una fila en `clientes` para TODO usuario, así que se
      cruza con `profiles.rol` y se descartan los perfiles con rol 'admin'.
-   - RLS de 0001_init.sql: `clientes_admin_all` y `profiles_admin_all` ya
-     permiten al admin leer ambas tablas → NO requiere migración adicional.
-   - Nunca expone columnas sensibles: el hash de contraseña vive en auth.users
-     (inaccesible desde el cliente); aquí se seleccionan columnas explícitas.
-   - Si la consulta falla: estado de error + reintento y NINGÚN total, para no
-     mostrar un "0" que se lea como resultado válido (CA HU13-6).
+    - RLS de 0001_init.sql: `clientes_admin_all` y `profiles_admin_all` ya
+      permiten al admin leer ambas tablas → NO requiere migración adicional.
+    - Nunca expone columnas sensibles: el hash de contraseña vive en auth.users
+      (inaccesible desde el cliente); aquí se seleccionan columnas explícitas.
+    - Si la consulta falla: estado de error + reintento y NINGÚN total, para no
+      mostrar un "0" que se lea como resultado válido (CA HU13-6).
+    - Arquitectura testeable: la lógica pura (esCuentaAdmin,
+      filtrarClientesNoAdmin, mapearClientePublico, ordenarClientes,
+      formatearFecha) vive en logica/clientes-logica.js y se testea con
+      node:test (docs/TEST-UNIT.md). Este módulo SOLO hace consultas + DOM.
    ============================================================================= */
 
 import { getSupabase } from './supabase-client.js';
 import { $, estadoCarga, escaparHtml } from './ui.js';
 import { mensajeErrorAdmin } from './api.js';
 import { svgUse, estadoVacioAdmin, estadoErrorAdmin } from './admin-ui.js';
+import {
+  filtrarClientesNoAdmin,
+  mapearClientePublico,
+  ordenarClientes,
+  formatearFecha
+} from './logica/clientes-logica.js';
 
 let clientes = [];
 
@@ -68,16 +78,14 @@ async function cargarClientes() {
     if (resClientes.error) throw resClientes.error;
     if (resProfiles.error) throw resProfiles.error;
 
-    const idsAdministrativos = new Set(
-      (resProfiles.data ?? [])
-        .filter((perfil) => perfil.rol === 'admin')
-        .map((perfil) => perfil.id)
-    );
-
-    // Filtro en cliente: un cliente sin profile_id (perfil borrado → SET NULL)
-    // NO es admin, por lo que se conserva.
-    clientes = (resClientes.data ?? []).filter(
-      (cliente) => !(cliente.profile_id && idsAdministrativos.has(cliente.profile_id))
+    // Lógica pura (testeable — CP-07/CP-08/CP-09):
+    // 1) excluye cuentas admin (cruce clientes.profile_id ↔ profiles.rol);
+    // 2) proyecta SOLO campos públicos (nunca password/hash ni profile_id);
+    // 3) ordena por creado_en DESC (más reciente primero).
+    clientes = ordenarClientes(
+      filtrarClientesNoAdmin(resClientes.data ?? [], resProfiles.data ?? []).map(
+        mapearClientePublico
+      )
     );
 
     renderizarLista();
@@ -133,10 +141,5 @@ function renderizarLista() {
   zona.appendChild(tabla);
 }
 
-/* Fecha de registro en formato local es-PE (o "—" si no es válida) */
-function formatearFecha(valor) {
-  if (!valor) return '—';
-  const fecha = new Date(valor);
-  if (Number.isNaN(fecha.getTime())) return '—';
-  return fecha.toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit' });
-}
+/* Fecha de registro: la formatea la lógica pura importada
+   (logica/clientes-logica.js → formatearFecha, CP-10). */

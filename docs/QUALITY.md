@@ -249,3 +249,5 @@ artefactos **generados** por `build.js` y están en `.gitignore`. Cubre CA-RNF03
 
 > Rellenar al cierre del hito: total de casos, aprobados, fallidos, pendientes y
 > resumen de hallazgos con acciones correctivas.
+## Anexo TDD
+Ver [docs/TDD-EVIDENCE.md](./TDD-EVIDENCE.md) para evidencia Red→Green→Refactor de la lógica pura (HU04/HU13/HU14).
