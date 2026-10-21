@@ -178,6 +178,14 @@ p { color: var(--color-texto-sec); }
 /* -----------------------------------------------------------------------------
    Utilidades
    ----------------------------------------------------------------------------- */
+/* El atributo [hidden] debe GANAR siempre a clases con display explícito
+   (p. ej. .btn{display:inline-flex}, .badge-sesion{display:inline-flex}).
+   Sin esta regla, el atributo hidden del HTML queda anulado por la clase y el
+   control se muestra aunque no haya sesión (regresión CA-RF03-3). */
+[hidden] {
+  display: none !important;
+}
+
 .contenedor {
   width: 100%;
   max-width: var(--container);

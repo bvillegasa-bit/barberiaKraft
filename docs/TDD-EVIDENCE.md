@@ -180,22 +180,102 @@ Error: TDD RED: no implementado
 | VERDE | Mínimo idéntico al original | Todo verde (14/14) | **VERDE** (pass 14, fail 0) |
 | REFACTOR | Defensivo/legible, without behavior change | Todo verde | **VERDE** (pass 14, fail 0) |
 
-## 4) CONFIRMACIÓN FINAL
+## 4) CICLO 4 — TDD test-first (nuevo comportamiento)
+
+**Objetivos/OE relacionados:** CA-RF03-3 (botón "Cerrar sesión" visible SOLO con sesión activa). **Bug corregido:** el botón se veía siempre.
+**Nuevo contrato puro:** `estadoUiSesion(sesion)` → `{ mostrarCerrarSesion: boolean, textoBadge: string|null }` en `pages/js/logica/sesion-logica.js`.
+**Casos cubiertos:** CP-15, CP-16, CP-17, CP-18 (más los CP-01..CP-05 previos del mismo módulo).
+
+> A diferencia de los ciclos 1–3 (reconstrucción guiada), este ciclo es **test-first real**: primero se escribieron las pruebas nuevas (rojo genuino por export inexistente) y recién después se implementó la función.
+
+### FASE ROJA
+**Acción:** Se agregaron las pruebas CP-15..CP-18 y el import de `estadoUiSesion` ANTES de implementar la función. La suite no puede cargar el módulo porque el export no existe.
+
+**Comando:** `npm test`
+
+**BLOQUE DE SALIDA REAL:**
+```text
+file:///.../tests/sesion-logica.test.js:15
+  estadoUiSesion
+  ^^^^^^^^^^^^^^
+SyntaxError: The requested module '../pages/js/logica/sesion-logica.js' does not provide an export named 'estadoUiSesion'
+    at #_instantiate (node:internal/modules/esm/module_job:254:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:369:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:671:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/esm/loader:101:5)
+
+Node.js v24.11.1
+✖ tests\sesion-logica.test.js (126.9129ms)
+ℹ tests 10
+ℹ suites 2
+ℹ pass 9
+ℹ fail 1
+```
+
+**Razón del rojo:** El contrato `estadoUiSesion` aún no existe → error de carga del módulo de pruebas (rojo por la razón correcta: comportamiento nuevo no implementado).
+
+### FASE VERDE
+**Acción:** Implementación MÍNIMA de `estadoUiSesion()` reutilizando `construirTextoBadge()` (hay sesión ⇔ `textoBadge` no nulo ⇒ botón visible). Se conectó el contrato único en `pagina-inicio.js`, `sesion-ui.js` y `pagina-admin.js`.
+
+**Comando:** `npm test`
+
+**BLOQUE DE SALIDA REAL (recortado al módulo nuevo):**
+```text
+▶ sesion-logica (HU04) — estadoUiSesion: visibilidad del botón y del badge
+  ✔ CP-15 sin sesión → NO mostrar botón y badge null (control oculto por defecto) (1.0034ms)
+  ✔ CP-16 con sesión → SÍ mostrar botón y texto "Sesión: {nombre}" (0.1949ms)
+  ✔ CP-17 con sesión sin nombre usa la parte local del email y mostrar=true (0.154ms)
+  ✔ CP-18 el contrato es estable: la forma de retorno siempre tiene ambos campos boolean/string (0.1647ms)
+✔ sesion-logica (HU04) — estadoUiSesion: visibilidad del botón y del badge (1.7791ms)
+ℹ tests 18
+ℹ suites 4
+ℹ pass 18
+ℹ fail 0
+ℹ duration_ms 275.7358
+```
+
+### FASE REFACTOR
+**Acción:** El módulo ya era defensivo; no hubo cambio funcional adicional. En la capa UI se factorizó `aplicarEstadoBotonSesion()` en `pagina-inicio.js` para no duplicar el toggle del atributo `hidden`.
+
+**Comando:** `npm test`
+
+**BLOQUE DE SALIDA REAL:**
+```text
+ℹ tests 18
+ℹ suites 4
+ℹ pass 18
+ℹ fail 0
+```
+
+**Fix de UI relacionado (mismo ciclo):**
+- `pages/index.html` y `pages/admin/dashboard.html`: el botón nace con el atributo `hidden` (fail-safe: si el JS falla/tarda, no se muestra un control inútil).
+- `pages/css/base.css`: regla global `[hidden] { display: none !important; }` — sin ella, las clases `.btn{display:inline-flex}` y `.badge-sesion{display:inline-flex}` ANULAN el atributo `hidden`.
+- `pagina-inicio.js` / `sesion-ui.js` / `pagina-admin.js`: doble sincronización (`observarSesion()` + comprobación puntual `getSession()`), siempre con el atributo `hidden` (sin estilos inline).
+
+**Tabla resumen ciclo 4:**
+| fase | acción | estado esperado | estado obtenido |
+|---|---|---|---|
+| ROJA | Pruebas CP-15..CP-18 antes de implementar | Falla por export inexistente | **FALLO** (fail 1, SyntaxError) |
+| VERDE | `estadoUiSesion()` mínimo + conexión UI | Todo verde (18/18) | **VERDE** (pass 18, fail 0) |
+| REFACTOR | Sin cambio funcional (módulo ya defensivo) | Todo verde | **VERDE** (pass 18, fail 0) |
+
+## 5) CONFIRMACIÓN FINAL
 
 **Comando:** `npm test`  
 **Resultado:**
 ```text
-ℹ suites 3
-ℹ pass 14
+ℹ tests 18
+ℹ suites 4
+ℹ pass 18
 ℹ fail 0
-ℹ duration_ms 261.7239
+ℹ duration_ms 275.7358
 ```
 
-**Verificación de sintaxis:** `node --check` OK en `pages/js/logica/{sesion,clientes,historial}-logica.js`, `pages/js/sesion-ui.js`, `pages/js/admin-clientes.js`, `pages/js/admin-historial.js`.  
+**Verificación de sintaxis:** `node --check` OK en `pages/js/logica/{sesion,clientes,historial}-logica.js`, `pages/js/sesion-ui.js`, `pages/js/pagina-inicio.js`, `pages/js/pagina-admin.js`, `pages/js/admin-clientes.js`, `pages/js/admin-historial.js`.  
 **Build:** `npm run dev` completado OK (*"Build completado..."* archivos copiados 41, dist generado).  
-**Comportamiento:** Coincide con el original del respaldo (idéntico funcionalmente).
+**Comportamiento:** Coincide con el original del respaldo (idéntico funcionalmente) + nuevo contrato `estadoUiSesion` (CA-RF03-3).
 
-## 5) ENLACES
+## 6) ENLACES
 
 - Vinculado desde: [`docs/TEST-UNIT.md`](TEST-UNIT.md) (sección añadida)
 - Referenciado en: [`docs/QUALITY.md`](QUALITY.md) (sección añadida)

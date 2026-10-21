@@ -9,7 +9,11 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { nombreAMostrar, construirTextoBadge } from '../pages/js/logica/sesion-logica.js';
+import {
+  nombreAMostrar,
+  construirTextoBadge,
+  estadoUiSesion
+} from '../pages/js/logica/sesion-logica.js';
 
 describe('sesion-logica (HU04) — texto del badge de sesión', () => {
   test('CP-01 nombreAMostrar devuelve el nombre del metadata', () => {
@@ -62,5 +66,55 @@ describe('sesion-logica (HU04) — texto del badge de sesión', () => {
     // Sin sesión (sin user) → null (el badge se oculta; CP-04)
     assert.equal(construirTextoBadge(null), null);
     assert.equal(construirTextoBadge({ user: null }), null);
+  });
+});
+
+describe('sesion-logica (HU04) — estadoUiSesion: visibilidad del botón y del badge', () => {
+  test('CP-15 sin sesión → NO mostrar botón y badge null (control oculto por defecto)', () => {
+    assert.deepEqual(estadoUiSesion(null), {
+      mostrarCerrarSesion: false,
+      textoBadge: null
+    });
+    assert.deepEqual(estadoUiSesion(undefined), {
+      mostrarCerrarSesion: false,
+      textoBadge: null
+    });
+    assert.deepEqual(estadoUiSesion({}), {
+      mostrarCerrarSesion: false,
+      textoBadge: null
+    });
+    assert.deepEqual(estadoUiSesion({ user: null }), {
+      mostrarCerrarSesion: false,
+      textoBadge: null
+    });
+  });
+
+  test('CP-16 con sesión → SÍ mostrar botón y texto "Sesión: {nombre}"', () => {
+    assert.deepEqual(
+      estadoUiSesion({
+        user: { user_metadata: { nombre: 'Ana Torres' }, email: 'ana@correo.com' }
+      }),
+      { mostrarCerrarSesion: true, textoBadge: 'Sesión: Ana Torres' }
+    );
+  });
+
+  test('CP-17 con sesión sin nombre usa la parte local del email y mostrar=true', () => {
+    assert.deepEqual(
+      estadoUiSesion({ user: { user_metadata: {}, email: 'carlos.ruiz@correo.com' } }),
+      { mostrarCerrarSesion: true, textoBadge: 'Sesión: carlos.ruiz' }
+    );
+  });
+
+  test('CP-18 el contrato es estable: la forma de retorno siempre tiene ambos campos boolean/string', () => {
+    const sin = estadoUiSesion(null);
+    const con = estadoUiSesion({ user: { email: 'a@b.com' } });
+    assert.equal(typeof sin.mostrarCerrarSesion, 'boolean');
+    assert.equal(typeof con.mostrarCerrarSesion, 'boolean');
+    assert.equal(sin.textoBadge, null);
+    assert.equal(typeof con.textoBadge, 'string');
+    // El botón y el badge comparten SIEMPRE el mismo criterio de sesión:
+    // hay badge ⇔ hay botón de cerrar sesión.
+    assert.equal(con.mostrarCerrarSesion, Boolean(con.textoBadge));
+    assert.equal(sin.mostrarCerrarSesion, Boolean(sin.textoBadge));
   });
 });

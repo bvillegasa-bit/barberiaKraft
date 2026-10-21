@@ -43,3 +43,28 @@ export function construirTextoBadge(sesion) {
   if (nombre === null) return null;
   return `Sesión: ${nombre}`;
 }
+
+/**
+ * Contrato ÚNICO de visibilidad de la UI de sesión (CA-RF03-3): decide, a
+ * partir de la sesión de Supabase, si el control "Cerrar sesión" debe verse y
+ * qué texto mostrar en el badge. Función PURA (sin DOM ni Supabase) → testeable
+ * con node:test.
+ *
+ * Seguridad por defecto (fail-safe): ante sesión ausente, inválida o
+ * indeterminada devuelve mostrarCerrarSesion=false → el botón (y el badge)
+ * permanecen ocultos. El HTML nace con `hidden`, así que un fallo de red, un
+ * INITIAL_SESSION que no llega o un SDK no cargado NO exponen un control inútil.
+ *
+ * @param {object|null} sesion Sesión de Supabase Auth
+ * @returns {{ mostrarCerrarSesion: boolean, textoBadge: string|null }}
+ *   mostrarCerrarSesion: true solo con sesión activa (hay objeto user).
+ *   textoBadge: "Sesión: {nombre}" con sesión, o null sin sesión.
+ */
+export function estadoUiSesion(sesion) {
+  const textoBadge = construirTextoBadge(sesion);
+  return {
+    mostrarCerrarSesion: textoBadge !== null,
+    textoBadge
+  };
+}
+

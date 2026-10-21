@@ -14,6 +14,8 @@ import { $, $$, estadoCarga } from './ui.js';
 import { esConfigPlaceholder } from './config.js';
 import { configurarNavbarAdmin } from './admin-ui.js';
 import { montarBadgeSesion } from './sesion-ui.js';
+import { getSupabase } from './supabase-client.js';
+import { estadoUiSesion } from './logica/sesion-logica.js';
 
 /* -----------------------------------------------------------------------------
    Registro de módulos por tab. Cada módulo exporta iniciar(contenedor).
@@ -115,13 +117,26 @@ async function iniciar() {
   const main = $('#principal');
   if (main) main.hidden = false;
 
-  // 3) Navbar y cierre de sesión
+  // 3) Navbar y cierre de sesión (contrato único estadoUiSesion, CP-15..18)
   configurarNavbarAdmin();
   const botonSalir = $('#btn-cerrar-sesion');
   if (botonSalir) {
+    botonSalir.hidden = false; // aquí el guard ya confirmó sesión admin
     botonSalir.addEventListener('click', () => {
       cerrarSesion();
     });
+    // Sincronización puntual (por si INITIAL_SESSION no llega): mantiene el
+    // botón acorde al estado real; sin sesión quedaría oculto (fail-safe).
+    try {
+      getSupabase()
+        .auth.getSession()
+        .then(({ data }) => {
+          botonSalir.hidden = !estadoUiSesion(data?.session).mostrarCerrarSesion;
+        })
+        .catch(() => { botonSalir.hidden = true; });
+    } catch {
+      botonSalir.hidden = true;
+    }
   }
 
   // 3-bis) Badge "Sesión: {nombre}" (HU04 · usabilidad): esquina inferior

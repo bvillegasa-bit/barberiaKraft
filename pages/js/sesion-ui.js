@@ -20,7 +20,8 @@
    ============================================================================= */
 
 import { observarSesion } from './auth.js';
-import { construirTextoBadge } from './logica/sesion-logica.js';
+import { getSupabase } from './supabase-client.js';
+import { estadoUiSesion } from './logica/sesion-logica.js';
 
 /**
  * Monta (idempotente — una sola vez por página) el badge fijo de sesión y lo
@@ -56,9 +57,9 @@ export function montarBadgeSesion({ rutaSprite = 'assets/sprite.svg' } = {}) {
 
   const texto = badge.querySelector('.badge-sesion__texto');
 
-  /** Aplica la sesión al badge: muestra "Sesión: {nombre}" u oculta. */
+  /** Aplica la sesión al badge usando el contrato único estadoUiSesion(). */
   const actualizar = (sesion) => {
-    const textoBadge = construirTextoBadge(sesion); // lógica pura testeada (CP-05)
+    const { textoBadge } = estadoUiSesion(sesion); // lógica pura testeada (CP-15..18)
     if (!textoBadge) {
       badge.hidden = true;
       if (texto) texto.textContent = '';
@@ -71,6 +72,17 @@ export function montarBadgeSesion({ rutaSprite = 'assets/sprite.svg' } = {}) {
   // Reactivo: INITIAL_SESSION al cargar · SIGNED_IN tras login · SIGNED_OUT
   // tras logout. Sin necesidad de recargar la página.
   observarSesion((_evento, sesion) => actualizar(sesion));
+
+  // Comprobación puntual al montar: cubre el caso en que INITIAL_SESSION no
+  // llegue. Si el SDK no está disponible, el badge queda `hidden` (fail-safe).
+  try {
+    getSupabase()
+      .auth.getSession()
+      .then(({ data }) => actualizar(data?.session))
+      .catch(() => actualizar(null));
+  } catch {
+    actualizar(null);
+  }
 
   return badge;
 }
