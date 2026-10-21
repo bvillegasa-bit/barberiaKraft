@@ -1,0 +1,85 @@
+﻿MODELO DE CALIDAD ISO/IEC 25010 - CALIDAD EXTERNA	Proyecto: KRAFT - Aplicación Web							
+Características	Peso	%	Subcaracterísticas	Peso	%	Métrica	Peso	Peso Abs
+Funcionalidad	9	20,0000000000%	Adecuación	9	23,6842105263%	Adecuación funcional del catálogo (ver servicios y promociones tal como se promete en la landing)	9	0,0137521222
+						Cobertura de funcionalidad (todos los RF: reserva, ocupación, login, CRUD admin implementados)	8	0,0122241087
+						Estabilidad de la especificación (REQUIREMENTS.md estable en el Hito evaluado)	8	0,0122241087
+						Completitud de perfiles (cliente registrado vs admin con funciones distintas visibles)	6	0,0091680815
+			Exactitud	8	21,0526315789%	Exactitud del cálculo de ocupación de sillas (mapa barbero/silla vs estado real en BD)	8	0,0160401003
+						Exactitud de la disponibilidad horaria al reservar cita (bloqueo de sillas)	7	0,0140350877
+						Exactitud de datos del perfil (Supabase Auth devuelve email/nombre correctos)	6	0,0120300752
+			Interoperabilidad	6	15,7894736842%	Interoperabilidad con Supabase (Auth + Postgres RLS funcionan vía SDK)	7	0,0122807018
+						Interoperabilidad con la autenticación de Supabase (magic link / correo)	6	0,0105263158
+						Interoperabilidad de la API REST de Supabase con el frontend desplegado	5	0,0087719298
+			Seguridad de Acceso	9	23,6842105263%	Auditoría de acceso (RLS + sesión de Supabase Auth en todas las tablas)	9	0,0142105263
+						Control de acceso por rol (get_my_role / is_admin distingue cliente y admin)	8	0,0126315789
+						Prevención de accesos no autorizados (secretos fuera del código, variables de entorno)	7	0,0110526316
+						Consentimiento de datos (Ley 29733: checkbox y aviso de privacidad en registro)	6	0,0094736842
+			Cumplimiento de la funcionalidad	6	15,7894736842%	Alineación con requisitos funcionales (matriz RF ↔ casos de uso documentados)	7	0,0122807018
+						Cumplimiento de la política de privacidad (Ley 29733)	6	0,0105263158
+						Cumplimiento de reglas de negocio de la barbería (horarios, duración de cita)	5	0,0087719298
+Fiabilidad	7	15,5555555556%	Madurez	7	28,0000000000%	Madurez en operación normal (varias reservas diarias sin errores en producción)	7	0,0160467836
+						Ausencia de fallos en el flujo registro → login → reserva	6	0,0137543860
+						Baja tasa de errores semanal (seguimiento en consola de Cloudflare)	6	0,0137543860
+			Tolerancia a fallos	6	24,0000000000%	Tolerancia a fallos de red (caída de Supabase no rompe la UI)	7	0,0145185185
+						Tolerancia a usuarios simultáneos reservando la misma silla (control de concurrencia)	6	0,0124444444
+						Tolerancia a datos incompletos (validaciones en formularios y RLS)	5	0,0103703704
+			Capacidad de recuperación	7	28,0000000000%	Recuperación ante caída de Supabase (reintentos y mensaje de error claro)	8	0,0183391813
+						Recuperación de sesión (login persistente con refresh token)	6	0,0137543860
+						Recuperación tras error en reserva (reintentar sin duplicar cita)	5	0,0114619883
+			Cumplimiento de la fiabilidad	5	20,0000000000%	Alineación con metas de disponibilidad documentadas en README/REQUIREMENTS	6	0,0116666667
+						Cumplimiento de los tiempos de respuesta prometidos en la demo	5	0,0097222222
+						Cumplimiento de las prácticas de backup de la BD de Supabase	5	0,0097222222
+Usabilidad	9	20,0000000000%	Capacidad para ser entendido	8	24,2424242424%	Capacidad de ser entendido (IU clara: pasos visibles para reservar)	8	0,0184704185
+						Claridad del mapa de ocupación de sillas (colores libre/ocupado)	7	0,0161616162
+						Claridad de mensajes de error y éxito (toasts en español amigable)	6	0,0138528139
+			Capacidad para ser aprendido	7	21,2121212121%	Capacidad de ser aprendido (poco tiempo del primer uso a la reserva)	8	0,0178628389
+						Descubrimiento de promociones (banners/tarjetas llamativas)	6	0,0133971292
+						Uso de patrones conocidos (botones y formularios estándar)	5	0,0111642743
+			Capacidad para ser operado	7	21,2121212121%	Capacidad de ser operado (flujo completo disponible desde móvil)	7	0,0156299841
+						Operabilidad del panel admin (CRUD de servicios/promos/ocupación en pocos clics)	6	0,0133971292
+						Tareas críticas realizables sin asistencia (agendar y cancelar cita)	6	0,0133971292
+			Capacidad de atracción	6	18,1818181818%	Atracción visual (diseño acorde a la marca de la barbería)	7	0,0141414141
+						Imagen profesional que genera confianza al agendar en línea	6	0,0121212121
+						Consistencia visual entre páginas (tipografía, colores, logo)	5	0,0101010101
+			Cumplimiento de la usabilidad	5	15,1515151515%	Alineación con el checklist de usabilidad definido por el grupo	6	0,0121212121
+						Accesibilidad básica (texto alternativo, contraste, teclado)	5	0,0101010101
+						Cumplimiento del flujo prometido en la demo (coincide con la app)	4	0,0080808081
+Eficiencia	6	13,3333333333%	Comportamiento temporal	8	42,1052631579%	Tiempo de respuesta de la ocupación en tiempo real (mapa de sillas actualizado)	8	0,0213868003
+						Tiempo de carga de la página estática (CDN de Cloudflare Pages)	7	0,0187134503
+						Tiempo de respuesta de reserva (confirmación en pocos segundos)	6	0,0160401003
+			Utilización de recursos	6	31,5789473684%	Uso eficiente de recursos (bundle JS estático pequeño)	7	0,0163742690
+						Número de requests a Supabase por acción (evita N+1)	6	0,0140350877
+						Optimización de imágenes del catálogo (WebP/carga diferida)	5	0,0116959064
+			Cumplimiento de la eficiencia	5	26,3157894737%	Alineación con las metas de rendimiento del README (tiempos de carga)	6	0,0140350877
+						Cumplimiento del presupuesto de red en dispositivos móviles	5	0,0116959064
+						Cumplimiento de Core Web Vitals básicos en la demo	4	0,0093567251
+Mantenibilidad	8	17,7777777778%	Capacidad para ser analizado	7	20,5882352941%	Capacidad de análisis (modularidad: componentes y módulos ES)	7	0,0134846921
+						Legibilidad del código (nombres claros, estructura por módulos/funciones)	6	0,0115583075
+						Documentación en REQUIREMENTS.md para localizar funciones y datos	6	0,0115583075
+			Capacidad para ser cambiado	6	17,6470588235%	Capacidad de cambio (agregar servicio/promoción sin tocar otras pantallas)	7	0,0122004357
+						Modificabilidad de estilos (variables CSS / design tokens)	6	0,0104575163
+						Impacto acotado de cambios en Supabase (RLS y esquema versionados)	5	0,0087145969
+			Estabilidad	8	23,5294117647%	Estabilidad tras cambios (las ediciones no rompen ocupación ni reserva)	8	0,0159352630
+						Estabilidad de integraciones (Supabase/Cloudflare documentadas en README)	7	0,0139433551
+						Ausencia de regresiones en los hitos evaluados	6	0,0119514472
+			Capacidad para ser probado	8	23,5294117647%	Capacidad de prueba (node --check y tests de ocupación 11/11 en verde)	8	0,0152109329
+						Cobertura de pruebas del flujo de reserva y ocupación	7	0,0133095663
+						Pruebas de RLS/roles (acceso admin vs cliente verificado)	7	0,0133095663
+			Cumplimiento de mantenibilidad	5	14,7058823529%	Alineación con las pautas de mantenimiento del grupo (checklist de auditoría)	6	0,0104575163
+						Cumplimiento de convenciones de código documentadas	5	0,0087145969
+						Cumplimiento del estándar de documentación del proyecto	4	0,0069716776
+Portabilidad	6	13,3333333333%	Adaptabilidad	7	24,1379310345%	Adaptabilidad a navegadores modernos (Chrome, Edge, Firefox, Safari)	7	0,0125159642
+						Adaptabilidad responsive (móvil/tablet/escritorio)	6	0,0107279693
+						Adaptabilidad del mapa de sillas a distintos tamaños de pantalla	5	0,0089399745
+			Instalabilidad	7	24,1379310345%	Instalabilidad (PWA/estática, deploy automático en Cloudflare Pages)	8	0,0135511192
+						Configuración inicial sin pasos manuales (build con una orden)	6	0,0101633394
+						Instalabilidad de la demo (URL pública lista para docentes)	5	0,0084694495
+			Coexistencia	5	17,2413793103%	Coexistencia con otros sistemas (página convive sin conflictos en el navegador)	6	0,0091954023
+						Independencia de recursos (esquema/tablas sin nombres globales)	5	0,0076628352
+						Sin interferencias de extensiones del navegador en la demo	4	0,0061302682
+			Capacidad para ser reemplazado	5	17,2413793103%	Capacidad de ser reemplazado (cambio de hosting/BD sin reescritura total)	6	0,0091954023
+						Uso de estándares abiertos (HTML/CSS/JS + API de Supabase)	5	0,0076628352
+						Separación frontend/backend para reemplazo parcial de componentes	4	0,0061302682
+			Cumplimiento de la portabilidad	5	17,2413793103%	Alineación con el estándar de portabilidad del enunciado (PWA)	6	0,0091954023
+						Cumplimiento del target de navegadores documentado	5	0,0076628352
+						Cumplimiento de la política de entorno (hosting gratuito en la UCV)	4	0,0061302682
