@@ -1,18 +1,17 @@
 /* =============================================================================
-   Barbería Kraft — pagina-login.js (T22)
-   Iniciar sesión (RF04): validación local (validacion.js), mensaje GENÉRICO de
-   credenciales inválidas (CA-RF03-8 / CA-RNF03-5) y redirección por rol
-   (cliente → index.html, admin → admin/dashboard.html — S-RF03-2/5).
+   Barbería Kraft — pagina-login.js (T22 · T27)
+   Iniciar sesión (RF04): validación local SOLO de email (formato) y contraseña
+   no vacía/≤64. NO se exige fortaleza ni confirmación en login.
+   Mensaje GENÉRICO de credenciales inválidas (CA-RF03-8 / CA-RNF03-5) y
+   redirección por rol (S-RF03-2 / S-RF03-5).
    ============================================================================= */
 
+import { iniciarNavbar, $, mostrarToast } from './ui.js';
 import {
-  iniciarNavbar,
-  $,
-  mostrarErrorCampo,
-  limpiarErrorCampo,
-  mostrarToast
-} from './ui.js';
-import { validarEmail, validarPassword } from './validacion.js';
+  REGLAS_LOGIN,
+  validarFormulario,
+  presentadorDOM
+} from './validacion/index.js';
 import { iniciarSesion, redirigirPorRol } from './auth.js';
 import { esConfigPlaceholder } from './config.js';
 
@@ -24,38 +23,42 @@ if (avisoConfig && esConfigPlaceholder()) avisoConfig.hidden = false;
 const form = $('#form-login');
 const btn = $('#btn-login');
 
+const CAMPOS = {
+  email: $('#email'),
+  password: $('#password')
+};
+
+CAMPOS.email.addEventListener('input', () => presentadorDOM.limpiar(CAMPOS.email));
+CAMPOS.password.addEventListener('input', () => presentadorDOM.limpiar(CAMPOS.password));
+
 form.addEventListener('submit', async (evento) => {
   evento.preventDefault();
 
-  const inputEmail = $('#email');
-  const inputPass = $('#password');
-  const email = inputEmail.value.trim();
-  const password = inputPass.value;
+  const datos = {
+    email: CAMPOS.email.value.trim(),
+    password: CAMPOS.password.value
+  };
 
-  limpiarErrorCampo(inputEmail);
-  limpiarErrorCampo(inputPass);
+  Object.values(CAMPOS).forEach(presentadorDOM.limpiar);
 
-  let valido = true;
-  const eEmail = validarEmail(email);
-  if (eEmail) {
-    mostrarErrorCampo(inputEmail, eEmail);
-    valido = false;
+  const resultado = validarFormulario(datos, REGLAS_LOGIN);
+  if (!resultado.ok) {
+    Object.entries(resultado.errores).forEach(([campo, mensaje]) => {
+      presentadorDOM.mostrar(CAMPOS[campo], mensaje);
+    });
+    if (CAMPOS[resultado.primero]) CAMPOS[resultado.primero].focus();
+    return;
   }
-  const ePass = validarPassword(password);
-  if (ePass) {
-    mostrarErrorCampo(inputPass, ePass);
-    valido = false;
-  }
-  if (!valido) return;
 
   btn.disabled = true;
-  const res = await iniciarSesion(email, password);
+  const res = await iniciarSesion(datos.email, datos.password);
   btn.disabled = false;
 
   if (!res.ok) {
     // Mensaje genérico: no revela si el email existe (CA-RNF03-5)
-    mostrarErrorCampo(inputPass, res.error || 'Correo o contraseña incorrectos.');
-    mostrarToast(res.error || 'Correo o contraseña incorrectos.', 'error');
+    const mensaje = res.error || 'Correo o contraseña incorrectos.';
+    presentadorDOM.mostrar(CAMPOS.password, mensaje);
+    mostrarToast(mensaje, 'error');
     return;
   }
 

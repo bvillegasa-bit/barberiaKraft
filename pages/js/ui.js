@@ -50,10 +50,16 @@ export function estadoCarga(contenedor, mensaje = 'Cargando…') {
   const estado = document.createElement('div');
   estado.className = 'estado';
   estado.setAttribute('role', 'status');
-  estado.innerHTML = `
-    <div class="spinner" aria-hidden="true"></div>
-    <p class="estado__mensaje">${mensaje}</p>
-  `;
+
+  const spinner = document.createElement('div');
+  spinner.className = 'spinner';
+  spinner.setAttribute('aria-hidden', 'true');
+
+  const texto = document.createElement('p');
+  texto.className = 'estado__mensaje';
+  texto.textContent = String(mensaje ?? '');
+
+  estado.append(spinner, texto);
   contenedor.appendChild(estado);
 }
 
@@ -61,12 +67,20 @@ export function estadoError(contenedor, mensaje = 'No se pudo conectar. Reintent
   contenedor.innerHTML = '';
   const estado = document.createElement('div');
   estado.className = 'estado';
-  estado.innerHTML = `
-    <svg class="icono estado__icono" role="img" aria-label="Error">
-      <use href="assets/sprite.svg#icon-alerta"></use>
-    </svg>
-    <p class="estado__mensaje">${mensaje}</p>
-  `;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('class', 'icono estado__icono');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Error');
+  const uso = document.createElementNS(svgNS, 'use');
+  uso.setAttribute('href', 'assets/sprite.svg#icon-alerta');
+  svg.appendChild(uso);
+
+  const texto = document.createElement('p');
+  texto.className = 'estado__mensaje';
+  texto.textContent = String(mensaje ?? '');
+
+  estado.append(svg, texto);
   const boton = document.createElement('button');
   boton.type = 'button';
   boton.className = 'btn btn--secundario btn--sm';
@@ -82,12 +96,24 @@ export function estadoVacio(contenedor, mensaje, icono = 'icon-alerta') {
   contenedor.innerHTML = '';
   const estado = document.createElement('div');
   estado.className = 'estado';
-  estado.innerHTML = `
-    <svg class="icono estado__icono" role="img" aria-label="${mensaje}">
-      <use href="assets/sprite.svg#${icono}"></use>
-    </svg>
-    <p class="estado__mensaje">${mensaje}</p>
-  `;
+
+  const texto = String(mensaje ?? '');
+  const iconoValido = String(icono ?? '').replace(/[^a-z0-9-]/gi, '') || 'icon-alerta';
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('class', 'icono estado__icono');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', texto || 'Estado');
+  const uso = document.createElementNS(svgNS, 'use');
+  uso.setAttribute('href', `assets/sprite.svg#${iconoValido}`);
+  svg.appendChild(uso);
+
+  const parrafo = document.createElement('p');
+  parrafo.className = 'estado__mensaje';
+  parrafo.textContent = texto;
+
+  estado.append(svg, parrafo);
   contenedor.appendChild(estado);
 }
 
@@ -219,17 +245,49 @@ export function escaparHtml(texto) {
 }
 
 /* -----------------------------------------------------------------------------
-   Ayuda para errores de formulario junto al campo (CA-RNF04-3)
+   Ayuda para errores de formulario junto al campo (CA-RNF04-3 / T27)
+   El error se enlaza con aria-describedby usando un id único, conserva
+   role="alert" y marca aria-invalid. No pisa otros aria-describedby (ayudas).
    ----------------------------------------------------------------------------- */
+let contadorErroresCampo = 0;
+
+function idsDescritos(input) {
+  return String(input.getAttribute('aria-describedby') || '')
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+function agregarDescribedBy(input, id) {
+  const ids = idsDescritos(input);
+  if (!ids.includes(id)) ids.push(id);
+  input.setAttribute('aria-describedby', ids.join(' '));
+}
+
+function quitarDescribedBy(input, id) {
+  if (!id) return;
+  const ids = idsDescritos(input).filter((actual) => actual !== id);
+  if (ids.length > 0) input.setAttribute('aria-describedby', ids.join(' '));
+  else input.removeAttribute('aria-describedby');
+}
+
 export function mostrarErrorCampo(input, mensaje) {
   const campo = input.closest('.campo');
   if (!campo) return;
+
+  // Retira el error anterior y su referencia antes de crear el nuevo
+  if (input.dataset.errorId) quitarDescribedBy(input, input.dataset.errorId);
   campo.querySelectorAll('.error').forEach((el) => el.remove());
+
+  contadorErroresCampo += 1;
   const error = document.createElement('p');
+  error.id = `error-${input.id || 'campo'}-${contadorErroresCampo}`;
   error.className = 'error';
   error.setAttribute('role', 'alert');
   error.textContent = mensaje;
   campo.appendChild(error);
+
+  input.dataset.errorId = error.id;
+  agregarDescribedBy(input, error.id);
   input.classList.add('invalido');
   input.setAttribute('aria-invalid', 'true');
 }
@@ -237,6 +295,11 @@ export function mostrarErrorCampo(input, mensaje) {
 export function limpiarErrorCampo(input) {
   const campo = input.closest('.campo');
   if (!campo) return;
+
+  if (input.dataset.errorId) {
+    quitarDescribedBy(input, input.dataset.errorId);
+    delete input.dataset.errorId;
+  }
   campo.querySelectorAll('.error').forEach((el) => el.remove());
   input.classList.remove('invalido');
   input.removeAttribute('aria-invalid');

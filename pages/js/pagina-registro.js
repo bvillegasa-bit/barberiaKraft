@@ -1,18 +1,22 @@
 /* =============================================================================
-   Barbería Kraft — pagina-registro.js (T23)
-   Registro de cliente (RF03): SOLO nombre, email y contraseña (minimización
-   Ley 29733) + checkbox OBLIGATORIO de consentimiento (CA-RNF03-4 / S-RF03-1).
-   El payload del registro NUNCA transporta rol (CA-RF03-6).
+   Barbería Kraft — pagina-registro.js (T23 · T27)
+   Registro de cliente (RF03): nombre, teléfono OPCIONAL, email, contraseña con
+   fortaleza + confirmación y consentimiento OBLIGATORIO (Ley 29733).
+   - Validación por capas: reglas puras inyectadas en el motor (SOLID · TDD).
+   - Errores accesibles junto al campo (aria-describedby/aria-invalid).
+   - Checklist de contraseña en vivo con aria-live="polite".
+   - El payload del registro NUNCA transporta rol (CA-RF03-6).
    ============================================================================= */
 
+import { iniciarNavbar, $, mostrarToast } from './ui.js';
 import {
-  iniciarNavbar,
-  $,
-  mostrarErrorCampo,
-  limpiarErrorCampo,
-  mostrarToast
-} from './ui.js';
-import { validarEmail, validarPassword, validarNombre } from './validacion.js';
+  REGLAS_REGISTRO,
+  validarCampo,
+  validarFormulario,
+  presentadorDOM,
+  estadoChecklistPassword,
+  sanearTelefono
+} from './validacion/index.js';
 import { registrarCliente, redirigirPorRol } from './auth.js';
 import { esConfigPlaceholder } from './config.js';
 
@@ -23,58 +27,105 @@ if (avisoConfig && esConfigPlaceholder()) avisoConfig.hidden = false;
 
 const form = $('#form-registro');
 const btn = $('#btn-registro');
+const checklist = $('#checklist-password');
 
+const CAMPOS = {
+  nombre: $('#nombre'),
+  telefono: $('#telefono'),
+  email: $('#email'),
+  password: $('#password'),
+  confirmar_password: $('#confirmar-password')
+};
+const checkboxConsentimiento = $('#consentimiento');
+
+/* -----------------------------------------------------------------------------
+   Checklist vivo de contraseña (RF03 · T27)
+   ----------------------------------------------------------------------------- */
+function renderChecklistPassword(valor) {
+  if (!checklist) return;
+  checklist.replaceChildren();
+
+  estadoChecklistPassword(valor).forEach(({ id, etiqueta, cumple }) => {
+    const item = document.createElement('li');
+    item.className = `checklist-password__item${cumple ? ' checklist-password__item--cumple' : ''}`;
+    item.dataset.requisito = id;
+    item.textContent = etiqueta;
+    checklist.appendChild(item);
+  });
+}
+
+/* -----------------------------------------------------------------------------
+   Saneado en vivo del teléfono: solo dígitos (T27)
+   ----------------------------------------------------------------------------- */
+CAMPOS.telefono.addEventListener('input', () => {
+  const limpio = sanearTelefono(CAMPOS.telefono.value);
+  if (CAMPOS.telefono.value !== limpio) CAMPOS.telefono.value = limpio;
+  presentadorDOM.limpiar(CAMPOS.telefono);
+});
+
+CAMPOS.telefono.addEventListener('blur', () => {
+  const mensaje = validarCampo('telefono', CAMPOS.telefono.value, {}, null, REGLAS_REGISTRO);
+  if (mensaje) presentadorDOM.mostrar(CAMPOS.telefono, mensaje);
+});
+
+CAMPOS.password.addEventListener('input', () => {
+  renderChecklistPassword(CAMPOS.password.value);
+  presentadorDOM.limpiar(CAMPOS.password);
+});
+
+CAMPOS.confirmar_password.addEventListener('input', () => {
+  presentadorDOM.limpiar(CAMPOS.confirmar_password);
+});
+
+/* Estado inicial del checklist: todos los requisitos pendientes */
+renderChecklistPassword('');
+
+/* -----------------------------------------------------------------------------
+   Submit
+   ----------------------------------------------------------------------------- */
 form.addEventListener('submit', async (evento) => {
   evento.preventDefault();
 
-  const inputNombre = $('#nombre');
-  const inputEmail = $('#email');
-  const inputPass = $('#password');
-  const checkboxConsentimiento = $('#consentimiento');
+  const datos = {
+    nombre: CAMPOS.nombre.value.trim(),
+    telefono: sanearTelefono(CAMPOS.telefono.value),
+    email: CAMPOS.email.value.trim(),
+    password: CAMPOS.password.value,
+    confirmar_password: CAMPOS.confirmar_password.value
+  };
 
-  const nombre = inputNombre.value.trim();
-  const email = inputEmail.value.trim();
-  const password = inputPass.value;
+  // Limpia errores anteriores de todos los campos gestionados
+  [...Object.values(CAMPOS), checkboxConsentimiento].forEach(presentadorDOM.limpiar);
 
-  [inputNombre, inputEmail, inputPass, checkboxConsentimiento].forEach(limpiarErrorCampo);
+  const resultado = validarFormulario(datos, REGLAS_REGISTRO, { password: datos.password });
 
-  let valido = true;
-
-  const eNombre = validarNombre(nombre);
-  if (eNombre) {
-    mostrarErrorCampo(inputNombre, eNombre);
-    valido = false;
-  }
-  const eEmail = validarEmail(email);
-  if (eEmail) {
-    mostrarErrorCampo(inputEmail, eEmail);
-    valido = false;
-  }
-  const ePass = validarPassword(password);
-  if (ePass) {
-    mostrarErrorCampo(inputPass, ePass);
-    valido = false;
+  if (!resultado.ok) {
+    Object.entries(resultado.errores).forEach(([campo, mensaje]) => {
+      presentadorDOM.mostrar(CAMPOS[campo], mensaje);
+    });
+    if (CAMPOS[resultado.primero]) CAMPOS[resultado.primero].focus();
+    return;
   }
 
   // Ley 29733 (RNF03 / CA-RNF03-4): sin consentimiento el registro NO procede
   if (!checkboxConsentimiento.checked) {
-    mostrarErrorCampo(
+    presentadorDOM.mostrar(
       checkboxConsentimiento,
       'Debes aceptar el tratamiento de tus datos personales para continuar.'
     );
-    valido = false;
+    checkboxConsentimiento.focus();
+    return;
   }
 
-  if (!valido) return;
-
   btn.disabled = true;
-  const res = await registrarCliente(nombre, email, password);
+  const res = await registrarCliente(datos.nombre, datos.email, datos.password, datos.telefono);
   btn.disabled = false;
 
   if (!res.ok) {
     // Email duplicado → "El correo ya está registrado" (CA-RF03-7)
-    mostrarErrorCampo(inputEmail, res.error || 'No se pudo completar el registro.');
-    mostrarToast(res.error || 'No se pudo completar el registro.', 'error');
+    const mensaje = res.error || 'No se pudo completar el registro.';
+    presentadorDOM.mostrar(CAMPOS.email, mensaje);
+    mostrarToast(mensaje, 'error');
     return;
   }
 
@@ -82,6 +133,7 @@ form.addEventListener('submit', async (evento) => {
     // Verificación de email activada en Supabase
     mostrarToast('Revisa tu correo para confirmar tu cuenta.', 'info', 6000);
     form.reset();
+    renderChecklistPassword('');
   } else {
     mostrarToast('Cuenta creada. ¡Bienvenido a Barbería Kraft!', 'exito');
     setTimeout(() => redirigirPorRol('cliente'), 1200);

@@ -33,15 +33,21 @@ function mensajeErrorAuth(error) {
  * @param {string} nombre
  * @param {string} email
  * @param {string} password
+ * @param {string} [telefono] Teléfono opcional (9 dígitos, ya saneado).
  * @returns {Promise<{ok:boolean, necesitaConfirmacion?:boolean, error?:string}>}
  */
-export async function registrarCliente(nombre, email, password) {
+export async function registrarCliente(nombre, email, password, telefono = '') {
   const supabase = getSupabase();
+  const emailLimpio = normalizarEmail(email);
+  const telefonoLimpio = normalizarTelefono(telefono);
+  const datosUsuario = { nombre }; // minimización Ley 29733: sin rol
+  if (telefonoLimpio) datosUsuario.telefono = telefonoLimpio;
+
   const { data, error } = await supabase.auth.signUp({
-    email,
+    email: emailLimpio,
     password,
     options: {
-      data: { nombre } // minimización Ley 29733: solo nombre; sin rol
+      data: datosUsuario
     }
   });
 
@@ -52,12 +58,14 @@ export async function registrarCliente(nombre, email, password) {
   const session = data?.session;
   if (session) {
     // Verificación de email DESACTIVADA: sesión inmediata → aplica el
-    // consentimiento Ley 29733 en la fila clientes (primer inicio).
+    // consentimiento Ley 29733 y sincroniza el teléfono (T27).
     await aplicarConsentimientoPendiente();
+    await sincronizarTelefonoCliente(telefonoLimpio);
     return { ok: true, necesitaConfirmacion: false };
   }
 
   // Verificación de email ACTIVADA: Supabase envía correo de confirmación.
+  // El teléfono queda en user_metadata; se sincronizará en el primer login.
   return { ok: true, necesitaConfirmacion: true };
 }
 
@@ -68,14 +76,17 @@ export async function registrarCliente(nombre, email, password) {
  */
 export async function iniciarSesion(email, password) {
   const supabase = getSupabase();
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const emailLimpio = normalizarEmail(email);
+  const { data, error } = await supabase.auth.signInWithPassword({ email: emailLimpio, password });
 
   if (error || !data?.session) {
     return { ok: false, error: 'Correo o contraseña incorrectos.' };
   }
 
-  // Consumo pendiente de consentimiento Ley 29733 (si aplica) + rol para redirect
+  // Consumo pendiente de consentimiento Ley 29733 (si aplica) + teléfono
+  // registrado en metadata (primer login tras confirmar email) + rol.
   await aplicarConsentimientoPendiente();
+  await sincronizarTelefonoCliente();
   const rol = await obtenerRol();
   return { ok: true, rol };
 }
@@ -157,6 +168,63 @@ export async function guardAdmin() {
     return 'cliente';
   }
   return 'admin';
+}
+
+/* -----------------------------------------------------------------------------
+   Teléfono del cliente (T27)
+   El teléfono es OPCIONAL. Se envía en user_metadata del signUp; la tabla
+   `clientes` lo recibe al primer inicio con sesión (si el proyecto exige
+   confirmar email, el metadata sobrevive y se sincroniza en el primer login).
+   Best-effort: un fallo NUNCA rompe el registro/login (RNF07).
+   ----------------------------------------------------------------------------- */
+
+/** Deja solo dígitos del teléfono; '' si no hay valor. */
+function normalizarTelefono(valor) {
+  return String(valor ?? '').replace(/\D/g, '');
+}
+
+/** Normaliza el email para almacenarlo/consultarlo: sin espacios y minúsculas. */
+function normalizarEmail(valor) {
+  return String(valor ?? '').trim().toLowerCase();
+}
+
+/**
+ * Sincroniza clientes.telefono desde el argumento o desde user_metadata.
+ * Solo actualiza si la fila está vacía o si el número cambió.
+ * @param {string} [telefono] Teléfono ya saneado (opcional).
+ * @returns {Promise<boolean>} true si se actualizó una fila.
+ */
+export async function sincronizarTelefonoCliente(telefono = null) {
+  try {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false; // sin sesión (p. ej. confirmación de email pendiente)
+
+    const deseado = normalizarTelefono(
+      telefono !== null && telefono !== undefined ? telefono : user.user_metadata?.telefono
+    );
+    if (!deseado) return false; // no hay teléfono que sincronizar
+
+    const { data: fila, error: errorLectura } = await supabase
+      .from('clientes')
+      .select('telefono')
+      .eq('profile_id', user.id)
+      .maybeSingle();
+    if (errorLectura) throw errorLectura;
+
+    if (fila && fila.telefono === deseado) return false; // ya está al día
+
+    const { error } = await supabase
+      .from('clientes')
+      .update({ telefono: deseado })
+      .eq('profile_id', user.id);
+    if (error) throw error;
+
+    return true;
+  } catch (e) {
+    console.warn('auth.js — sincronizarTelefonoCliente:', e);
+    return false;
+  }
 }
 
 /* -----------------------------------------------------------------------------

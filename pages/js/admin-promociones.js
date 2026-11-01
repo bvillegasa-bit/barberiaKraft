@@ -10,13 +10,16 @@
    ============================================================================= */
 
 import { getSupabase } from './supabase-client.js';
-import { $, mostrarToast, mostrarErrorCampo, limpiarErrorCampo, estadoCarga, escaparHtml, formatoSoles } from './ui.js';
-import { validarTitulo, validarPrecio } from './validacion.js';
+import { $, mostrarToast, estadoCarga, escaparHtml, formatoSoles } from './ui.js';
+import { REGLAS_PROMOCION, validarFormulario, presentadorDOM } from './validacion/index.js';
 import { mensajeErrorAdmin } from './api.js';
 import { svgUse, estadoVacioAdmin, estadoErrorAdmin } from './admin-ui.js';
 
 let registros = [];
 let editandoId = null;
+
+/** Campos del formulario; las claves coinciden con REGLAS_PROMOCION. */
+const CAMPOS_PROMOCION = ['titulo', 'oferta', 'beneficio', 'descripcion'];
 
 const PLANTILLA = `
   <div class="admin-panel__herramientas">
@@ -60,8 +63,9 @@ export async function iniciar(contenedor) {
 
   const form = $('#form-promocion');
 
-  ['#promo-titulo', '#promo-oferta'].forEach((selector) => {
-    $(selector).addEventListener('input', () => limpiarErrorCampo($(selector)));
+  CAMPOS_PROMOCION.forEach((campo) => {
+    const input = $(`#promo-${campo}`);
+    if (input) input.addEventListener('input', () => presentadorDOM.limpiar(input));
   });
 
   $('#promos-nuevo').addEventListener('click', abrirFormularioNueva);
@@ -165,19 +169,22 @@ async function guardarPromocion(evento) {
   const beneficio = $('#promo-beneficio').value.trim();
   const oferta = $('#promo-oferta').value;
 
-  // El precio oferta es opcional: solo se valida cuando trae valor
-  const errores = {
-    titulo: validarTitulo(titulo),
-    oferta: oferta !== '' ? validarPrecio(oferta) : null
-  };
-  let valido = true;
-  Object.entries(errores).forEach(([campo, mensaje]) => {
-    if (!mensaje) return;
-    const input = $(`#promo-${campo}`);
-    mostrarErrorCampo(input, mensaje);
-    valido = false;
-  });
-  if (!valido) return;
+  // Precio oferta OPCIONAL (validarPrecioOpcional) + longitudes (T27)
+  CAMPOS_PROMOCION.forEach((campo) => presentadorDOM.limpiar($(`#promo-${campo}`)));
+
+  const resultado = validarFormulario(
+    { titulo, oferta, beneficio, descripcion },
+    REGLAS_PROMOCION
+  );
+
+  if (!resultado.ok) {
+    Object.entries(resultado.errores).forEach(([campo, mensaje]) => {
+      presentadorDOM.mostrar($(`#promo-${campo}`), mensaje);
+    });
+    const primerInput = $(`#promo-${resultado.primero}`);
+    if (primerInput) primerInput.focus();
+    return;
+  }
 
   const boton = evento.target.querySelector('button[type="submit"]');
   boton.disabled = true;

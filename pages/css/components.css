@@ -471,14 +471,54 @@
   color: var(--color-rojo-texto);
 }
 
-.campo input.invalido {
+.campo input.invalido,
+.campo select.invalido,
+.campo textarea.invalido {
   border-color: var(--color-rojo-texto);
+}
+
+/* Checklist vivo de contraseña (T27 · RF03): requisitos visibles y accesibles */
+.checklist-password {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.checklist-password__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.checklist-password__item::before {
+  content: '○';
+  font-weight: 700;
+  color: var(--color-texto-sec);
+}
+
+.checklist-password__item--cumple {
+  color: var(--color-texto);
+}
+
+.checklist-password__item--cumple::before {
+  content: '✓';
+  color: var(--color-rojo-texto);
 }
 
 .campo--checkbox {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--sp-3);
+}
+
+/* El error del checkbox ocupa toda la fila y no se solapa con la etiqueta */
+.campo--checkbox .error {
+  flex-basis: 100%;
 }
 
 .campo--checkbox input {

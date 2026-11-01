@@ -24,12 +24,20 @@ export function estadoErrorAdmin(contenedor, mensaje = 'No se pudo conectar. Rei
   contenedor.innerHTML = '';
   const estado = document.createElement('div');
   estado.className = 'estado';
-  estado.innerHTML = `
-    <svg class="icono estado__icono" role="img" aria-label="Error">
-      <use href="../assets/sprite.svg#icon-alerta"></use>
-    </svg>
-    <p class="estado__mensaje">${mensaje}</p>
-  `;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('class', 'icono estado__icono');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Error');
+  const uso = document.createElementNS(svgNS, 'use');
+  uso.setAttribute('href', '../assets/sprite.svg#icon-alerta');
+  svg.appendChild(uso);
+
+  const texto = document.createElement('p');
+  texto.className = 'estado__mensaje';
+  texto.textContent = String(mensaje ?? '');
+
+  estado.append(svg, texto);
   const boton = document.createElement('button');
   boton.type = 'button';
   boton.className = 'btn btn--secundario btn--sm';
@@ -48,12 +56,24 @@ export function estadoVacioAdmin(contenedor, mensaje, icono = 'icon-alerta') {
   contenedor.innerHTML = '';
   const estado = document.createElement('div');
   estado.className = 'estado';
-  estado.innerHTML = `
-    <svg class="icono estado__icono" role="img" aria-label="${mensaje}">
-      <use href="../assets/sprite.svg#${icono}"></use>
-    </svg>
-    <p class="estado__mensaje">${mensaje}</p>
-  `;
+
+  const texto = String(mensaje ?? '');
+  const iconoValido = String(icono ?? '').replace(/[^a-z0-9-]/gi, '') || 'icon-alerta';
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('class', 'icono estado__icono');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', texto || 'Estado');
+  const uso = document.createElementNS(svgNS, 'use');
+  uso.setAttribute('href', `../assets/sprite.svg#${iconoValido}`);
+  svg.appendChild(uso);
+
+  const parrafo = document.createElement('p');
+  parrafo.className = 'estado__mensaje';
+  parrafo.textContent = texto;
+
+  estado.append(svg, parrafo);
   contenedor.appendChild(estado);
 }
 

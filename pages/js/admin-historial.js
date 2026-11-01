@@ -120,7 +120,7 @@ function poblarSelector(select) {
   select.innerHTML = clientes
     .map((cliente) => {
       const etiqueta = cliente.nombre ? `${cliente.nombre} — ${cliente.email}` : cliente.email;
-      return `<option value="${cliente.id}">${escaparHtml(etiqueta)}</option>`;
+      return `<option value="${escaparHtml(cliente.id)}">${escaparHtml(etiqueta)}</option>`;
     })
     .join('');
 }

@@ -10,13 +10,16 @@
    ============================================================================= */
 
 import { getSupabase } from './supabase-client.js';
-import { $, mostrarToast, mostrarErrorCampo, limpiarErrorCampo, estadoCarga, escaparHtml, formatoSoles } from './ui.js';
-import { validarNombre, validarPrecio, validarEnteroPositivo } from './validacion.js';
+import { $, mostrarToast, estadoCarga, escaparHtml, formatoSoles } from './ui.js';
+import { REGLAS_SERVICIO, validarFormulario, presentadorDOM } from './validacion/index.js';
 import { mensajeErrorAdmin } from './api.js';
 import { svgUse, estadoVacioAdmin, estadoErrorAdmin } from './admin-ui.js';
 
 let registros = [];
 let editandoId = null;
+
+/** Campos del formulario; las claves coinciden con REGLAS_SERVICIO. */
+const CAMPOS_SERVICIO = ['nombre', 'precio', 'duracion', 'descripcion'];
 
 const PLANTILLA = `
   <div class="admin-panel__herramientas">
@@ -62,8 +65,9 @@ export async function iniciar(contenedor) {
   const botonNuevo = $('#servicios-nuevo');
 
   // Limpia el error del campo apenas el admin corrige (CA-RNF04-3)
-  ['#servicio-nombre', '#servicio-precio', '#servicio-duracion'].forEach((selector) => {
-    $(selector).addEventListener('input', () => limpiarErrorCampo($(selector)));
+  CAMPOS_SERVICIO.forEach((campo) => {
+    const input = $(`#servicio-${campo}`);
+    if (input) input.addEventListener('input', () => presentadorDOM.limpiar(input));
   });
 
   botonNuevo.addEventListener('click', abrirFormularioNuevo);
@@ -167,21 +171,22 @@ async function guardarServicio(evento) {
   const precio = $('#servicio-precio').value;
   const duracion = $('#servicio-duracion').value;
 
-  // Validación en cliente (RNF03) — mensajes junto al campo
-  const errores = {
-    nombre: validarNombre(nombre),
-    precio: validarPrecio(precio),
-    duracion: validarEnteroPositivo(duracion)
-  };
-  let valido = true;
-  Object.entries(errores).forEach(([campo, mensaje]) => {
-    const input = $(`#servicio-${campo}`);
-    if (mensaje) {
-      mostrarErrorCampo(input, mensaje);
-      valido = false;
-    }
-  });
-  if (!valido) return;
+  // Validación en cliente (RNF03 / T27) — reglas inyectadas y mensajes junto al campo
+  CAMPOS_SERVICIO.forEach((campo) => presentadorDOM.limpiar($(`#servicio-${campo}`)));
+
+  const resultado = validarFormulario(
+    { nombre, precio, duracion, descripcion },
+    REGLAS_SERVICIO
+  );
+
+  if (!resultado.ok) {
+    Object.entries(resultado.errores).forEach(([campo, mensaje]) => {
+      presentadorDOM.mostrar($(`#servicio-${campo}`), mensaje);
+    });
+    const primerInput = $(`#servicio-${resultado.primero}`);
+    if (primerInput) primerInput.focus();
+    return;
+  }
 
   const boton = evento.target.querySelector('button[type="submit"]');
   boton.disabled = true;
