@@ -89,6 +89,8 @@ barberia-kraft/
     ├── REQUIREMENTS.md        ← trazabilidad RF/RNF ↔ ISO/IEC 25010 ↔ estándares
     ├── QUALITY.md             ← plan de pruebas (RLS, auth, cálculo, UI, a11y, secretos)
     ├── TEST-UNIT.md           ← pruebas unitarias HU04/HU13/HU14 (npm test) + refactor
+    ├── SOLID.md               ← principios SOLID de la capa de validación
+    ├── QA-REPORT-VALIDACION.md ← QA de validación (134 pruebas, benchmark, auditorías)
     └── QA-AUDIT-CHECKLIST.md  ← checklist de auditoría por características ISO 25010
 ```
 
@@ -166,6 +168,21 @@ El registro público **nunca** asigna rol admin (CA-RF03-6). Para promocionar un
 abre `supabase/migrations/0002_promote_admin.sql`: es una guía **100% comentada** que
 indica el comando exacto (`UPDATE public.profiles SET rol = 'admin' WHERE email = '…'`).
 Ejecútala en el SQL Editor como owner/postgres y verifica con `SELECT is_admin();`.
+
+---
+
+## Comandos de calidad
+
+```bash
+npm test        # 134 pruebas unitarias (node:test nativo, sin dependencias)
+npm run bench   # benchmark de la capa de validación
+npm run dev     # build de desarrollo con placeholders
+```
+
+Documentos de evidencia: [TEST-UNIT.md](./TEST-UNIT.md) (pruebas por HU),
+[SOLID.md](./SOLID.md) (principios y trazabilidad de la capa de validación),
+[QA-REPORT-VALIDACION.md](./QA-REPORT-VALIDACION.md) (134 pruebas, benchmark,
+auditorías de seguridad y usabilidad) y [QUALITY.md](./QUALITY.md) (plan de pruebas).
 
 ---
 

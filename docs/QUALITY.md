@@ -249,5 +249,20 @@ artefactos **generados** por `build.js` y están en `.gitignore`. Cubre CA-RNF03
 
 > Rellenar al cierre del hito: total de casos, aprobados, fallidos, pendientes y
 > resumen de hallazgos con acciones correctivas.
+## 11. QA de la capa de validación (T27 · SOLID)
+
+Informe completo: [QA-REPORT-VALIDACION.md](./QA-REPORT-VALIDACION.md). Diseño y
+trazabilidad de principios: [SOLID.md](./SOLID.md).
+
+| ID caso | Procedimiento | Resultado esperado | Resultado obtenido | Estado |
+|---|---|---|---|---|
+| Q-VAL-1 | `npm test` sobre `tests/validacion/` y suites HU04/HU13/HU14 | 0 fallos | 134/134 aprobadas (29 suites, ~1.25 s) | Aprobado |
+| Q-VAL-2 | `npm run bench` (100k reglas / 10k formulario) | validar formulario < 1 ms | 3.267 µs/op = 0.0033 ms | Aprobado |
+| Q-VAL-3 | Revisión de XSS en estados de UI y tablas admin | 0 hallazgos críticos | 3 hallazgos corregidos (S-01…S-03), 0 abiertos | Aprobado |
+| Q-VAL-4 | Auditoría a11y de registro/login/admin | labels, autocomplete, `aria-live`, foco en primer error | Verificado, sin cambios requeridos | Aprobado |
+| Q-VAL-5 | `npm run dev` + medición de artefactos | build correcto con placeholders | 53 archivos, 527.2 KB; validación 25.6 KB | Aprobado |
+
+---
+
 ## Anexo TDD
 Ver [docs/TDD-EVIDENCE.md](./TDD-EVIDENCE.md) para evidencia Red→Green→Refactor de la lógica pura (HU04/HU13/HU14).
