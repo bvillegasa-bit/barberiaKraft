@@ -33,7 +33,7 @@ function mensajeErrorAuth(error) {
  * @param {string} nombre
  * @param {string} email
  * @param {string} password
- * @param {string} [telefono] Teléfono opcional (9 dígitos, ya saneado).
+ * @param {string} telefono Teléfono obligatorio (9 dígitos, ya saneado).
  * @returns {Promise<{ok:boolean, necesitaConfirmacion?:boolean, error?:string}>}
  */
 export async function registrarCliente(nombre, email, password, telefono = '') {
@@ -172,9 +172,10 @@ export async function guardAdmin() {
 
 /* -----------------------------------------------------------------------------
    Teléfono del cliente (T27)
-   El teléfono es OPCIONAL. Se envía en user_metadata del signUp; la tabla
-   `clientes` lo recibe al primer inicio con sesión (si el proyecto exige
-   confirmar email, el metadata sobrevive y se sincroniza en el primer login).
+   El teléfono es OBLIGATORIO en el registro. Se envía en user_metadata del
+   signUp; la tabla `clientes` lo recibe al primer inicio con sesión (si el
+   proyecto exige confirmar email, el metadata sobrevive y se sincroniza en el
+   primer login).
    Best-effort: un fallo NUNCA rompe el registro/login (RNF07).
    ----------------------------------------------------------------------------- */
 

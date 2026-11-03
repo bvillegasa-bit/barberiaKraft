@@ -72,19 +72,22 @@ async function cargarClientes() {
         .order('creado_en', { ascending: false }),
       supabase
         .from('profiles')
-        .select('id, rol')
+        .select('id, rol, nombre')
     ]);
 
     if (resClientes.error) throw resClientes.error;
     if (resProfiles.error) throw resProfiles.error;
 
-    // Lógica pura (testeable — CP-07/CP-08/CP-09):
+    // Lógica pura (testeable — CP-07/CP-08/CP-09/CP-V55):
     // 1) excluye cuentas admin (cruce clientes.profile_id ↔ profiles.rol);
-    // 2) proyecta SOLO campos públicos (nunca password/hash ni profile_id);
-    // 3) ordena por creado_en DESC (más reciente primero).
+    // 2) resuelve el nombre desde profiles.nombre → clientes.nombre → email;
+    // 3) proyecta SOLO campos públicos (nunca password/hash ni profile_id);
+    // 4) ordena por creado_en DESC (más reciente primero).
+    const perfiles = resProfiles.data ?? [];
+    const perfilesPorId = new Map(perfiles.map((perfil) => [perfil.id, perfil]));
     clientes = ordenarClientes(
-      filtrarClientesNoAdmin(resClientes.data ?? [], resProfiles.data ?? []).map(
-        mapearClientePublico
+      filtrarClientesNoAdmin(resClientes.data ?? [], perfiles).map((fila) =>
+        mapearClientePublico(fila, perfilesPorId.get(fila.profile_id))
       )
     );
 

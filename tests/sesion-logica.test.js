@@ -73,19 +73,23 @@ describe('sesion-logica (HU04) — estadoUiSesion: visibilidad del botón y del 
   test('CP-15 sin sesión → NO mostrar botón y badge null (control oculto por defecto)', () => {
     assert.deepEqual(estadoUiSesion(null), {
       mostrarCerrarSesion: false,
-      textoBadge: null
+      textoBadge: null,
+      mostrarAcceso: true
     });
     assert.deepEqual(estadoUiSesion(undefined), {
       mostrarCerrarSesion: false,
-      textoBadge: null
+      textoBadge: null,
+      mostrarAcceso: true
     });
     assert.deepEqual(estadoUiSesion({}), {
       mostrarCerrarSesion: false,
-      textoBadge: null
+      textoBadge: null,
+      mostrarAcceso: true
     });
     assert.deepEqual(estadoUiSesion({ user: null }), {
       mostrarCerrarSesion: false,
-      textoBadge: null
+      textoBadge: null,
+      mostrarAcceso: true
     });
   });
 
@@ -94,27 +98,41 @@ describe('sesion-logica (HU04) — estadoUiSesion: visibilidad del botón y del 
       estadoUiSesion({
         user: { user_metadata: { nombre: 'Ana Torres' }, email: 'ana@correo.com' }
       }),
-      { mostrarCerrarSesion: true, textoBadge: 'Sesión: Ana Torres' }
+      { mostrarCerrarSesion: true, textoBadge: 'Sesión: Ana Torres', mostrarAcceso: false }
     );
   });
 
   test('CP-17 con sesión sin nombre usa la parte local del email y mostrar=true', () => {
     assert.deepEqual(
       estadoUiSesion({ user: { user_metadata: {}, email: 'carlos.ruiz@correo.com' } }),
-      { mostrarCerrarSesion: true, textoBadge: 'Sesión: carlos.ruiz' }
+      { mostrarCerrarSesion: true, textoBadge: 'Sesión: carlos.ruiz', mostrarAcceso: false }
     );
   });
 
-  test('CP-18 el contrato es estable: la forma de retorno siempre tiene ambos campos boolean/string', () => {
+  test('CP-18 el contrato es estable: la forma de retorno siempre tiene los campos esperados', () => {
     const sin = estadoUiSesion(null);
     const con = estadoUiSesion({ user: { email: 'a@b.com' } });
     assert.equal(typeof sin.mostrarCerrarSesion, 'boolean');
     assert.equal(typeof con.mostrarCerrarSesion, 'boolean');
+    assert.equal(typeof sin.mostrarAcceso, 'boolean');
+    assert.equal(typeof con.mostrarAcceso, 'boolean');
     assert.equal(sin.textoBadge, null);
     assert.equal(typeof con.textoBadge, 'string');
     // El botón y el badge comparten SIEMPRE el mismo criterio de sesión:
     // hay badge ⇔ hay botón de cerrar sesión.
     assert.equal(con.mostrarCerrarSesion, Boolean(con.textoBadge));
     assert.equal(sin.mostrarCerrarSesion, Boolean(sin.textoBadge));
+  });
+
+  test('CP-V56 mostrarAcceso es true solo sin sesión (oculta login/registro)', () => {
+    assert.equal(estadoUiSesion(null).mostrarAcceso, true);
+    assert.equal(estadoUiSesion(undefined).mostrarAcceso, true);
+    assert.equal(estadoUiSesion({ user: null }).mostrarAcceso, true);
+    assert.equal(estadoUiSesion({ user: { email: 'a@b.com' } }).mostrarAcceso, false);
+    // Inverso exacto de mostrarCerrarSesion
+    const sin = estadoUiSesion(null);
+    const con = estadoUiSesion({ user: { email: 'a@b.com' } });
+    assert.equal(sin.mostrarAcceso, !sin.mostrarCerrarSesion);
+    assert.equal(con.mostrarAcceso, !con.mostrarCerrarSesion);
   });
 });

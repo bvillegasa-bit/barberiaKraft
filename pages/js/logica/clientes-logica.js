@@ -34,14 +34,39 @@ export function filtrarClientesNoAdmin(filas = [], perfiles = []) {
 }
 
 /**
+ * Resuelve el nombre a mostrar con la prioridad del negocio:
+ * profiles.nombre → clientes.nombre → parte local del email.
+ * Nunca devuelve "Sin nombre": si no hay dato, devuelve '' y el render decide.
+ * @param {{ nombre?: string }|null|undefined} perfil
+ * @param {{ nombre?: string, email?: string }|null|undefined} fila
+ * @returns {string}
+ */
+export function nombrePublico(perfil, fila) {
+  const nombrePerfil = String(perfil?.nombre ?? '').trim();
+  if (nombrePerfil) return nombrePerfil;
+
+  const nombreCliente = String(fila?.nombre ?? '').trim();
+  if (nombreCliente) return nombreCliente;
+
+  const email = String(fila?.email ?? '').trim();
+  if (email) {
+    const local = email.split('@')[0].trim();
+    if (local) return local;
+  }
+
+  return '';
+}
+
+/**
  * Proyecta SOLO los campos públicos permitidos.
  * NUNCA expone password, hash, profile_id ni columnas sensibles.
  * @param {object|null|undefined} fila
+ * @param {{ nombre?: string }|null|undefined} [perfil] Fila de `profiles`.
  * @returns {{ nombre: string, email: string, telefono: string, creado_en: string }}
  */
-export function mapearClientePublico(fila) {
+export function mapearClientePublico(fila, perfil = null) {
   return {
-    nombre: fila?.nombre ?? '',
+    nombre: nombrePublico(perfil, fila),
     email: fila?.email ?? '',
     telefono: fila?.telefono ?? '',
     creado_en: fila?.creado_en ?? ''

@@ -279,3 +279,123 @@ Node.js v24.11.1
 
 - Vinculado desde: [`docs/TEST-UNIT.md`](TEST-UNIT.md) (sección añadida)
 - Referenciado en: [`docs/QUALITY.md`](QUALITY.md) (sección añadida)
+
+---
+
+# Ciclo 5 — correcciones de validación y navbar
+
+Este ciclo corrige 6 defectos reportados (numerados 4–9 en el reporte):
+nombre real en el panel de clientes, teléfono obligatorio, mostrar/ocultar
+contraseña, nombres sin números, texto "Mínimo 8 caracteres" y ocultamiento
+de "Iniciar sesión"/"Registrarse" con sesión activa.
+
+## 1) ALCANCE
+
+**Archivos de producción modificados:**
+- `pages/js/validacion/reglas/telefono.js` — teléfono obligatorio.
+- `pages/js/validacion/reglas/nombre.js` — rechazo de números y validación de caracteres.
+- `pages/js/logica/clientes-logica.js` — `nombrePublico()` + `mapearClientePublico(fila, perfil)`.
+- `pages/js/admin-clientes.js` — lee `profiles.nombre` y cruza por `profile_id`.
+- `pages/js/logica/visibilidad-password.js` — NUEVO; lógica pura mostrar/ocultar.
+- `pages/js/visibilidad-password-ui.js` — NUEVO; wiring DOM accesible (sin inline).
+- `pages/js/logica/sesion-logica.js` — `estadoUiSesion()` añade `mostrarAcceso`.
+- `pages/js/navbar-sesion.js` — NUEVO; oculta accesos con `hidden`.
+- `pages/js/pagina-inicio.js`, `pages/js/pagina-login.js`, `pages/js/pagina-registro.js` — conexión de módulos.
+- `pages/index.html`, `pages/login.html`, `pages/registro.html` — ids de navbar, `required`/`aria-required`, botones toggle.
+- `pages/css/components.css` — `.campo__password` y `.password-toggle`.
+- `pages/js/auth.js`, `pages/js/validacion/registro-reglas.js` — comentarios actualizados (sin cambio funcional).
+
+**Pruebas añadidas/ajustadas:**
+- NUEVO `tests/validacion/correcciones-ciclo5.test.js` — CP-V49, CP-V50, CP-V51, CP-V52, CP-V53.
+- NUEVO `tests/visibilidad-password.test.js` — CP-V54.
+- `tests/clientes-logica.test.js` — CP-V55.
+- `tests/sesion-logica.test.js` — CP-V56 + contrato CP-18 ampliado.
+- `tests/validacion/email-telefono.test.js` — CP-V14.
+- `tests/validacion/cobertura-caja-blanca.test.js` — CB-T01, CB-N02.
+- `tests/validacion/seguridad-inputs.test.js` — SG-T01, SG-N01.
+
+## 2) FASE ROJA (pruebas primero)
+
+**Comando:** `npm test`
+
+**BLOQUE DE SALIDA REAL (resumen final del runner):**
+```text
+ℹ tests 143
+ℹ suites 32
+ℹ pass 128
+ℹ fail 15
+ℹ cancelled 0
+```
+
+**Fallos reales observados (motivo correcto: comportamiento nuevo aún no implementado):**
+```text
+✖ CP-V55 mapearClientePublico prioriza profiles.nombre y cae a clientes.nombre y al email
+✖ CP-V56 mostrarAcceso es true solo sin sesión (oculta login/registro)
+✖ CB-T01 vacío/null/undefined se rechaza (teléfono obligatorio)
+✖ CB-N02 nombre: rechaza números y símbolos; acepta letras/espacios
+✖ CP-V49 vacío, nulo y solo espacios se rechazan
+✖ CP-V50 rechaza nombres con dígitos
+✖ CP-V52 rechaza cadenas solo de símbolos o espacios
+✖ CP-V14 rechaza vacío porque el teléfono es obligatorio
+✖ SG-T01 payloads no numéricos se rechazan (el teléfono es obligatorio)
+✖ SG-N01 nombre rechaza números/símbolos sin lanzar; textos libres aceptan XSS
+✖ tests\visibilidad-password.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module ... pages\js\logica\visibilidad-password.js
+```
+
+**Nota de honestidad TDD:** CP-V51 (acentos/apóstrofes/guiones) y CP-V53
+("Mínimo 8 caracteres") ya pasaban antes de implementar porque el
+comportamiento existía; se añadieron como pruebas de NO regresión. El resto de
+CP-V49..CP-V56 sí falló por la razón correcta.
+
+## 3) FASE VERDE (implementación mínima)
+
+**Acciones:**
+- `validarTelefono('')` devuelve `'El teléfono es obligatorio.'`.
+- `validarNombre` comprueba en orden: vacío → control → longitud → dígitos → caracteres; regex `/^[\p{L}\p{M}\s'’\-]+$/u` y exige al menos una letra.
+- `nombrePublico(perfil, fila)`: `profiles.nombre` → `clientes.nombre` → parte local del email; nunca `"Sin nombre"`.
+- `admin-clientes.js` consulta `profiles(id, rol, nombre)`, construye `Map` por id y mapea con el perfil.
+- `alternarVisibilidad('password') === 'text'`; fail-safe a `'password'`; `etiquetaBoton(true|false)`.
+- `estadoUiSesion()` devuelve `mostrarAcceso: textoBadge === null`.
+- Navbar usa `observarSesion()` + `getSession()` y alterna SOLO `hidden`.
+
+**Comando:** `npm test`
+
+**BLOQUE DE SALIDA REAL (final):**
+```text
+ℹ tests 145
+ℹ suites 33
+ℹ pass 145
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1409.2643
+```
+
+**Tabla resumen ciclo 5:**
+| fase | acción | estado esperado | estado obtenido |
+|---|---|---|---|
+| ROJA | CP-V49..CP-V56 + ajustes antes de implementar | Fallo por comportamiento ausente | **FALLO** (tests 143, pass 128, fail 15) |
+| VERDE | Implementación mínima de reglas, lógica y UI | Todo verde | **VERDE** (tests 145, pass 145, fail 0) |
+
+## 4) VERIFICACIONES FINALES
+
+**Sintaxis:** `node --check` OK en 20 archivos JS (producción + pruebas tocadas);
+`node --check fallos: 0 de 20`.
+
+**Build:** `npm run dev` completado OK:
+```text
+[build.js] Build completado en: ...\barberia-kraft\dist
+[build.js]   Archivos copiados : 56
+[build.js]   Tamaño total      : 533.66 KB
+[build.js]   Excluidos de dist : js\config.template.js
+[build.js]   MODO DESARROLLO   : config.js generado con placeholders (esConfigPlaceholder() = true)
+```
+
+**Módulos nuevos copiados a `dist`:** `js/logica/visibilidad-password.js`,
+`js/visibilidad-password-ui.js`, `js/navbar-sesion.js` (los tres `True`).
+
+**Contrato de build:** los tests NO se copian a `dist`; el sitio estático
+incluye HTML, CSS y JS de `pages/`.
+

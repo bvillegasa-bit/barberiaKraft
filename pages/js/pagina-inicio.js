@@ -21,8 +21,10 @@ import { cerrarSesion, observarSesion } from './auth.js';
 import { getSupabase } from './supabase-client.js';
 import { montarBadgeSesion } from './sesion-ui.js';
 import { estadoUiSesion } from './logica/sesion-logica.js';
+import { configurarNavbarSesion } from './navbar-sesion.js';
 
 iniciarNavbar();
+configurarNavbarSesion();
 
 /* -----------------------------------------------------------------------------
    Botón "Cerrar sesión" (CA-RF03-3): oculto sin sesión, visible con sesión.

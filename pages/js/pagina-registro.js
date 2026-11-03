@@ -1,7 +1,7 @@
 /* =============================================================================
    Barbería Kraft — pagina-registro.js (T23 · T27)
-   Registro de cliente (RF03): nombre, teléfono OPCIONAL, email, contraseña con
-   fortaleza + confirmación y consentimiento OBLIGATORIO (Ley 29733).
+   Registro de cliente (RF03): nombre, teléfono OBLIGATORIO, email, contraseña
+   con fortaleza + confirmación y consentimiento OBLIGATORIO (Ley 29733).
    - Validación por capas: reglas puras inyectadas en el motor (SOLID · TDD).
    - Errores accesibles junto al campo (aria-describedby/aria-invalid).
    - Checklist de contraseña en vivo con aria-live="polite".
@@ -19,8 +19,11 @@ import {
 } from './validacion/index.js';
 import { registrarCliente, redirigirPorRol } from './auth.js';
 import { esConfigPlaceholder } from './config.js';
+import { iniciarTogglePassword } from './visibilidad-password-ui.js';
+import { configurarNavbarSesion } from './navbar-sesion.js';
 
 iniciarNavbar();
+configurarNavbarSesion();
 
 const avisoConfig = $('#aviso-config');
 if (avisoConfig && esConfigPlaceholder()) avisoConfig.hidden = false;
@@ -37,6 +40,12 @@ const CAMPOS = {
   confirmar_password: $('#confirmar-password')
 };
 const checkboxConsentimiento = $('#consentimiento');
+
+const togglePassword = iniciarTogglePassword($('#btn-toggle-password'), CAMPOS.password);
+const toggleConfirmar = iniciarTogglePassword(
+  $('#btn-toggle-confirmar-password'),
+  CAMPOS.confirmar_password
+);
 
 /* -----------------------------------------------------------------------------
    Checklist vivo de contraseña (RF03 · T27)
@@ -134,6 +143,8 @@ form.addEventListener('submit', async (evento) => {
     mostrarToast('Revisa tu correo para confirmar tu cuenta.', 'info', 6000);
     form.reset();
     renderChecklistPassword('');
+    if (togglePassword) togglePassword.aplicar(false);
+    if (toggleConfirmar) toggleConfirmar.aplicar(false);
   } else {
     mostrarToast('Cuenta creada. ¡Bienvenido a Barbería Kraft!', 'exito');
     setTimeout(() => redirigirPorRol('cliente'), 1200);

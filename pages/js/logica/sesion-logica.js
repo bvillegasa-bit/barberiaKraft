@@ -56,15 +56,17 @@ export function construirTextoBadge(sesion) {
  * INITIAL_SESSION que no llega o un SDK no cargado NO exponen un control inútil.
  *
  * @param {object|null} sesion Sesión de Supabase Auth
- * @returns {{ mostrarCerrarSesion: boolean, textoBadge: string|null }}
+ * @returns {{ mostrarCerrarSesion: boolean, textoBadge: string|null, mostrarAcceso: boolean }}
  *   mostrarCerrarSesion: true solo con sesión activa (hay objeto user).
  *   textoBadge: "Sesión: {nombre}" con sesión, o null sin sesión.
+ *   mostrarAcceso: true solo SIN sesión (enlaces "Iniciar sesión"/"Registrarse").
  */
 export function estadoUiSesion(sesion) {
   const textoBadge = construirTextoBadge(sesion);
   return {
     mostrarCerrarSesion: textoBadge !== null,
-    textoBadge
+    textoBadge,
+    mostrarAcceso: textoBadge === null
   };
 }
 

@@ -31,7 +31,7 @@
       <nav id="menu-principal" class="navbar__menu" aria-label="Navegación principal">
         <a class="navbar__enlace" href="index.html#servicios">Servicios</a>
         <a class="navbar__enlace" href="index.html#promociones">Promociones</a>
-        <a class="navbar__enlace" href="registro.html">Registrarse</a>
+        <a class="navbar__enlace" id="nav-registro" href="registro.html">Registrarse</a>
       </nav>
     </div>
   </header>
@@ -54,8 +54,13 @@
 
           <div class="campo">
             <label for="password">Contraseña</label>
-            <input type="password" id="password" name="password" autocomplete="current-password"
-                   minlength="8" maxlength="64" required aria-describedby="ayuda-password">
+            <div class="campo__password">
+              <input type="password" id="password" name="password" autocomplete="current-password"
+                     minlength="8" maxlength="64" required aria-describedby="ayuda-password">
+              <button class="password-toggle" type="button" id="btn-toggle-password"
+                      aria-controls="password" aria-pressed="false"
+                      aria-label="Mostrar contraseña">Mostrar</button>
+            </div>
             <p class="ayuda" id="ayuda-password">Ingresa tu contraseña (máximo 64 caracteres).</p>
           </div>
 

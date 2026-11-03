@@ -76,11 +76,11 @@ describe('regla teléfono (CP-V09..CP-V15)', () => {
     assert.equal(validarTelefono('9998887771'), 'El teléfono no puede tener más de 9 dígitos.');
   });
 
-  test('CP-V14 permite vacío porque el teléfono es opcional', () => {
-    assert.equal(validarTelefono(''), null);
-    assert.equal(validarTelefono('   '), null);
-    assert.equal(validarTelefono(null), null);
-    assert.equal(validarTelefono(undefined), null);
+  test('CP-V14 rechaza vacío porque el teléfono es obligatorio', () => {
+    assert.equal(validarTelefono(''), 'El teléfono es obligatorio.');
+    assert.equal(validarTelefono('   '), 'El teléfono es obligatorio.');
+    assert.equal(validarTelefono(null), 'El teléfono es obligatorio.');
+    assert.equal(validarTelefono(undefined), 'El teléfono es obligatorio.');
   });
 
   test('CP-V15 sanearTelefono elimina todo lo que no sea dígito', () => {

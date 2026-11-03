@@ -177,11 +177,11 @@ describe('CAJA BLANCA · regla email: entradas no-string y ramas internas', () =
 });
 
 describe('CAJA BLANCA · regla teléfono: ramas y límites 8/9/10', () => {
-  test('CB-T01 vacío/null/undefined sigue siendo válido (campo opcional)', () => {
-    assert.equal(validarTelefono(''), null);
-    assert.equal(validarTelefono('   '), null);
-    assert.equal(validarTelefono(null), null);
-    assert.equal(validarTelefono(undefined), null);
+  test('CB-T01 vacío/null/undefined se rechaza (teléfono obligatorio)', () => {
+    assert.equal(validarTelefono(''), 'El teléfono es obligatorio.');
+    assert.equal(validarTelefono('   '), 'El teléfono es obligatorio.');
+    assert.equal(validarTelefono(null), 'El teléfono es obligatorio.');
+    assert.equal(validarTelefono(undefined), 'El teléfono es obligatorio.');
   });
 
   test('CB-T02 números, booleanos, objetos y arrays no lanzan', () => {
@@ -375,13 +375,13 @@ describe('CAJA BLANCA · reglas de texto: límites y caracteres de control', () 
     assert.equal(validarNombre('a'.repeat(81)), 'El nombre no puede superar los 80 caracteres.');
   });
 
-  test('CB-N02 nombre: números, booleanos, objetos y unicode se convierten a texto', () => {
-    assert.equal(validarNombre(123), null);
+  test('CB-N02 nombre: rechaza números y símbolos; acepta letras/espacios', () => {
+    assert.equal(validarNombre(123), 'El nombre no debe contener números.');
     assert.equal(validarNombre(true), null);
-    assert.equal(validarNombre({}), null);
+    assert.equal(validarNombre({}), 'El nombre contiene caracteres no válidos.');
     assert.equal(validarNombre('José Núñez'), null);
     assert.equal(validarNombre('  Ana  '), null);
-    assert.equal(validarNombre('😀'), null);
+    assert.equal(validarNombre('😀'), 'El nombre contiene caracteres no válidos.');
   });
 
   test('CB-N03 nombre: byte nulo y saltos internos se rechazan', () => {

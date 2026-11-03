@@ -3,7 +3,7 @@
    -----------------------------------------------------------------------------
    SOLID · SRP: valida y sanea el teléfono celular peruano (9 dígitos).
    SOLID · LSP: misma firma que el resto de reglas.
-   Decisión: el teléfono es OPCIONAL; si se completa debe tener 9 dígitos.
+   Decisión: el teléfono es OBLIGATORIO y debe tener exactamente 9 dígitos.
    RNF03 / Ley 29733 — se persiste solo el dato mínimo necesario.
    ============================================================================= */
 
@@ -19,9 +19,9 @@ export function sanearTelefono(valor) {
 
 /**
  * Valida un teléfono celular de Perú.
- * - Vacío → válido (campo opcional).
+ * - Vacío → inválido (campo obligatorio).
  * - Solo dígitos.
- * - Exactamente 9 dígitos si se completa.
+ * - Exactamente 9 dígitos.
  *
  * @param {*} valor
  * @param {import('../contrato.js').ContextoValidacion} [contexto] No se usa.
@@ -31,7 +31,7 @@ export function validarTelefono(valor, contexto = {}) {
   void contexto;
   const telefono = String(valor ?? '').trim();
 
-  if (telefono === '') return null;
+  if (telefono === '') return 'El teléfono es obligatorio.';
   if (!/^\d+$/.test(telefono)) return 'El teléfono solo puede contener dígitos.';
   if (telefono.length > 9) return 'El teléfono no puede tener más de 9 dígitos.';
   if (telefono.length < 9) return 'El teléfono debe tener 9 dígitos.';

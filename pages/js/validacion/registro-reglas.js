@@ -65,7 +65,7 @@ export function obtenerReglas(mapa, campo) {
    Mapas de reglas por formulario
    ----------------------------------------------------------------------------- */
 
-/** Registro de cliente (RF03 / T27): incluye confirmación y teléfono opcional. */
+/** Registro de cliente (RF03 / T27): incluye confirmación y teléfono obligatorio. */
 export const REGLAS_REGISTRO = crearRegistro({
   nombre: [validarNombre],
   email: [validarEmail],

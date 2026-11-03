@@ -80,6 +80,30 @@ describe('clientes-logica (HU13) — cuentas admin, mapeo público y orden', () 
     assert.deepEqual(vacio, { nombre: '', email: '', telefono: '', creado_en: '' });
   });
 
+  test('CP-V55 mapearClientePublico prioriza profiles.nombre y cae a clientes.nombre y al email', () => {
+    const fila = {
+      nombre: '',
+      email: 'ana.torres@correo.com',
+      telefono: '999111222',
+      creado_en: '2026-01-10T10:00:00Z',
+      profile_id: 'p-cliente'
+    };
+    // 1) Gana el nombre del perfil (fuente real del dato)
+    assert.equal(mapearClientePublico(fila, { nombre: 'Ana Torres' }).nombre, 'Ana Torres');
+    assert.equal(mapearClientePublico(fila, { nombre: '   ' }).nombre, 'ana.torres');
+    // 2) Sin nombre de perfil se usa clientes.nombre
+    assert.equal(
+      mapearClientePublico({ ...fila, nombre: 'Nombre Clientes' }, null).nombre,
+      'Nombre Clientes'
+    );
+    // 3) Sin nombres se usa la parte local del email (nunca "Sin nombre")
+    assert.equal(mapearClientePublico(fila, null).nombre, 'ana.torres');
+    assert.notEqual(mapearClientePublico(fila, null).nombre, 'Sin nombre');
+    // 4) Sin ningún dato queda cadena vacía (el render decide el último fallback)
+    assert.equal(mapearClientePublico({ ...fila, email: '' }, null).nombre, '');
+    assert.equal(mapearClientePublico(null, { nombre: '' }).nombre, '');
+  });
+
   test('CP-09 ordenarClientes ordena por creado_en DESC, no muta y envía fechas inválidas al final', () => {
     const desorden = [
       { nombre: 'Ana', creado_en: '2026-01-10T10:00:00Z' },

@@ -14,8 +14,11 @@ import {
 } from './validacion/index.js';
 import { iniciarSesion, redirigirPorRol } from './auth.js';
 import { esConfigPlaceholder } from './config.js';
+import { iniciarTogglePassword } from './visibilidad-password-ui.js';
+import { configurarNavbarSesion } from './navbar-sesion.js';
 
 iniciarNavbar();
+configurarNavbarSesion();
 
 const avisoConfig = $('#aviso-config');
 if (avisoConfig && esConfigPlaceholder()) avisoConfig.hidden = false;
@@ -27,6 +30,8 @@ const CAMPOS = {
   email: $('#email'),
   password: $('#password')
 };
+
+iniciarTogglePassword($('#btn-toggle-password'), CAMPOS.password);
 
 CAMPOS.email.addEventListener('input', () => presentadorDOM.limpiar(CAMPOS.email));
 CAMPOS.password.addEventListener('input', () => presentadorDOM.limpiar(CAMPOS.password));

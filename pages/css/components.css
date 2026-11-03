@@ -465,6 +465,45 @@
   color: var(--color-texto-sec);
 }
 
+/* Mostrar/ocultar contraseña (RF03): input + botón en una fila accesible.
+   El botón conserva área táctil ≥44px y foco visible; no usa estilos inline. */
+.campo__password {
+  display: flex;
+  align-items: stretch;
+  gap: var(--sp-2);
+}
+
+.campo__password input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+}
+
+.password-toggle {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: var(--sp-2) var(--sp-3);
+  background: transparent;
+  border: 1px solid var(--color-plomo);
+  border-radius: var(--radius);
+  color: var(--color-texto);
+  font: inherit;
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  border-color: var(--color-texto-sec);
+  background: var(--color-superficie);
+}
+
+.password-toggle:focus-visible {
+  outline: 3px solid var(--color-rojo-texto);
+  outline-offset: 1px;
+}
+
 .campo .error {
   font-size: var(--texto-sm);
   font-weight: 600;

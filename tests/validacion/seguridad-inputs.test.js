@@ -107,9 +107,8 @@ describe('SEGURIDAD · email rechaza XSS, SQL, traversal y codificaciones', () =
 });
 
 describe('SEGURIDAD · teléfono rechaza todo lo no numérico', () => {
-  test('SG-T01 payloads no numéricos se rechazan; solo tabs/vacío son válidos', () => {
-    probarRechazos(PAYLOADS.filter((carga) => carga !== '\t\t'), validarTelefono, 'validarTelefono');
-    assert.equal(validarTelefono('\t\t'), null, 'SG-T01 los tabs se recortan y el campo es opcional');
+  test('SG-T01 payloads no numéricos se rechazan (el teléfono es obligatorio)', () => {
+    probarRechazos(PAYLOADS, validarTelefono, 'validarTelefono');
   });
 
   test('SG-T02 sanearTelefono neutraliza por lista blanca de dígitos', () => {
@@ -145,13 +144,15 @@ describe('SEGURIDAD · contraseña rechaza payloads largos o inválidos', () => 
 });
 
 describe('SEGURIDAD · textos libres: no lanzan y no se mutilan', () => {
-  test('SG-N01 nombre/título/descripción/beneficio aceptan XSS como texto plano', () => {
+  test('SG-N01 nombre rechaza números/símbolos sin lanzar; textos libres aceptan XSS', () => {
     for (const carga of [...XSS, ...SQL, ...TRAVERSAL, '%00', '😀😀😀']) {
       for (const validar of [validarNombre, validarTitulo, validarDescripcion, validarBeneficio]) {
         assert.doesNotThrow(() => validar(carga), `SG-N01 no debe lanzar con ${JSON.stringify(carga)}`);
       }
     }
-    assert.equal(validarNombre('<script>alert(1)</script>'), null);
+    // El nombre solo admite letras/espacios/apóstrofes/guiones: el payload XSS
+    // se rechaza por política (nunca por reflexión de HTML).
+    assert.equal(validarNombre('<script>alert(1)</script>'), 'El nombre no debe contener números.');
     assert.equal(validarDescripcion('"><img src=x onerror=alert(1)>'), null);
   });
 
