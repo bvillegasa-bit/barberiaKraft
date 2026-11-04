@@ -3,17 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Barbería Kraft · Estilo que habla por ti</title>
-  <meta name="description" content="Barbería Kraft en Callao: cortes de cabello y afeitado clásico. Consulta la ocupación del local en tiempo real, servicios y promociones.">
+  <title>Barbería Kraft · Tu mejor corte, sin esperas</title>
+  <meta name="description" content="Barbería Kraft en Callao: cortes de cabello y afeitado clásico. Consulta la ocupación del local en tiempo real, servicios, promociones y horarios.">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/landing.css">
 </head>
 <body class="pagina-inicio">
 
   <a class="skip-link" href="#principal">Saltar al contenido</a>
 
-  <!-- Navbar general (sin sesión en Hito 1) -->
+  <!-- Enlace fijo discreto: solo se muestra con sesión de rol admin -->
+  <a id="volver-panel" class="volver-panel" href="admin/dashboard.html" hidden>
+    <span aria-hidden="true">←</span> Volver al panel
+  </a>
+
+  <!-- Header sticky: marca, navegación, CTA Reservar y sesión -->
   <header class="navbar">
     <div class="contenedor navbar__interior">
       <a class="navbar__brand" href="index.html" aria-label="Barbería Kraft — inicio">
@@ -22,16 +28,25 @@
         </svg>
         <span class="navbar__logo">KRAFT</span>
       </a>
-      <button class="navbar__hamburguesa" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
-        <svg class="icono" role="img" aria-hidden="true" focusable="false">
-          <use href="assets/sprite.svg#icon-menu"></use>
-        </svg>
-      </button>
+
+      <div class="navbar__acciones">
+        <a class="btn btn--primario btn--sm navbar__cta" href="login.html" data-reserva="navbar">
+          Reservar
+        </a>
+        <button class="navbar__hamburguesa" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+          <svg class="icono" role="img" aria-hidden="true" focusable="false">
+            <use href="assets/sprite.svg#icon-menu"></use>
+          </svg>
+        </button>
+      </div>
+
       <nav id="menu-principal" class="navbar__menu" aria-label="Navegación principal">
         <a class="navbar__enlace" href="#servicios">Servicios</a>
         <a class="navbar__enlace" href="#promociones">Promociones</a>
+        <a class="navbar__enlace" href="#horarios">Horarios</a>
+        <a class="navbar__enlace" href="#barberia">Nosotros</a>
         <a class="navbar__enlace" id="nav-login" href="login.html">Iniciar sesión</a>
-        <a class="btn btn--primario btn--sm" id="nav-registro" href="registro.html">Registrarse</a>
+        <a class="btn btn--secundario btn--sm" id="nav-registro" href="registro.html">Registrarse</a>
         <!-- Visible solo con sesión activa (pagina-inicio.js via onAuthStateChange) -->
         <button class="btn btn--secundario btn--sm" type="button" id="btn-cerrar-sesion" hidden>Cerrar sesión</button>
       </nav>
@@ -40,27 +55,65 @@
 
   <main id="principal">
 
-    <!-- Hero: ocupación en tiempo real (RF02) + CTA -->
-    <section class="hero">
+    <!-- Hero: propuesta de valor + ocupación en tiempo real (RF02) + CTA -->
+    <section class="hero" aria-labelledby="titulo-hero">
       <div class="contenedor hero__cont">
-        <svg class="icono hero__icono" role="img" aria-hidden="true" focusable="false">
-          <use href="assets/sprite.svg#icon-tijeras"></use>
-        </svg>
-        <h1 class="hero__titulo">Estilo que <span>habla</span> por ti</h1>
-        <p class="hero__sub">Cortes de cabello y afeitado clásico en Callao. Consulta la ocupación y pide tu cita sin esperas.</p>
-        <!-- Semáforo renderizado por pagina-inicio.js (SIEMPRE desde el rpc) -->
-        <div id="contenedor-ocupacion" aria-live="polite" role="status"></div>
-        <div class="hero__acciones">
-          <a class="btn btn--primario" href="#servicios">
-            Ver servicios
-            <svg class="icono" role="img" aria-hidden="true" focusable="false">
-              <use href="assets/sprite.svg#icon-chevron"></use>
+        <div class="hero__texto">
+          <p class="hero__eyebrow">Reserva hoy · Callao, Perú</p>
+          <h1 class="hero__titulo" id="titulo-hero">Tu mejor corte, <span>sin esperas</span></h1>
+          <p class="hero__sub">Cortes de cabello y afeitado clásico con barberos de oficio. Consulta la ocupación del local y reserva tu cita en segundos.</p>
+
+          <!-- Semáforo renderizado por pagina-inicio.js (SIEMPRE desde el rpc) -->
+          <div id="contenedor-ocupacion" aria-live="polite" role="status"></div>
+
+          <div class="hero__acciones">
+            <a class="btn btn--primario" href="login.html" data-reserva="hero">
+              Reservar cita
+              <svg class="icono" role="img" aria-hidden="true" focusable="false">
+                <use href="assets/sprite.svg#icon-chevron"></use>
+              </svg>
+            </a>
+            <a class="btn btn--secundario" href="#servicios">Ver servicios</a>
+          </div>
+
+          <ul class="hero__puntos">
+            <li>Atención puntual</li>
+            <li>Barberos con oficio</li>
+            <li>Ambiente relajado</li>
+          </ul>
+        </div>
+
+        <div class="hero__visual" aria-hidden="true">
+          <div class="hero__visual-panel">
+            <svg class="icono hero__visual-icono" role="img" focusable="false">
+              <use href="assets/sprite.svg#icon-barber-pole"></use>
             </svg>
-          </a>
-          <!-- Reservas: Hito 2 (fuera de alcance) — visible pero deshabilitado -->
-          <button class="btn btn--secundario" type="button" disabled title="Las reservas estarán disponibles en el Hito 2">
-            Reservar
-          </button>
+            <p class="hero__visual-titulo">KRAFT</p>
+            <p class="hero__visual-sub">Cortes clásicos · Afeitado · Estilo</p>
+            <div class="hero__visual-tarjeta">
+              <span>Hoy</span>
+              <strong>8:30 – 19:00</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contenedor franja-confianza" aria-label="Razones para elegir Kraft">
+        <div class="franja-confianza__item">
+          <span class="franja-confianza__valor">8:30 – 19:00</span>
+          <p class="franja-confianza__texto">Lun a Sáb</p>
+        </div>
+        <div class="franja-confianza__item">
+          <span class="franja-confianza__valor">Hasta 22:00</span>
+          <p class="franja-confianza__texto">Feriados</p>
+        </div>
+        <div class="franja-confianza__item">
+          <span class="franja-confianza__valor">Sin esperas</span>
+          <p class="franja-confianza__texto">Reserva en línea</p>
+        </div>
+        <div class="franja-confianza__item">
+          <span class="franja-confianza__valor">Oficio real</span>
+          <p class="franja-confianza__texto">Barberos con años de experiencia</p>
         </div>
       </div>
     </section>
@@ -68,28 +121,144 @@
     <!-- Catálogo de servicios (RF01) -->
     <section id="servicios" class="seccion" aria-labelledby="titulo-servicios">
       <div class="contenedor">
-        <h2 class="seccion__titulo" id="titulo-servicios">
-          <svg class="icono" role="img" aria-hidden="true" focusable="false">
-            <use href="assets/sprite.svg#icon-navaja"></use>
-          </svg>
-          Servicios
-        </h2>
-        <!-- Tarjetas renderizadas por pagina-inicio.js -->
+        <div class="seccion__cabecera">
+          <p class="seccion__eyebrow">Servicios</p>
+          <h2 class="seccion__titulo" id="titulo-servicios">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="assets/sprite.svg#icon-navaja"></use>
+            </svg>
+            Elige tu servicio
+          </h2>
+          <p class="seccion__desc">Precios claros, duración estimada y reserva directa. Sin sorpresas.</p>
+        </div>
+        <!-- Tarjetas renderizadas por pagina-inicio.js (incluyen botón Reservar) -->
         <div id="contenedor-servicios"></div>
       </div>
     </section>
 
     <!-- Promociones activas (RF05) -->
-    <section id="promociones" class="seccion" aria-labelledby="titulo-promociones">
+    <section id="promociones" class="seccion seccion--alt" aria-labelledby="titulo-promociones">
       <div class="contenedor">
-        <h2 class="seccion__titulo" id="titulo-promociones">
-          <svg class="icono" role="img" aria-hidden="true" focusable="false">
-            <use href="assets/sprite.svg#icon-estrella"></use>
-          </svg>
-          Promociones
-        </h2>
+        <div class="seccion__cabecera">
+          <p class="seccion__eyebrow">Promociones</p>
+          <h2 class="seccion__titulo" id="titulo-promociones">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="assets/sprite.svg#icon-estrella"></use>
+            </svg>
+            Beneficios vigentes
+          </h2>
+          <p class="seccion__desc">Ofertas activas por tiempo limitado. Consulta disponibilidad al reservar.</p>
+        </div>
         <!-- Tarjetas renderizadas por pagina-inicio.js -->
         <div id="contenedor-promociones"></div>
+      </div>
+    </section>
+
+    <!-- Horarios del local -->
+    <section id="horarios" class="seccion" aria-labelledby="titulo-horarios">
+      <div class="contenedor">
+        <div class="seccion__cabecera">
+          <p class="seccion__eyebrow">Horarios</p>
+          <h2 class="seccion__titulo" id="titulo-horarios">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="assets/sprite.svg#icon-reloj"></use>
+            </svg>
+            Abrimos cuando lo necesitas
+          </h2>
+          <p class="seccion__desc">Ven sin cita o reserva con anticipación. La ocupación en vivo te ayuda a elegir el mejor momento.</p>
+        </div>
+
+        <div class="horario-panel">
+          <div class="horario-fila">
+            <div>
+              <span class="horario-fila__dia">Lunes a sábado</span>
+              <p class="horario-fila__nota">Atención continua durante todo el día.</p>
+            </div>
+            <strong class="horario-fila__hora">8:30 – 19:00</strong>
+          </div>
+
+          <div class="horario-fila horario-fila--destacado">
+            <div>
+              <span class="horario-fila__dia">Domingos y feriados</span>
+              <p class="horario-fila__nota">Horario extendido sujeto a disponibilidad de barberos.</p>
+            </div>
+            <strong class="horario-fila__hora">Hasta 22:00</strong>
+          </div>
+
+          <div class="horario-fila">
+            <div>
+              <span class="horario-fila__dia">Reserva sin esperas</span>
+              <p class="horario-fila__nota">Elige servicio, día y hora desde tu cuenta.</p>
+            </div>
+            <strong class="horario-fila__hora">Cita en segundos</strong>
+          </div>
+        </div>
+
+        <p class="horario-panel__pie">
+          <span class="punto" aria-hidden="true"></span>
+          Consulta la ocupación en vivo antes de venir y elige tu mejor momento.
+        </p>
+      </div>
+    </section>
+
+    <!-- Bloque de confianza / barbería -->
+    <section id="barberia" class="seccion seccion--alt" aria-labelledby="titulo-barberia">
+      <div class="contenedor">
+        <div class="seccion__cabecera">
+          <p class="seccion__eyebrow">La barbería</p>
+          <h2 class="seccion__titulo" id="titulo-barberia">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="assets/sprite.svg#icon-bigote"></use>
+            </svg>
+            Oficio, detalle y puntualidad
+          </h2>
+          <p class="seccion__desc">En Kraft cuidamos cada corte como si fuera el primero: escucha, técnica y un acabado que se nota.</p>
+        </div>
+
+        <div class="valores">
+          <article class="tarjeta valor">
+            <span class="valor__icono" aria-hidden="true">
+              <svg class="icono" role="img" focusable="false">
+                <use href="assets/sprite.svg#icon-navaja"></use>
+              </svg>
+            </span>
+            <h3>Técnica de barbería</h3>
+            <p>Cortes clásicos y modernos, perfilado y afeitado con navaja.</p>
+          </article>
+
+          <article class="tarjeta valor">
+            <span class="valor__icono" aria-hidden="true">
+              <svg class="icono" role="img" focusable="false">
+                <use href="assets/sprite.svg#icon-reloj"></use>
+              </svg>
+            </span>
+            <h3>Tu tiempo importa</h3>
+            <p>Consulta la ocupación en vivo y reserva para llegar justo a tu turno.</p>
+          </article>
+
+          <article class="tarjeta valor">
+            <span class="valor__icono" aria-hidden="true">
+              <svg class="icono" role="img" focusable="false">
+                <use href="assets/sprite.svg#icon-estrella"></use>
+              </svg>
+            </span>
+            <h3>Trato cercano</h3>
+            <p>Un espacio tranquilo, productos de calidad y atención personalizada.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Franja CTA final -->
+    <section class="franja-cta" aria-labelledby="titulo-reserva">
+      <div class="contenedor franja-cta__interior">
+        <div>
+          <h2 id="titulo-reserva">¿Listo para tu próximo corte?</h2>
+          <p>Reserva en línea y llega directo a la silla. También puedes acercarte al local.</p>
+        </div>
+        <div>
+          <a class="btn btn--primario" href="login.html" data-reserva="franja">Reservar mi cita</a>
+        </div>
       </div>
     </section>
 
@@ -97,9 +266,46 @@
 
   <footer class="footer">
     <div class="contenedor">
-      <p>© <span id="anio">2026</span> Barbería Kraft · Callao, Perú</p>
+      <div class="footer__grid">
+        <div class="footer__marca">
+          <span class="footer__logo">BARBERÍA KRAFT</span>
+          <p>Cortes de cabello y afeitado clásico en Callao, Perú. Oficio y estilo desde el primer día.</p>
+        </div>
+
+        <div>
+          <p class="footer__titulo">Visítanos</p>
+          <ul class="footer__lista">
+            <li>Callao, Perú</li>
+            <li>Lun – Sáb · 8:30 – 19:00</li>
+            <li>Feriados · hasta las 22:00</li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__titulo">Explora</p>
+          <ul class="footer__lista">
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#promociones">Promociones</a></li>
+            <li><a href="#horarios">Horarios</a></li>
+            <li><a href="login.html">Reservar cita</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__legal">
+        <p>© <span id="anio">2026</span> Barbería Kraft · Callao, Perú</p>
+        <ul class="leyenda" aria-label="Leyenda de ocupación">
+          <li><span class="leyenda__punto leyenda__punto--verde" aria-hidden="true"></span> Disponible (&lt;50%)</li>
+          <li><span class="leyenda__punto leyenda__punto--ambar" aria-hidden="true"></span> Moderado (50–79%)</li>
+          <li><span class="leyenda__punto leyenda__punto--rojo" aria-hidden="true"></span> Ocupado (≥80%)</li>
+        </ul>
+      </div>
     </div>
   </footer>
+
+  <!-- Contenedores globales: toast reutilizado por ui.js y aviso de configuración -->
+  <div id="toast-global" class="toast" role="status" aria-live="polite"></div>
+  <p id="aviso-config" class="nota" role="status" hidden></p>
 
   <!-- SDK de Supabase (UMD global) ANTES de los módulos; los módulos son diferidos -->
   <script src="js/vendor/supabase.js"></script>

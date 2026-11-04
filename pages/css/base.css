@@ -4,32 +4,65 @@
    ============================================================================= */
 
 /* -----------------------------------------------------------------------------
-   Design tokens (paleta EXACTA — design §8.1)
+   Design tokens — Sistema A1 «claro y minimalista» (2026)
+   Paleta base: fondo cálido #FAFAF8, superficie blanca, tinta #111111 y un
+   acento ámbar/dorado sobrio. Los nombres heredados (--color-negro, --color-rojo…)
+   se conservan como ALIAS semánticos para no romper JS ni clases existentes.
+
    REGLAS DE CONTRASTE (RNF08 / CA-RNF08-1, WCAG 2.1 AA):
-   - Texto sobre negro #0A0A0A: #F8F9FA (~18:1) y #ADB5BD (~8.4:1) ✓ AA.
-   - Rojo #C1121F sobre negro ≈ 3.6:1 → NUNCA para texto normal.
-     Para texto rojo SIEMPRE usar --color-rojo-texto (#E5383B, ~4.6:1 AA).
-   - Blanco sobre rojo #C1121F ≈ 5.1:1 ✓ AA (badges/CTA).
-   - #6C757D (plomo) ≈ 4.6:1 sobre negro pero se reserva SOLO para
-     bordes/divisores/iconos inactivos (NO para texto).
+   - Tinta #111111 sobre fondo #FAFAF8 ≈ 17.8:1 ✓ AAA.
+   - Texto secundario #57544D sobre #FAFAF8 ≈ 7.1:1 ✓ AAA.
+   - Acento para TEXTO --color-acento-texto #7A5A16 sobre blanco ≈ 6.2:1 ✓ AA.
+   - El ámbar decorativo --color-acento (#B98A2E) NO se usa para texto normal.
+   - Blanco sobre tinta #111111 ≈ 18:1 ✓ AAA (CTA principal).
+   - Peligro #B42318 y éxito #1B7F4B se usan siempre con texto blanco o como
+     texto sobre blanco (≥4.5:1).
    ----------------------------------------------------------------------------- */
 :root {
-  /* Colores base */
-  --color-negro:        #0A0A0A;  /* fondo principal */
-  --color-negro-alt:    #141414;  /* superficie cards/panel  */
-  --color-superficie:   #1E1E1E;  /* inputs, bordes, hover   */
-  --color-rojo:         #C1121F;  /* acentos, CTA, badges    */
-  --color-rojo-texto:   #E5383B;  /* rojo para TEXTO sobre negro (AA ≥4.5) */
-  --color-rojo-hover:   #D62828;
-  --color-plomo:        #6C757D;  /* bordes/divisores/iconos inactivos (NO texto) */
-  --color-texto:        #F8F9FA;  /* texto principal sobre oscuro (≈18:1 AA) */
-  --color-texto-sec:    #ADB5BD;  /* texto secundario sobre negro (≈8.4:1 AA) */
-  --color-exito:        #2DC653;  /* semáforo verde (libre / <50%) */
-  --color-alerta:       #FFB703;  /* semáforo ámbar (50–79%)    */
-  --color-ocupado:      #C1121F;  /* semáforo rojo (≥80%)       */
+  /* --- Superficies y tinta --- */
+  --color-fondo:        #FAFAF8;
+  --color-superficie:   #FFFFFF;   /* alias heredado: inputs y hover (se afina abajo) */
+  --color-superficie-2: #F4F1EA;   /* inputs, hover, chips suaves */
+  --color-borde:        #E7E2D8;
+  --color-borde-fuerte: #D6CFC1;
+  --color-tinta:        #111111;
+  --color-tinta-suave:  #3D3A35;
 
-  /* Radios y espaciado */
-  --radius: 8px;
+  /* --- Acento cálido (ámbar/dorado sobrio) --- */
+  --color-acento:        #B98A2E;
+  --color-acento-texto:  #7A5A16;
+  --color-acento-hover:  #96701F;
+  --color-acento-suave:  #F6EEDC;
+  --color-acento-borde:  #E8D8B6;
+
+  /* --- Semánticos --- */
+  --color-muted:        #57544D;
+  --color-superficie-alta: #FFFFFF;
+  --color-overlay:      rgba(17, 17, 17, 0.48);
+
+  /* --- Alias heredados (compatibilidad total con CSS/JS existente) --- */
+  --color-negro:        var(--color-fondo);        /* antes fondo oscuro */
+  --color-negro-alt:    var(--color-superficie);   /* antes superficie oscura */
+  --color-rojo:         var(--color-tinta);        /* CTA/badges: tinta */
+  --color-rojo-texto:   var(--color-acento-texto); /* enlaces/precios acento AA */
+  --color-rojo-hover:   var(--color-acento-hover);
+  --color-plomo:        var(--color-borde-fuerte); /* bordes/divisores */
+  --color-texto:        var(--color-tinta);
+  --color-texto-sec:    #57544D;
+  --color-exito:        #1B7F4B;
+  --color-alerta:       #A96208;
+  --color-ocupado:      #B42318;
+  --color-peligro:      #B42318;
+
+  /* --- Radios --- */
+  --radius: 12px;
+  --radius-sm: 10px;
+  --radius-lg: 16px;
+  --radius-card: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* --- Espaciado (escala 4/8/12/16/24/32/48/64/96) --- */
   --sp-1: 4px;
   --sp-2: 8px;
   --sp-3: 12px;
@@ -38,21 +71,40 @@
   --sp-6: 32px;
   --sp-7: 48px;
   --sp-8: 64px;
+  --sp-9: 96px;
 
-  /* Layout */
-  --container: 1100px;
+  /* --- Sombras suaves --- */
+  --shadow-xs: 0 1px 2px rgba(17, 17, 17, 0.05);
+  --shadow-sm: 0 4px 14px rgba(17, 17, 17, 0.06);
+  --shadow-md: 0 12px 32px rgba(17, 17, 17, 0.10);
+  --shadow-lg: 0 24px 64px rgba(17, 17, 17, 0.12);
+  --shadow-card: 0 1px 2px rgba(17, 17, 17, 0.04), 0 10px 28px rgba(17, 17, 17, 0.06);
+  --shadow-card-hover: 0 2px 4px rgba(17, 17, 17, 0.05), 0 18px 40px rgba(17, 17, 17, 0.10);
 
-  /* Tipografía (escala 1.25: 16/20/25/31; line-height 1.5) */
-  --font-titulos: 'Oswald', 'Arial Narrow', sans-serif;
+  /* --- Layout --- */
+  --container: 1160px;
+  --sidebar-w: 260px;
+
+  /* --- Tipografía (escala armónica, lectura clara) --- */
+  --font-marca: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-titulos: 'Inter', 'Segoe UI', Arial, sans-serif;
   --font-cuerpo: 'Inter', 'Segoe UI', Arial, sans-serif;
+  --texto-xs: 0.75rem;     /* 12px  */
   --texto-sm: 0.875rem;    /* 14px  */
   --texto-base: 1rem;      /* 16px  */
   --texto-md: 1.25rem;     /* 20px  */
   --texto-lg: 1.5625rem;   /* 25px  */
   --texto-xl: 1.9375rem;   /* 31px  */
+  --texto-2xl: 2.5rem;     /* 40px  */
+  --texto-3xl: clamp(2.35rem, 5vw, 3.65rem);
+  --texto-hero: clamp(2.4rem, 6.2vw, 3.9rem);
+  --texto-h2: clamp(1.7rem, 3.4vw, 2.35rem);
+  --texto-h3: clamp(1.05rem, 1.6vw, 1.22rem);
 
-  /* Transiciones */
+  /* --- Movimiento --- */
   --transicion: 0.18s ease;
+  --transicion-suave: 0.28s cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 /* -----------------------------------------------------------------------------
@@ -275,4 +327,80 @@ p { color: var(--color-texto-sec); }
 main {
   flex: 1;
   width: 100%;
+}
+
+/* =============================================================================
+   CAPA A1 — Refinamiento tipográfico y de superficies (sobrescribe sin renombrar)
+   Se mantiene al final de base.css para ganar a las reglas anteriores sin
+   tocar ninguna clase existente consumida por el JS.
+   ============================================================================= */
+body {
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-titulos);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--color-texto);
+}
+
+h1 { font-size: var(--texto-hero); }
+h2 { font-size: var(--texto-h2); }
+h3 { font-size: var(--texto-h3); }
+
+p {
+  color: var(--color-texto-sec);
+  line-height: 1.65;
+}
+
+a {
+  color: var(--color-acento-texto);
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--color-acento-hover);
+}
+
+/* Foco visible de alto contraste (AA y no solo color: anillo + offset) */
+:focus-visible {
+  outline: 3px solid var(--color-acento-texto);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Selección de texto con el acento suave de la marca */
+::selection {
+  background: var(--color-acento-suave);
+  color: var(--color-tinta);
+}
+
+/* Contenedor con más aire en pantallas medianas */
+@media (min-width: 768px) {
+  .contenedor {
+    padding-inline: var(--sp-6);
+  }
+}
+
+/* Respeta la preferencia de movimiento reducido en TODAS las animaciones */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

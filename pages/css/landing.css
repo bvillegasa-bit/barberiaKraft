@@ -1,0 +1,984 @@
+/* =============================================================================
+   Barbería Kraft — landing.css
+   Rediseño visual de la LANDING «claro y minimalista» (tipo Fresha).
+   Se enlaza SOLO desde index.html, después de base.css y components.css.
+   Mobile-first, sin dependencias, sin estilos inline (CSP).
+   Los ids y clases consumidos por pagina-inicio.js / ui.js NO cambian.
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   1. Base de la página
+   ----------------------------------------------------------------------------- */
+.pagina-inicio {
+  background:
+    radial-gradient(70rem 34rem at 88% -12%, rgba(185, 138, 46, 0.10), transparent 62%),
+    var(--color-fondo);
+  background-repeat: no-repeat;
+}
+
+.pagina-inicio h2,
+.pagina-inicio h3 {
+  text-wrap: balance;
+}
+
+.pagina-inicio p {
+  text-wrap: pretty;
+}
+
+/* -----------------------------------------------------------------------------
+   2. Header sticky
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(250, 250, 248, 0.88);
+  border-bottom: 1px solid var(--color-borde);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  backdrop-filter: saturate(160%) blur(14px);
+}
+
+.pagina-inicio .navbar__interior {
+  min-height: 68px;
+  gap: var(--sp-4);
+}
+
+.pagina-inicio .navbar__brand {
+  font-family: var(--font-marca);
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: 0.16em;
+  color: var(--color-tinta);
+  gap: var(--sp-2);
+}
+
+.pagina-inicio .navbar__brand .icono {
+  width: 1.6rem;
+  height: 1.6rem;
+  color: var(--color-acento-texto);
+}
+
+.pagina-inicio .navbar__enlace {
+  color: var(--color-tinta-suave);
+  font-size: var(--texto-sm);
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  transition: background-color var(--transicion), color var(--transicion);
+}
+
+.pagina-inicio .navbar__enlace:hover {
+  background: var(--color-acento-suave);
+  color: var(--color-tinta);
+  text-decoration: none;
+}
+
+.pagina-inicio .navbar__acciones {
+  margin-left: auto;
+}
+
+.pagina-inicio .navbar__hamburguesa {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde-fuerte);
+  border-radius: var(--radius-sm);
+  color: var(--color-tinta);
+  box-shadow: var(--shadow-xs);
+}
+
+.pagina-inicio .navbar__hamburguesa:hover {
+  background: var(--color-superficie-2);
+}
+
+@media (min-width: 768px) {
+  .pagina-inicio .navbar__interior {
+    min-height: 76px;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   3. Botones pill
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .btn {
+  border-radius: var(--radius-pill);
+  border-width: 1px;
+  padding: 11px 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  box-shadow: var(--shadow-xs);
+  transition: background-color var(--transicion), border-color var(--transicion),
+              color var(--transicion), box-shadow var(--transicion),
+              transform var(--transicion);
+}
+
+.pagina-inicio .btn--primario {
+  background-color: var(--color-tinta);
+  border-color: var(--color-tinta);
+  color: #ffffff;
+}
+
+.pagina-inicio .btn--primario:hover {
+  background-color: #262626;
+  border-color: #262626;
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.pagina-inicio .btn--secundario {
+  background-color: var(--color-superficie);
+  border-color: var(--color-borde-fuerte);
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .btn--secundario:hover {
+  background-color: var(--color-acento-suave);
+  border-color: var(--color-acento-borde);
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .btn--sm {
+  padding: 8px 16px;
+  font-size: var(--texto-sm);
+}
+
+.pagina-inicio .btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+/* -----------------------------------------------------------------------------
+   4. Hero
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .hero {
+  position: relative;
+  background-color: transparent;
+  background-image: none;
+  border-bottom: 1px solid var(--color-borde);
+  padding: clamp(40px, 7vw, 84px) 0 clamp(32px, 5vw, 56px);
+  text-align: left;
+}
+
+.pagina-inicio .hero__cont {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: clamp(32px, 5vw, 64px);
+}
+
+.pagina-inicio .hero__texto {
+  display: grid;
+  justify-items: start;
+  gap: var(--sp-4);
+  max-width: 40rem;
+}
+
+.pagina-inicio .hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 7px 14px;
+  background: var(--color-acento-suave);
+  border: 1px solid var(--color-acento-borde);
+  border-radius: var(--radius-pill);
+  color: var(--color-acento-texto);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+}
+
+.pagina-inicio .hero__eyebrow::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-acento);
+}
+
+.pagina-inicio .hero__titulo {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-hero);
+  font-weight: 600;
+  line-height: 1.03;
+  letter-spacing: -0.04em;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .hero__titulo span {
+  color: var(--color-acento-texto);
+}
+
+.pagina-inicio .hero__sub {
+  max-width: 34rem;
+  margin: 0;
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .hero #contenedor-ocupacion {
+  width: 100%;
+}
+
+.pagina-inicio .hero .semaforo {
+  width: 100%;
+  max-width: 30rem;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-xs);
+}
+
+.pagina-inicio .hero__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  justify-content: flex-start;
+}
+
+.pagina-inicio .hero__puntos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-5);
+  margin: var(--sp-2) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .hero__puntos li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.pagina-inicio .hero__puntos li::before {
+  content: '✓';
+  font-weight: 700;
+  color: var(--color-exito);
+}
+
+/* Bloque visual: composición CSS, sin imágenes externas */
+.pagina-inicio .hero__visual {
+  width: 100%;
+}
+
+.pagina-inicio .hero__visual-panel {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--sp-3);
+  min-height: 340px;
+  padding: var(--sp-7) var(--sp-5) var(--sp-8);
+  overflow: hidden;
+  text-align: center;
+  border: 1px solid var(--color-acento-borde);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.95), transparent 58%),
+    linear-gradient(155deg, #f9f3e5 0%, #f2e8d3 52%, #eadfc7 100%);
+  box-shadow: var(--shadow-card);
+}
+
+.pagina-inicio .hero__visual-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    repeating-linear-gradient(135deg, rgba(122, 90, 22, 0.05) 0 1px, transparent 1px 16px);
+  opacity: 0.55;
+}
+
+.pagina-inicio .hero__visual-panel::after {
+  content: '';
+  position: absolute;
+  inset: auto -22% -52% -22%;
+  height: 72%;
+  z-index: -1;
+  border-radius: 50%;
+  background: rgba(185, 138, 46, 0.13);
+}
+
+.pagina-inicio .hero__visual-icono {
+  width: 3.6rem;
+  height: 3.6rem;
+  color: var(--color-acento-texto);
+}
+
+.pagina-inicio .hero__visual-titulo {
+  margin: 0;
+  font-family: var(--font-marca);
+  font-size: 1.6rem;
+  letter-spacing: 0.18em;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .hero__visual-sub {
+  margin: 0;
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--color-acento-texto);
+}
+
+.pagina-inicio .hero__visual-tarjeta {
+  position: absolute;
+  right: var(--sp-4);
+  bottom: var(--sp-4);
+  display: grid;
+  gap: 2px;
+  padding: var(--sp-3) var(--sp-4);
+  text-align: left;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.pagina-inicio .hero__visual-tarjeta span {
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .hero__visual-tarjeta strong {
+  font-size: var(--texto-base);
+  color: var(--color-tinta);
+}
+
+/* Franja de confianza bajo el hero */
+.pagina-inicio .franja-confianza {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-4);
+  margin-top: clamp(32px, 5vw, 56px);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--color-borde);
+}
+
+.pagina-inicio .franja-confianza__item {
+  display: grid;
+  gap: 2px;
+}
+
+.pagina-inicio .franja-confianza__valor {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .franja-confianza__texto {
+  margin: 0;
+  font-size: var(--texto-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-texto-sec);
+}
+
+/* -----------------------------------------------------------------------------
+   5. Secciones
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .seccion {
+  padding: clamp(48px, 7vw, 88px) 0;
+}
+
+.pagina-inicio .seccion--alt {
+  background: var(--color-superficie);
+  border-block: 1px solid var(--color-borde);
+}
+
+.pagina-inicio .seccion__cabecera {
+  display: grid;
+  gap: var(--sp-2);
+  max-width: 46rem;
+  margin-bottom: clamp(28px, 4vw, 44px);
+}
+
+.pagina-inicio .seccion__eyebrow {
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-acento-texto);
+}
+
+.pagina-inicio .seccion__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: 0;
+  font-size: var(--texto-h2);
+  letter-spacing: -0.03em;
+}
+
+.pagina-inicio .seccion__titulo .icono {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-acento-texto);
+  flex-shrink: 0;
+}
+
+.pagina-inicio .seccion__desc {
+  margin: 0;
+  color: var(--color-texto-sec);
+}
+
+/* -----------------------------------------------------------------------------
+   6. Tarjetas de servicio y promoción (render del JS)
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .grid-tarjetas {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-5);
+}
+
+.pagina-inicio .tarjeta {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.pagina-inicio .card-servicio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-5);
+  transition: box-shadow var(--transicion-suave), border-color var(--transicion-suave),
+              transform var(--transicion-suave);
+}
+
+.pagina-inicio .card-servicio:hover {
+  border-color: var(--color-acento-borde);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.pagina-inicio .card-servicio__nombre {
+  margin: 0;
+  font-family: var(--font-titulos);
+  font-size: 1.18rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .card-servicio__desc {
+  flex: 1;
+  min-height: 2.7em;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .card-servicio__pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--color-borde);
+}
+
+.pagina-inicio .card-servicio__precio {
+  font-family: var(--font-cuerpo);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .card-servicio__duracion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 4px 10px;
+  background: var(--color-superficie-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--texto-xs);
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .card-servicio__duracion .icono {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.pagina-inicio .card-servicio__acciones {
+  margin-top: var(--sp-4);
+}
+
+.pagina-inicio .card-servicio__reservar {
+  width: 100%;
+}
+
+.pagina-inicio .card-promo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-5);
+  border-top: 3px solid var(--color-acento);
+}
+
+.pagina-inicio .card-promo__chip {
+  align-self: flex-start;
+  padding: 3px 10px;
+  background: var(--color-acento-suave);
+  border: 1px solid var(--color-acento-borde);
+  border-radius: var(--radius-pill);
+  color: var(--color-acento-texto);
+  font-family: var(--font-cuerpo);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.pagina-inicio .card-promo__titulo {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .card-promo__desc {
+  flex: 1;
+  font-size: var(--texto-sm);
+}
+
+.pagina-inicio .card-promo__beneficio {
+  margin: 0;
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--color-exito);
+}
+
+.pagina-inicio .card-promo__oferta {
+  font-family: var(--font-cuerpo);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-acento-texto);
+}
+
+/* -----------------------------------------------------------------------------
+   7. Horarios
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .horario-panel {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  overflow: hidden;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.pagina-inicio .horario-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.pagina-inicio .horario-fila:last-child {
+  border-bottom: 0;
+}
+
+.pagina-inicio .horario-fila__dia {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .horario-fila__nota {
+  margin: 2px 0 0;
+  font-size: var(--texto-xs);
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .horario-fila__hora {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-tinta);
+  white-space: nowrap;
+}
+
+.pagina-inicio .horario-fila--destacado {
+  background: linear-gradient(120deg, var(--color-tinta), #2b2620);
+}
+
+.pagina-inicio .horario-fila--destacado .horario-fila__dia,
+.pagina-inicio .horario-fila--destacado .horario-fila__hora {
+  color: #ffffff;
+}
+
+.pagina-inicio .horario-fila--destacado .horario-fila__nota {
+  color: #d8d3c9;
+}
+
+.pagina-inicio .horario-panel__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .horario-panel__pie .punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-exito);
+}
+
+/* Compatibilidad con la estructura de tarjetas de horario previa */
+.pagina-inicio .horarios {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+}
+
+.pagina-inicio .horario {
+  display: grid;
+  gap: 6px;
+  padding: var(--sp-5);
+}
+
+.pagina-inicio .horario__dia {
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-acento-texto);
+}
+
+.pagina-inicio .horario__hora {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .horario__nota {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+/* -----------------------------------------------------------------------------
+   8. Beneficios / confianza
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .valores {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+}
+
+.pagina-inicio .valor {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-5);
+  transition: box-shadow var(--transicion-suave), border-color var(--transicion-suave);
+}
+
+.pagina-inicio .valor:hover {
+  border-color: var(--color-acento-borde);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.pagina-inicio .valor__icono {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--color-acento-suave);
+  color: var(--color-acento-texto);
+}
+
+.pagina-inicio .valor__icono .icono {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.pagina-inicio .valor h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .valor p {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+/* -----------------------------------------------------------------------------
+   9. Franja CTA final
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .franja-cta {
+  background: linear-gradient(135deg, #111111 0%, #26221b 100%);
+}
+
+.pagina-inicio .franja-cta__interior {
+  display: grid;
+  gap: var(--sp-5);
+  align-items: center;
+  padding-block: clamp(40px, 6vw, 64px);
+}
+
+.pagina-inicio .franja-cta h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.pagina-inicio .franja-cta p {
+  margin: var(--sp-2) 0 0;
+  color: #d3ccc0;
+}
+
+.pagina-inicio .franja-cta .btn--primario {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .franja-cta .btn--primario:hover {
+  background: var(--color-acento-suave);
+  border-color: var(--color-acento-suave);
+  color: var(--color-tinta);
+}
+
+/* -----------------------------------------------------------------------------
+   10. Footer
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .footer {
+  margin-top: auto;
+  padding: clamp(40px, 6vw, 72px) 0 var(--sp-5);
+  background: var(--color-superficie);
+  border-top: 1px solid var(--color-borde);
+  text-align: left;
+}
+
+.pagina-inicio .footer__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-6);
+}
+
+.pagina-inicio .footer__marca {
+  display: grid;
+  gap: var(--sp-2);
+  align-content: start;
+  max-width: 26rem;
+}
+
+.pagina-inicio .footer__logo {
+  font-family: var(--font-marca);
+  font-size: 1.15rem;
+  letter-spacing: 0.16em;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .footer__marca p {
+  margin: 0;
+  font-size: var(--texto-sm);
+}
+
+.pagina-inicio .footer__titulo {
+  margin: 0 0 var(--sp-3);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .footer__lista {
+  display: grid;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .footer__lista a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .footer__lista a:hover {
+  color: var(--color-acento-texto);
+}
+
+.pagina-inicio .footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-top: var(--sp-6);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--color-borde);
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pagina-inicio .leyenda li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--texto-xs);
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .leyenda__punto {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pagina-inicio .leyenda__punto--verde { background: var(--color-exito); }
+.pagina-inicio .leyenda__punto--ambar { background: var(--color-alerta); }
+.pagina-inicio .leyenda__punto--rojo  { background: var(--color-ocupado); }
+
+/* -----------------------------------------------------------------------------
+   11. Responsive (móvil primero)
+   ----------------------------------------------------------------------------- */
+@media (min-width: 560px) {
+  .pagina-inicio .horarios {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 640px) {
+  .pagina-inicio .franja-confianza {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .pagina-inicio .valores {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pagina-inicio .horario-panel {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pagina-inicio .horario-fila {
+    border-bottom: 0;
+    border-right: 1px solid var(--color-borde);
+  }
+
+  .pagina-inicio .horario-fila:last-child {
+    border-right: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .pagina-inicio .grid-tarjetas {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .pagina-inicio .hero__cont {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(40px, 5vw, 72px);
+  }
+
+  .pagina-inicio .hero__visual-panel {
+    min-height: 430px;
+  }
+
+  .pagina-inicio .valores {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .pagina-inicio .horario-panel {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .pagina-inicio .franja-cta__interior {
+    grid-template-columns: 1fr auto;
+    gap: var(--sp-7);
+  }
+
+  .pagina-inicio .footer__grid {
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: var(--sp-7);
+  }
+}
+
+@media (min-width: 1024px) {
+  .pagina-inicio .grid-tarjetas,
+  .pagina-inicio .grid-tarjetas--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .pagina-inicio .hero__acciones {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .pagina-inicio .hero__acciones .btn {
+    width: 100%;
+  }
+
+  .pagina-inicio .horario-fila {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--sp-1);
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   12. Accesibilidad y movimiento reducido
+   ----------------------------------------------------------------------------- */
+.pagina-inicio a,
+.pagina-inicio button {
+  touch-action: manipulation;
+}
+
+.pagina-inicio :focus-visible {
+  outline: 3px solid var(--color-acento-texto);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pagina-inicio .card-servicio,
+  .pagina-inicio .btn {
+    transition: none;
+  }
+
+  .pagina-inicio .card-servicio:hover,
+  .pagina-inicio .btn:active {
+    transform: none;
+  }
+}

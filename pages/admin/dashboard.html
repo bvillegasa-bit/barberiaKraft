@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de administración · Barbería Kraft</title>
-  <meta name="description" content="Panel de administración de Barbería Kraft: gestión de servicios, promociones y ocupación del local.">
+  <meta name="description" content="Panel de administración de Barbería Kraft: gestión de servicios, promociones, ocupación, clientes e historial.">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -13,95 +13,178 @@
 </head>
 <body class="pagina-admin">
 
-  <a class="skip-link" href="#principal">Saltar al contenido</a>
+  <a class="skip-link" href="#principal">Ir al contenido</a>
 
-  <!-- Navbar general (rutas hacia la raíz de pages/) -->
-  <header class="navbar">
-    <div class="contenedor navbar__interior">
-      <a class="navbar__brand" href="../index.html" aria-label="Barbería Kraft — inicio">
-        <svg class="icono" role="img" aria-hidden="true" focusable="false">
-          <use href="../assets/sprite.svg#icon-tijeras"></use>
-        </svg>
-        <span class="navbar__logo">KRAFT</span>
-      </a>
-      <button class="navbar__hamburguesa" type="button" aria-expanded="false" aria-controls="menu-admin" aria-label="Abrir menú">
-        <svg class="icono" role="img" aria-hidden="true" focusable="false">
-          <use href="../assets/sprite.svg#icon-menu"></use>
-        </svg>
-      </button>
-      <nav id="menu-admin" class="navbar__menu" aria-label="Navegación del panel">
-        <a class="navbar__enlace" href="../index.html">Ver página pública</a>
-        <a class="navbar__enlace" href="../index.html#servicios">Servicios</a>
-        <button class="navbar__enlace navbar__enlace--boton" type="button" id="btn-cerrar-sesion" hidden>Cerrar sesión</button>
+  <!-- Shell completo: permanece oculto hasta que el guard confirma rol admin
+       (pagina-admin.js · S-RF03-6 / CA-RF03-5). -->
+  <div id="admin-shell" class="admin-shell" hidden>
+
+    <!-- Overlay móvil: cierra el sidebar al tocar fuera -->
+    <div class="admin-overlay" id="admin-overlay" aria-hidden="true"></div>
+
+    <!-- =====================================================================
+         SIDEBAR: marca · navegación con iconos · usuario y cierre de sesión
+         ===================================================================== -->
+    <aside class="admin-sidebar" id="admin-sidebar" aria-label="Navegación del panel">
+      <div class="admin-sidebar__marca">
+        <a class="admin-sidebar__brand" href="../index.html" aria-label="Barbería Kraft — ir al sitio público">
+          <span class="admin-sidebar__brand-icono" aria-hidden="true">
+            <svg class="icono" role="img" focusable="false">
+              <use href="../assets/sprite.svg#icon-tijeras"></use>
+            </svg>
+          </span>
+          <span class="admin-sidebar__brand-texto">
+            <span class="admin-sidebar__logo">Barbería Kraft</span>
+            <span class="admin-sidebar__sub">Panel de administración</span>
+          </span>
+        </a>
+        <button class="admin-sidebar__cerrar" id="btn-cerrar-sidebar" type="button" aria-label="Cerrar menú del panel">
+          <svg class="icono" role="img" aria-hidden="true" focusable="false">
+            <use href="../assets/sprite.svg#icon-x"></use>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="admin-sidebar__nav" aria-label="Secciones del panel">
+        <p class="admin-sidebar__grupo" id="admin-nav-titulo">Gestión</p>
+
+        <!-- Tabs reconvertidas en navegación vertical (mismos ids/data-tab/ARIA) -->
+        <div class="admin-tabs" role="tablist" aria-orientation="vertical" aria-labelledby="admin-nav-titulo">
+          <button class="admin-tabs__tab" type="button" role="tab" id="tab-servicios" data-tab="servicios"
+                  aria-selected="true" aria-current="page" aria-controls="panel-servicios">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="../assets/sprite.svg#icon-navaja"></use>
+            </svg>
+            <span class="admin-tabs__texto">Servicios</span>
+          </button>
+          <button class="admin-tabs__tab" type="button" role="tab" id="tab-promociones" data-tab="promociones"
+                  aria-selected="false" aria-controls="panel-promociones" tabindex="-1">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="../assets/sprite.svg#icon-estrella"></use>
+            </svg>
+            <span class="admin-tabs__texto">Promociones</span>
+          </button>
+          <button class="admin-tabs__tab" type="button" role="tab" id="tab-ocupacion" data-tab="ocupacion"
+                  aria-selected="false" aria-controls="panel-ocupacion" tabindex="-1">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="../assets/sprite.svg#icon-silla"></use>
+            </svg>
+            <span class="admin-tabs__texto">Ocupación</span>
+          </button>
+          <button class="admin-tabs__tab" type="button" role="tab" id="tab-clientes" data-tab="clientes"
+                  aria-selected="false" aria-controls="panel-clientes" tabindex="-1">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="../assets/sprite.svg#icon-usuario"></use>
+            </svg>
+            <span class="admin-tabs__texto">Clientes</span>
+          </button>
+          <button class="admin-tabs__tab" type="button" role="tab" id="tab-historial" data-tab="historial"
+                  aria-selected="false" aria-controls="panel-historial" tabindex="-1">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="../assets/sprite.svg#icon-reloj"></use>
+            </svg>
+            <span class="admin-tabs__texto">Historial</span>
+          </button>
+        </div>
+
+        <div class="admin-sidebar__enlaces">
+          <a class="admin-sidebar__enlace" href="/" target="_blank" rel="noopener noreferrer">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="../assets/sprite.svg#icon-barber-pole"></use>
+            </svg>
+            Ver sitio público
+            <span class="visually-hidden">(se abre en una pestaña nueva)</span>
+          </a>
+        </div>
       </nav>
+
+      <div class="admin-sidebar__pie">
+        <div class="admin-sidebar__usuario">
+          <span class="admin-sidebar__avatar" aria-hidden="true">
+            <svg class="icono" role="img" focusable="false">
+              <use href="../assets/sprite.svg#icon-usuario"></use>
+            </svg>
+          </span>
+          <span class="admin-sidebar__datos">
+            <span class="admin-sidebar__nombre" id="usuario-nombre">Administrador</span>
+            <span class="admin-sidebar__rol" id="usuario-rol" aria-live="polite"></span>
+          </span>
+        </div>
+        <button class="admin-sidebar__salir" type="button" id="btn-cerrar-sesion" hidden>
+          <svg class="icono" role="img" aria-hidden="true" focusable="false">
+            <use href="../assets/sprite.svg#icon-candado"></use>
+          </svg>
+          Cerrar sesión
+        </button>
+      </div>
+    </aside>
+
+    <!-- =====================================================================
+         CUERPO: topbar + KPIs + paneles (mismas pestañas de siempre)
+         ===================================================================== -->
+    <div class="admin-shell__body">
+
+      <header class="admin-topbar">
+        <button class="admin-topbar__toggle" id="btn-sidebar-toggle" type="button"
+                aria-expanded="false" aria-controls="admin-sidebar" aria-label="Abrir menú del panel">
+          <svg class="icono" role="img" aria-hidden="true" focusable="false">
+            <use href="../assets/sprite.svg#icon-menu"></use>
+          </svg>
+        </button>
+
+        <div class="admin-topbar__titulos">
+          <p class="admin-topbar__eyebrow">Panel</p>
+          <h1 class="admin-topbar__titulo" id="admin-topbar-titulo">Servicios</h1>
+        </div>
+
+        <div class="admin-topbar__acciones">
+          <a class="btn btn--secundario btn--sm" href="/" target="_blank" rel="noopener noreferrer">
+            Ver sitio público
+          </a>
+        </div>
+      </header>
+
+      <main id="principal" class="admin-main">
+
+        <!-- visible solo cuando falta configuración de Supabase (js/config.js) -->
+        <p id="aviso-config" class="nota" role="status" hidden>
+          Configuración pendiente: agrega la URL y la anon key de tu proyecto Supabase en js/config.js.
+        </p>
+
+        <!-- KPIs: se rellenan con datos reales si están disponibles -->
+        <section class="admin-kpis" aria-label="Resumen del panel">
+          <article class="admin-kpi">
+            <span class="admin-kpi__label">Ocupación actual</span>
+            <strong class="admin-kpi__valor" id="kpi-ocupacion">—</strong>
+            <span class="admin-kpi__meta" id="kpi-ocupacion-meta">Consultando…</span>
+          </article>
+          <article class="admin-kpi">
+            <span class="admin-kpi__label">Servicios activos</span>
+            <strong class="admin-kpi__valor" id="kpi-servicios">—</strong>
+            <span class="admin-kpi__meta">Catálogo público</span>
+          </article>
+          <article class="admin-kpi">
+            <span class="admin-kpi__label">Promociones activas</span>
+            <strong class="admin-kpi__valor" id="kpi-promociones">—</strong>
+            <span class="admin-kpi__meta">Vigentes en la landing</span>
+          </article>
+        </section>
+
+        <!-- Paneles por tab: los módulos CRUD se montan aquí (T25/T26/T27 + HU13/HU14) -->
+        <section id="panel-servicios" class="admin-panel" role="tabpanel" aria-labelledby="tab-servicios"></section>
+        <section id="panel-promociones" class="admin-panel" role="tabpanel" aria-labelledby="tab-promociones" hidden></section>
+        <section id="panel-ocupacion" class="admin-panel" role="tabpanel" aria-labelledby="tab-ocupacion" hidden></section>
+        <section id="panel-clientes" class="admin-panel" role="tabpanel" aria-labelledby="tab-clientes" hidden></section>
+        <section id="panel-historial" class="admin-panel" role="tabpanel" aria-labelledby="tab-historial" hidden></section>
+      </main>
+
+      <footer class="footer admin-footer">
+        <div class="contenedor">
+          <p>© <span id="anio">2026</span> Barbería Kraft · Panel de administración</p>
+        </div>
+      </footer>
     </div>
-  </header>
-
-  <!-- El shell se muestra SOLO tras pasar el guard admin (pagina-admin.js, S-RF03-6) -->
-  <main id="principal" class="contenedor admin-main" hidden>
-    <div class="admin-cabecera">
-      <h1>Panel de administración</h1>
-      <p class="admin-cabecera__rol" id="usuario-rol" aria-live="polite"></p>
-    </div>
-
-    <!-- visible solo cuando falta configuración de Supabase (js/config.js) -->
-    <p id="aviso-config" class="nota" role="status" hidden>
-      Configuración pendiente: agrega la URL y la anon key de tu proyecto Supabase en js/config.js.
-    </p>
-
-    <!-- Tabs del panel (design §8.3.8): Servicios | Promociones | Ocupación |
-         Clientes | Historial (todos activos; los módulos se cargan en perezoso). -->
-    <div class="admin-tabs" role="tablist" aria-label="Secciones del panel">
-      <button class="admin-tabs__tab" type="button" role="tab" id="tab-servicios" data-tab="servicios"
-              aria-selected="true" aria-controls="panel-servicios">
-        <svg class="icono" role="img" aria-hidden="true" focusable="false">
-          <use href="../assets/sprite.svg#icon-navaja"></use>
-        </svg>
-        Servicios
-      </button>
-      <button class="admin-tabs__tab" type="button" role="tab" id="tab-promociones" data-tab="promociones"
-              aria-selected="false" aria-controls="panel-promociones" tabindex="-1">
-        <svg class="icono" role="img" aria-hidden="true" focusable="false">
-          <use href="../assets/sprite.svg#icon-estrella"></use>
-        </svg>
-        Promociones
-      </button>
-      <button class="admin-tabs__tab" type="button" role="tab" id="tab-ocupacion" data-tab="ocupacion"
-              aria-selected="false" aria-controls="panel-ocupacion" tabindex="-1">
-        <svg class="icono" role="img" aria-hidden="true" focusable="false">
-          <use href="../assets/sprite.svg#icon-silla"></use>
-        </svg>
-        Ocupación
-      </button>
-      <button class="admin-tabs__tab" type="button" role="tab" id="tab-clientes" data-tab="clientes"
-              aria-selected="false" aria-controls="panel-clientes" tabindex="-1">
-        <svg class="icono" role="img" aria-hidden="true" focusable="false">
-          <use href="../assets/sprite.svg#icon-usuario"></use>
-        </svg>
-        Clientes
-      </button>
-      <button class="admin-tabs__tab" type="button" role="tab" id="tab-historial" data-tab="historial"
-              aria-selected="false" aria-controls="panel-historial" tabindex="-1">
-        <svg class="icono" role="img" aria-hidden="true" focusable="false">
-          <use href="../assets/sprite.svg#icon-reloj"></use>
-        </svg>
-        Historial
-      </button>
-    </div>
-
-    <!-- Paneles por tab: los módulos CRUD se montan aquí (T25/T26/T27 + HU13/HU14) -->
-    <section id="panel-servicios" class="admin-panel" role="tabpanel" aria-labelledby="tab-servicios"></section>
-    <section id="panel-promociones" class="admin-panel" role="tabpanel" aria-labelledby="tab-promociones" hidden></section>
-    <section id="panel-ocupacion" class="admin-panel" role="tabpanel" aria-labelledby="tab-ocupacion" hidden></section>
-    <section id="panel-clientes" class="admin-panel" role="tabpanel" aria-labelledby="tab-clientes" hidden></section>
-    <section id="panel-historial" class="admin-panel" role="tabpanel" aria-labelledby="tab-historial" hidden></section>
-  </main>
-
-  <footer class="footer">
-    <div class="contenedor">
-      <p>© <span id="anio">2026</span> Barbería Kraft · Callao, Perú</p>
-    </div>
-  </footer>
+  </div>
 
   <!-- SDK de Supabase (UMD global) ANTES de los módulos -->
   <script src="../js/vendor/supabase.js"></script>

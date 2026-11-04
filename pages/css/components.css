@@ -408,7 +408,7 @@
 .card-silla--libre .card-silla__estado { color: var(--color-exito); }
 .card-silla--libre .card-silla__estado::before { background: var(--color-exito); }
 
-.card-silla--ocupada .card-silla__estado { color: var(--color-rojo-texto); }
+.card-silla--ocupada .card-silla__estado { color: var(--color-ocupado); }
 .card-silla--ocupada .card-silla__estado::before { background: var(--color-ocupado); }
 
 .card-silla__meta {
@@ -804,4 +804,958 @@
 
 .estado__accion .btn {
   margin-top: var(--sp-2);
+}
+
+/* =============================================================================
+   CAPA A1 — Rediseño «claro y minimalista» (tipo Fresha)
+   Todas las reglas son ADITIVAS: conservan los nombres de clase existentes y
+   se apoyan en los tokens nuevos de base.css. Ninguna clase usada por el JS
+   cambia de nombre ni de contrato.
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   1. Navbar clara y sticky
+   ----------------------------------------------------------------------------- */
+.navbar {
+  background: rgba(250, 250, 248, 0.92);
+  border-bottom: 1px solid var(--color-borde);
+  -webkit-backdrop-filter: saturate(160%) blur(12px);
+  backdrop-filter: saturate(160%) blur(12px);
+}
+
+.navbar__interior {
+  min-height: 72px;
+}
+
+.navbar__brand {
+  font-family: var(--font-marca);
+  font-weight: 600;
+  font-size: 1.3rem;
+  letter-spacing: 0.16em;
+  color: var(--color-tinta);
+  gap: var(--sp-2);
+}
+
+.navbar__brand:hover {
+  color: var(--color-tinta);
+  text-decoration: none;
+}
+
+.navbar__brand .icono {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--color-acento-texto);
+}
+
+.navbar__logo {
+  line-height: 1;
+}
+
+.navbar__hamburguesa {
+  width: 44px;
+  height: 44px;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde-fuerte);
+  border-radius: var(--radius-sm);
+  color: var(--color-tinta);
+  box-shadow: var(--shadow-xs);
+}
+
+.navbar__hamburguesa:hover {
+  background: var(--color-superficie-2);
+}
+
+.navbar__menu {
+  gap: var(--sp-1);
+}
+
+.navbar__enlace {
+  color: var(--color-tinta-suave);
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  padding-inline: var(--sp-3);
+}
+
+.navbar__enlace:hover {
+  background: var(--color-acento-suave);
+  color: var(--color-tinta);
+}
+
+.navbar__acciones {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-left: auto;
+}
+
+.navbar__cta {
+  margin-left: var(--sp-1);
+  white-space: nowrap;
+}
+
+/* -----------------------------------------------------------------------------
+   2. Botones (primario tinta, secundario borde suave)
+   ----------------------------------------------------------------------------- */
+.btn {
+  border-width: 1px;
+  border-radius: var(--radius-pill);
+  padding: 10px 22px;
+  letter-spacing: -0.01em;
+  box-shadow: var(--shadow-xs);
+  transition: background-color var(--transicion), border-color var(--transicion),
+              box-shadow var(--transicion), color var(--transicion);
+}
+
+.btn--primario {
+  background-color: var(--color-tinta);
+  border-color: var(--color-tinta);
+  color: #ffffff;
+}
+
+.btn--primario:hover {
+  background-color: #2a2a2a;
+  border-color: #2a2a2a;
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--secundario {
+  background-color: var(--color-superficie);
+  border-color: var(--color-borde-fuerte);
+  color: var(--color-tinta);
+}
+
+.btn--secundario:hover {
+  background-color: var(--color-acento-suave);
+  border-color: var(--color-acento-borde);
+  color: var(--color-tinta);
+}
+
+.btn--peligro {
+  background-color: var(--color-superficie);
+  border-color: #e8c6c2;
+  color: var(--color-peligro);
+}
+
+.btn--peligro:hover {
+  background-color: var(--color-peligro);
+  border-color: var(--color-peligro);
+  color: #ffffff;
+}
+
+.btn--sm {
+  padding: 6px 14px;
+}
+
+.btn:active {
+  box-shadow: none;
+}
+
+/* -----------------------------------------------------------------------------
+   3. Hero — jerarquía tipográfica clara + panel decorativo
+   ----------------------------------------------------------------------------- */
+.hero {
+  background-color: var(--color-fondo);
+  background-image:
+    radial-gradient(60rem 30rem at 85% -10%, rgba(185, 138, 46, 0.14), transparent 60%),
+    radial-gradient(40rem 24rem at 5% 110%, rgba(185, 138, 46, 0.08), transparent 60%);
+  border-bottom: 1px solid var(--color-borde);
+  padding: clamp(40px, 7vw, 88px) 0;
+  text-align: left;
+}
+
+.hero__cont {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-6);
+  align-items: center;
+  justify-items: stretch;
+}
+
+.hero__texto {
+  display: grid;
+  justify-items: start;
+  gap: var(--sp-4);
+  max-width: 40rem;
+}
+
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 6px 14px;
+  background: var(--color-acento-suave);
+  border: 1px solid var(--color-acento-borde);
+  border-radius: var(--radius-pill);
+  color: var(--color-acento-texto);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+}
+
+.hero__eyebrow::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-acento);
+}
+
+.hero__titulo {
+  font-family: var(--font-titulos);
+  font-size: var(--texto-3xl);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-transform: none;
+  color: var(--color-tinta);
+}
+
+.hero__titulo span {
+  color: var(--color-acento-texto);
+}
+
+.hero__sub {
+  max-width: 36rem;
+  margin: 0;
+  font-size: clamp(1.02rem, 1.6vw, 1.18rem);
+  color: var(--color-texto-sec);
+}
+
+.hero #contenedor-ocupacion {
+  width: 100%;
+}
+
+.hero .semaforo {
+  background: var(--color-superficie);
+  border-color: var(--color-borde);
+  box-shadow: var(--shadow-xs);
+  border-radius: var(--radius-pill);
+}
+
+.hero__acciones {
+  justify-content: flex-start;
+  gap: var(--sp-3);
+}
+
+.hero__puntos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.hero__puntos li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.hero__puntos li::before {
+  content: '✓';
+  font-weight: 700;
+  color: var(--color-exito);
+}
+
+.hero__visual {
+  width: 100%;
+}
+
+.hero__visual-panel {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--sp-3);
+  min-height: 320px;
+  padding: var(--sp-7) var(--sp-5);
+  overflow: hidden;
+  text-align: center;
+  border: 1px solid var(--color-acento-borde);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.9), transparent 55%),
+    linear-gradient(150deg, #f8f1e1 0%, #f1e7d2 55%, #eadfc7 100%);
+  box-shadow: var(--shadow-md);
+}
+
+.hero__visual-panel::after {
+  content: '';
+  position: absolute;
+  inset: auto -20% -55% -20%;
+  height: 70%;
+  z-index: -1;
+  border-radius: 50%;
+  background: rgba(185, 138, 46, 0.12);
+}
+
+.hero__visual-icono {
+  width: 4rem;
+  height: 4rem;
+  color: var(--color-acento-texto);
+}
+
+.hero__visual-titulo {
+  font-family: var(--font-marca);
+  font-size: 1.5rem;
+  letter-spacing: 0.14em;
+  color: var(--color-tinta);
+  margin: 0;
+}
+
+.hero__visual-sub {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-acento-texto);
+  font-weight: 600;
+}
+
+.hero__visual-tarjeta {
+  position: absolute;
+  right: var(--sp-4);
+  bottom: var(--sp-4);
+  display: grid;
+  gap: 2px;
+  padding: var(--sp-3) var(--sp-4);
+  text-align: left;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.hero__visual-tarjeta span {
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-texto-sec);
+}
+
+.hero__visual-tarjeta strong {
+  font-size: var(--texto-base);
+  color: var(--color-tinta);
+}
+
+/* -----------------------------------------------------------------------------
+   4. Secciones y tarjetas
+   ----------------------------------------------------------------------------- */
+.seccion {
+  padding: clamp(48px, 7vw, 88px) 0;
+}
+
+.seccion--alt {
+  background: var(--color-superficie);
+  border-block: 1px solid var(--color-borde);
+}
+
+.seccion__cabecera {
+  display: grid;
+  gap: var(--sp-2);
+  max-width: 46rem;
+  margin-bottom: var(--sp-6);
+}
+
+.seccion__eyebrow {
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-acento-texto);
+}
+
+.seccion__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: 0;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  letter-spacing: -0.025em;
+}
+
+.seccion__titulo .icono {
+  width: 1.6rem;
+  height: 1.6rem;
+  color: var(--color-acento-texto);
+}
+
+.seccion__desc {
+  margin: 0;
+  color: var(--color-texto-sec);
+}
+
+.seccion__pie {
+  margin-top: var(--sp-5);
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.tarjeta {
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.grid-tarjetas {
+  gap: var(--sp-5);
+}
+
+/* Card de servicio: nombre, duración, precio y CTA Reservar */
+.card-servicio {
+  gap: var(--sp-2);
+  transition: box-shadow var(--transicion-suave), border-color var(--transicion-suave);
+}
+
+.card-servicio:hover {
+  border-color: var(--color-borde-fuerte);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-servicio__nombre {
+  font-family: var(--font-titulos);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0;
+}
+
+.card-servicio__desc {
+  color: var(--color-texto-sec);
+  min-height: 2.6em;
+}
+
+.card-servicio__pie {
+  border-top: 1px solid var(--color-borde);
+  padding-top: var(--sp-3);
+}
+
+.card-servicio__precio {
+  font-family: var(--font-cuerpo);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--color-tinta);
+  letter-spacing: -0.01em;
+}
+
+.card-servicio__duracion {
+  padding: 4px 10px;
+  background: var(--color-superficie-2);
+  border-radius: var(--radius-pill);
+  color: var(--color-texto-sec);
+}
+
+.card-servicio__acciones {
+  margin-top: var(--sp-4);
+}
+
+.card-servicio__reservar {
+  width: 100%;
+}
+
+/* Card de promoción: acento cálido y chip legible */
+.card-promo {
+  border-left: 0;
+  border-top: 3px solid var(--color-acento);
+  gap: var(--sp-2);
+}
+
+.card-promo__chip {
+  align-self: flex-start;
+  padding: 3px 10px;
+  background: var(--color-acento-suave);
+  border: 1px solid var(--color-acento-borde);
+  border-radius: var(--radius-pill);
+  color: var(--color-acento-texto);
+  font-family: var(--font-cuerpo);
+  font-size: var(--texto-xs);
+  letter-spacing: 0.12em;
+}
+
+.card-promo__titulo {
+  font-size: 1.15rem;
+}
+
+.card-promo__oferta {
+  font-family: var(--font-cuerpo);
+  font-size: 1.3rem;
+  color: var(--color-acento-texto);
+  letter-spacing: -0.01em;
+}
+
+.card-promo__beneficio {
+  color: var(--color-exito);
+  font-size: var(--texto-sm);
+}
+
+/* -----------------------------------------------------------------------------
+   5. Horarios
+   ----------------------------------------------------------------------------- */
+.horarios {
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: 1fr;
+}
+
+.horario {
+  display: grid;
+  gap: 6px;
+  padding: var(--sp-5);
+}
+
+.horario__dia {
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-acento-texto);
+}
+
+.horario__hora {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-tinta);
+}
+
+.horario__nota {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.horario--destacado {
+  background: var(--color-tinta);
+  border-color: var(--color-tinta);
+  color: #ffffff;
+}
+
+.horario--destacado .horario__dia {
+  color: #ead0a0;
+}
+
+.horario--destacado .horario__hora {
+  color: #ffffff;
+}
+
+.horario--destacado .horario__nota {
+  color: #d8d3c9;
+}
+
+/* -----------------------------------------------------------------------------
+   6. Bloque de confianza
+   ----------------------------------------------------------------------------- */
+.valores {
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: 1fr;
+}
+
+.valor {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-5);
+}
+
+.valor__icono {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--color-acento-suave);
+  color: var(--color-acento-texto);
+}
+
+.valor__icono .icono {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.valor h3 {
+  font-size: 1.05rem;
+}
+
+.valor p {
+  margin: 0;
+  font-size: var(--texto-sm);
+}
+
+/* -----------------------------------------------------------------------------
+   7. Franja CTA
+   ----------------------------------------------------------------------------- */
+.franja-cta {
+  background: linear-gradient(135deg, #111111 0%, #26221b 100%);
+}
+
+.franja-cta__interior {
+  display: grid;
+  gap: var(--sp-4);
+  align-items: center;
+  padding-block: var(--sp-7);
+}
+
+.franja-cta h2 {
+  color: #ffffff;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.025em;
+}
+
+.franja-cta p {
+  margin: var(--sp-2) 0 0;
+  color: #d3ccc0;
+}
+
+.franja-cta .btn--primario {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: var(--color-tinta);
+}
+
+.franja-cta .btn--primario:hover {
+  background: var(--color-acento-suave);
+  border-color: var(--color-acento-suave);
+  color: var(--color-tinta);
+}
+
+/* -----------------------------------------------------------------------------
+   8. Footer con datos, enlaces y leyenda del semáforo
+   ----------------------------------------------------------------------------- */
+.footer {
+  background-color: var(--color-superficie);
+  border-top: 1px solid var(--color-borde);
+  padding: var(--sp-7) 0 var(--sp-5);
+  text-align: left;
+}
+
+.footer__grid {
+  display: grid;
+  gap: var(--sp-6);
+  grid-template-columns: 1fr;
+}
+
+.footer__marca {
+  display: grid;
+  gap: var(--sp-2);
+  align-content: start;
+  max-width: 24rem;
+}
+
+.footer__logo {
+  font-family: var(--font-marca);
+  font-size: 1.2rem;
+  letter-spacing: 0.16em;
+  color: var(--color-tinta);
+}
+
+.footer__marca p {
+  margin: 0;
+  font-size: var(--texto-sm);
+}
+
+.footer__titulo {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-texto-sec);
+}
+
+.footer__lista {
+  display: grid;
+  gap: var(--sp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.footer__lista a {
+  color: var(--color-texto-sec);
+}
+
+.footer__lista a:hover {
+  color: var(--color-acento-texto);
+}
+
+.footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-top: var(--sp-6);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--color-borde);
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.leyenda li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.leyenda__punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.leyenda__punto--verde { background: var(--color-exito); }
+.leyenda__punto--ambar { background: var(--color-alerta); }
+.leyenda__punto--rojo  { background: var(--color-ocupado); }
+
+/* -----------------------------------------------------------------------------
+   9. Enlace fijo «Volver al panel» (solo visible con sesión admin)
+   Convive con #badge-sesion (inferior derecha) y #btn-cerrar-sesion (navbar).
+   ----------------------------------------------------------------------------- */
+.volver-panel {
+  position: fixed;
+  top: 84px;
+  right: var(--sp-4);
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 44px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-tinta);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.volver-panel:hover {
+  background: var(--color-acento-suave);
+  border-color: var(--color-acento-borde);
+  color: var(--color-tinta);
+  text-decoration: none;
+}
+
+.volver-panel:focus-visible {
+  outline: 3px solid var(--color-acento-texto);
+  outline-offset: 2px;
+}
+
+/* -----------------------------------------------------------------------------
+   10. Formularios, avisos, toast y badge sobre superficie clara
+   ----------------------------------------------------------------------------- */
+.campo input,
+.campo select,
+.campo textarea {
+  background: var(--color-superficie);
+  border-color: var(--color-borde-fuerte);
+  border-radius: var(--radius-sm);
+  color: var(--color-tinta);
+}
+
+.campo input::placeholder,
+.campo textarea::placeholder {
+  color: #8a867e;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  outline: 3px solid var(--color-acento-texto);
+  outline-offset: 1px;
+  border-color: var(--color-acento-texto);
+}
+
+.campo label {
+  color: var(--color-tinta);
+}
+
+.campo .ayuda {
+  color: var(--color-texto-sec);
+}
+
+.campo .error {
+  color: var(--color-peligro);
+}
+
+.password-toggle {
+  background: var(--color-superficie);
+  border-color: var(--color-borde-fuerte);
+  border-radius: var(--radius-sm);
+  color: var(--color-tinta);
+}
+
+.password-toggle:hover {
+  background: var(--color-superficie-2);
+  border-color: var(--color-acento-borde);
+}
+
+.nota {
+  background: var(--color-superficie-2);
+  border-color: var(--color-borde);
+  color: var(--color-texto-sec);
+}
+
+.toast {
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-md);
+}
+
+.toast--exito {
+  background: var(--color-exito);
+  color: #ffffff;
+}
+
+.toast--error {
+  background: var(--color-peligro);
+  color: #ffffff;
+}
+
+.toast--info {
+  background: var(--color-superficie);
+  color: var(--color-tinta);
+  border: 1px solid var(--color-borde);
+}
+
+.badge-sesion {
+  background: var(--color-superficie);
+  color: var(--color-tinta);
+  border-color: var(--color-borde);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+}
+
+.badge-sesion .icono {
+  color: var(--color-exito);
+}
+
+.skip-link {
+  background: var(--color-tinta);
+  color: #ffffff;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.spinner {
+  border-color: var(--color-borde);
+  border-top-color: var(--color-acento-texto);
+}
+
+/* Panel de autenticación como tarjeta limpia */
+.panel-auth {
+  max-width: 27rem;
+  padding: var(--sp-6);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* -----------------------------------------------------------------------------
+   11. Responsive (móvil primero)
+   ----------------------------------------------------------------------------- */
+@media (min-width: 640px) {
+  .horarios {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .valores {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .hero__cont {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: var(--sp-8);
+  }
+
+  .hero__visual-panel {
+    min-height: 420px;
+  }
+
+  .horarios {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .valores {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .franja-cta__interior {
+    grid-template-columns: 1fr auto;
+    gap: var(--sp-6);
+  }
+
+  .footer__grid {
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: var(--sp-7);
+  }
+}
+
+@media (max-width: 767px) {
+  .navbar__interior {
+    flex-wrap: wrap;
+    padding-block: var(--sp-3);
+  }
+
+  .navbar__menu.abierto {
+    order: 3;
+    flex-basis: 100%;
+    padding-bottom: var(--sp-4);
+    border-top: 1px solid var(--color-borde);
+    margin-top: var(--sp-2);
+  }
+
+  .navbar__cta {
+    margin-left: 0;
+  }
+
+  .volver-panel {
+    top: 76px;
+    right: var(--sp-3);
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar__acciones {
+    order: 3;
+    margin-left: 0;
+  }
+
+  .navbar__menu {
+    order: 2;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero__acciones {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .hero__acciones .btn {
+    width: 100%;
+  }
 }

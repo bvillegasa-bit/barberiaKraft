@@ -22,6 +22,7 @@ import { getSupabase } from './supabase-client.js';
 import { montarBadgeSesion } from './sesion-ui.js';
 import { estadoUiSesion } from './logica/sesion-logica.js';
 import { configurarNavbarSesion } from './navbar-sesion.js';
+import { configurarVolverPanel } from './volver-panel.js';
 
 iniciarNavbar();
 configurarNavbarSesion();
@@ -62,6 +63,11 @@ function configurarCierreDeSesion() {
 }
 
 configurarCierreDeSesion();
+
+/* Enlace "← Volver al panel" (solo admin): módulo volver-panel.js.
+   Alterna `hidden` y convive con el navbar (#btn-cerrar-sesion, arriba) y el
+   badge (#badge-sesion, abajo-derecha). */
+configurarVolverPanel();
 
 /* Badge "Sesión: {nombre}" (HU04 · usabilidad): esquina inferior derecha,
    se muestra/oculta en vivo con observarSesion() y convive con el botón
