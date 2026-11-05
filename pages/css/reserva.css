@@ -1,0 +1,440 @@
+/* =============================================================================
+   Barbería Kraft — reserva.css
+   Página de reserva (stepper Servicio → Fecha → Hora → Confirmar).
+   Tokens de base.css, header/footer de landing.css. Mobile-first, sin estilos
+   inline (CSP estricto). Solo clases con prefijo .pagina-reserva / .reserva.
+   ============================================================================= */
+
+.pagina-reserva {
+  background:
+    radial-gradient(70rem 34rem at 88% -12%, rgba(185, 138, 46, 0.10), transparent 62%),
+    var(--color-fondo);
+  background-repeat: no-repeat;
+}
+
+.reserva {
+  padding-block: var(--sp-6) var(--sp-8);
+}
+
+.reserva__contenedor {
+  max-width: 820px;
+}
+
+.reserva__cabecera {
+  margin-bottom: var(--sp-5);
+  text-align: center;
+}
+
+.reserva__cabecera .seccion__eyebrow {
+  margin-bottom: var(--sp-2);
+}
+
+.reserva__titulo {
+  font-family: var(--font-marca);
+  font-size: var(--texto-h2);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-tinta);
+  margin-bottom: var(--sp-2);
+}
+
+.reserva__sub {
+  color: var(--color-muted);
+  font-size: var(--texto-base);
+  max-width: 56ch;
+  margin-inline: auto;
+}
+
+.reserva__estado:empty {
+  display: none;
+}
+
+.reserva__app[hidden] {
+  display: none;
+}
+
+/* -----------------------------------------------------------------------------
+   Stepper de 4 pasos
+   ----------------------------------------------------------------------------- */
+.stepper {
+  margin-bottom: var(--sp-4);
+}
+
+.stepper__lista {
+  list-style: none;
+  margin: 0 0 var(--sp-3);
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-1);
+}
+
+.stepper__paso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  color: var(--color-muted);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+}
+
+.stepper__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-borde-fuerte);
+  background: var(--color-superficie);
+  color: var(--color-muted);
+  font-size: var(--texto-sm);
+  font-variant-numeric: tabular-nums;
+  transition: background-color var(--transicion), border-color var(--transicion), color var(--transicion);
+}
+
+.stepper__paso.is-completado .stepper__num {
+  background: var(--color-acento-suave);
+  border-color: var(--color-acento-borde);
+  color: var(--color-acento-texto);
+}
+
+.stepper__paso.is-actual {
+  color: var(--color-tinta);
+}
+
+.stepper__paso.is-actual .stepper__num {
+  background: var(--color-tinta);
+  border-color: var(--color-tinta);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.stepper__barra {
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-superficie-2);
+  overflow: hidden;
+}
+
+.stepper__progreso {
+  display: block;
+  height: 100%;
+  width: 25%;
+  border-radius: inherit;
+  background: var(--color-acento);
+  transition: width var(--transicion-suave);
+}
+
+/* -----------------------------------------------------------------------------
+   Panel y pasos
+   ----------------------------------------------------------------------------- */
+.reserva__panel {
+  padding: var(--sp-5);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.reserva-paso {
+  outline: none;
+}
+
+.reserva-paso:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.reserva-paso[hidden] {
+  display: none;
+}
+
+.reserva-paso__titulo {
+  font-size: var(--texto-md);
+  font-weight: 600;
+  color: var(--color-tinta);
+  margin-bottom: var(--sp-1);
+}
+
+.reserva-paso__ayuda {
+  color: var(--color-muted);
+  font-size: var(--texto-sm);
+  margin-bottom: var(--sp-4);
+}
+
+/* -----------------------------------------------------------------------------
+   Paso 1 — servicios
+   ----------------------------------------------------------------------------- */
+.reserva-servicios {
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: 1fr;
+}
+
+.reserva-servicio {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  width: 100%;
+  padding: var(--sp-4);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde-fuerte);
+  border-radius: var(--radius);
+  color: var(--color-tinta);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--transicion), background-color var(--transicion), box-shadow var(--transicion);
+}
+
+.reserva-servicio:hover {
+  background: var(--color-superficie-2);
+}
+
+.reserva-servicio:focus-visible,
+.reserva-slot:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+.reserva-servicio[aria-pressed="true"] {
+  border-color: var(--color-tinta);
+  background: var(--color-acento-suave);
+  box-shadow: var(--shadow-xs);
+}
+
+.reserva-servicio__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.reserva-servicio__nombre {
+  font-weight: 600;
+  font-size: var(--texto-base);
+}
+
+.reserva-servicio__meta {
+  color: var(--color-muted);
+  font-size: var(--texto-sm);
+}
+
+.reserva-servicio__precio {
+  font-weight: 700;
+  font-size: var(--texto-base);
+  color: var(--color-acento-texto);
+  white-space: nowrap;
+}
+
+/* -----------------------------------------------------------------------------
+   Paso 2 — fecha
+   ----------------------------------------------------------------------------- */
+.reserva-fecha input {
+  max-width: 320px;
+}
+
+.reserva-aviso {
+  margin-top: var(--sp-3);
+  padding: var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-acento-suave);
+  border: 1px solid var(--color-acento-borde);
+  color: var(--color-acento-texto);
+  font-size: var(--texto-sm);
+}
+
+.reserva-aviso--error {
+  background: #FDECEA;
+  border-color: #F3C4BF;
+  color: var(--color-peligro);
+}
+
+/* -----------------------------------------------------------------------------
+   Paso 3 — grilla de horarios
+   ----------------------------------------------------------------------------- */
+.reserva-slots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+
+.reserva-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 48px;
+  padding: var(--sp-2);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde-fuerte);
+  border-radius: var(--radius-sm);
+  color: var(--color-tinta);
+  font: inherit;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: border-color var(--transicion), background-color var(--transicion), color var(--transicion);
+}
+
+.reserva-slot:hover:not(:disabled) {
+  background: var(--color-acento-suave);
+  border-color: var(--color-acento-borde);
+}
+
+.reserva-slot[aria-pressed="true"] {
+  background: var(--color-tinta);
+  border-color: var(--color-tinta);
+  color: #ffffff;
+}
+
+.reserva-slot:disabled {
+  cursor: not-allowed;
+  background: var(--color-superficie-2);
+  border-color: var(--color-borde);
+  color: var(--color-muted);
+}
+
+.reserva-slot__etiqueta {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.reserva-slot[aria-pressed="true"] .reserva-slot__etiqueta {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* -----------------------------------------------------------------------------
+   Paso 4 — resumen
+   ----------------------------------------------------------------------------- */
+.reserva-resumen {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-4);
+  padding: var(--sp-4);
+  background: var(--color-superficie-2);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius);
+}
+
+.reserva-resumen__fila {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px dashed var(--color-borde-fuerte);
+}
+
+.reserva-resumen__fila:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.reserva-resumen__etiqueta {
+  color: var(--color-muted);
+  font-size: var(--texto-sm);
+}
+
+.reserva-resumen__valor {
+  font-weight: 600;
+  color: var(--color-tinta);
+  text-align: right;
+}
+
+.reserva-resumen__valor--total {
+  color: var(--color-acento-texto);
+  font-size: var(--texto-md);
+}
+
+.reserva-error,
+.reserva-alerta {
+  margin-bottom: var(--sp-3);
+  padding: var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: #FDECEA;
+  border: 1px solid #F3C4BF;
+  color: var(--color-peligro);
+  font-size: var(--texto-sm);
+}
+
+.reserva-error[hidden],
+.reserva-alerta[hidden] {
+  display: none;
+}
+
+/* -----------------------------------------------------------------------------
+   Navegación del formulario
+   ----------------------------------------------------------------------------- */
+.reserva__navegacion {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--color-borde);
+}
+
+.reserva__navegacion #btn-siguiente {
+  margin-left: auto;
+}
+
+/* -----------------------------------------------------------------------------
+   Responsive
+   ----------------------------------------------------------------------------- */
+@media (min-width: 640px) {
+  .reserva {
+    padding-block: var(--sp-7) var(--sp-9);
+  }
+
+  .reserva__panel {
+    padding: var(--sp-6);
+  }
+
+  .reserva-servicios {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .reserva-slots {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .reserva-resumen {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sp-5);
+  }
+
+  .reserva-resumen__fila {
+    border-bottom-style: solid;
+  }
+}
+
+@media (min-width: 900px) {
+  .stepper__paso {
+    flex-direction: row;
+    justify-content: center;
+    font-size: var(--texto-sm);
+  }
+
+  .reserva-slots {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stepper__progreso,
+  .reserva-servicio,
+  .reserva-slot {
+    transition: none;
+  }
+}

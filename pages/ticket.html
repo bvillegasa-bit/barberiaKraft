@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tu ticket · Barbería Kraft</title>
+  <meta name="description" content="Consulta, imprime o descarga el ticket de tu reserva en Barbería Kraft.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/landing.css">
+  <link rel="stylesheet" href="css/ticket.css">
+</head>
+<body class="pagina-inicio pagina-ticket">
+
+  <a class="skip-link" href="#principal">Saltar al contenido</a>
+
+  <a id="volver-panel" class="volver-panel" href="admin/dashboard.html" hidden>
+    <span aria-hidden="true">←</span> Volver al panel
+  </a>
+
+  <header class="navbar">
+    <div class="contenedor navbar__interior">
+      <a class="navbar__brand" href="index.html" aria-label="Barbería Kraft — inicio">
+        <svg class="icono" role="img" aria-hidden="true" focusable="false">
+          <use href="assets/sprite.svg#icon-tijeras"></use>
+        </svg>
+        <span class="navbar__logo">KRAFT</span>
+      </a>
+
+      <div class="navbar__acciones">
+        <a class="btn btn--primario btn--sm navbar__cta" href="/reservar" data-reserva="navbar">
+          Reservar
+        </a>
+        <button class="navbar__hamburguesa" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú">
+          <svg class="icono" role="img" aria-hidden="true" focusable="false">
+            <use href="assets/sprite.svg#icon-menu"></use>
+          </svg>
+        </button>
+      </div>
+
+      <nav id="menu-principal" class="navbar__menu" aria-label="Navegación principal">
+        <a class="navbar__enlace" href="index.html#servicios">Servicios</a>
+        <a class="navbar__enlace" href="index.html#promociones">Promociones</a>
+        <a class="navbar__enlace" href="index.html#horarios">Horarios</a>
+        <a class="navbar__enlace" href="index.html#barberia">Nosotros</a>
+        <a class="navbar__enlace" id="nav-login" href="login.html">Iniciar sesión</a>
+        <a class="btn btn--secundario btn--sm" id="nav-registro" href="registro.html">Registrarse</a>
+        <button class="btn btn--secundario btn--sm" type="button" id="btn-cerrar-sesion" hidden>Cerrar sesión</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="principal" class="ticket">
+    <div class="contenedor ticket__contenedor">
+
+      <div id="estado-carga" class="ticket__estado" role="status" aria-live="polite">
+        <span class="ticket__spinner" aria-hidden="true"></span>
+        <p>Cargando tu ticket…</p>
+      </div>
+
+      <p id="ticket-error" class="ticket__error" role="alert" aria-live="assertive" hidden></p>
+
+      <article id="ticket" class="ticket__recibo" aria-labelledby="ticket-titulo" hidden>
+        <h1 id="ticket-titulo" class="ticket__titulo" tabindex="-1">Tu ticket</h1>
+
+        <p id="ticket-codigo" class="ticket__codigo"></p>
+
+        <dl id="ticket-lineas" class="ticket__lineas"></dl>
+
+        <p id="ticket-pie" class="ticket__pie"></p>
+
+        <p class="ticket__aviso">Presenta este código al llegar.</p>
+
+        <div id="ticket-sesion" class="ticket__sesion" hidden></div>
+
+        <div class="ticket__acciones">
+          <button id="btn-imprimir" class="btn btn--primario" type="button">Imprimir</button>
+          <button id="btn-descargar" class="btn btn--secundario" type="button">Descargar .txt</button>
+          <a id="btn-otra" class="btn btn--secundario" href="/reservar">Otra reserva</a>
+          <a id="btn-inicio" class="btn btn--secundario" href="/">Ir al inicio</a>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="contenedor">
+      <div class="footer__grid">
+        <div class="footer__marca">
+          <span class="footer__logo">BARBERÍA KRAFT</span>
+          <p>Cortes de cabello y afeitado clásico en Callao, Perú. Oficio y estilo desde el primer día.</p>
+        </div>
+
+        <div>
+          <p class="footer__titulo">Visítanos</p>
+          <ul class="footer__lista">
+            <li>Callao, Perú</li>
+            <li>Lun – Sáb · 8:30 – 19:00</li>
+            <li>Feriados · hasta las 22:00</li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__titulo">Explora</p>
+          <ul class="footer__lista">
+            <li><a href="index.html#servicios">Servicios</a></li>
+            <li><a href="index.html#promociones">Promociones</a></li>
+            <li><a href="index.html#horarios">Horarios</a></li>
+            <li><a href="/reservar">Reservar cita</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__legal">
+        <p>© <span id="anio">2026</span> Barbería Kraft · Callao, Perú</p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast-global" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/vendor/supabase.js"></script>
+  <script type="module" src="js/pagina-ticket.js"></script>
+</body>
+</html>

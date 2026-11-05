@@ -20,6 +20,22 @@ import { configurarNavbarSesion } from './navbar-sesion.js';
 iniciarNavbar();
 configurarNavbarSesion();
 
+/**
+ * Destino local seguro tras el login (?next=/reservar). Solo rutas absolutas
+ * del propio sitio: evita open redirects (//host, /\host, /login...).
+ * @returns {string} Ruta válida o '' para usar la redirección por rol.
+ */
+function destinoSiguiente() {
+  try {
+    const next = String(new URLSearchParams(window.location.search).get('next') ?? '').trim();
+    if (!next.startsWith('/') || next.startsWith('//') || next.includes('\\')) return '';
+    if (next.startsWith('/login')) return '';
+    return next;
+  } catch {
+    return '';
+  }
+}
+
 const avisoConfig = $('#aviso-config');
 if (avisoConfig && esConfigPlaceholder()) avisoConfig.hidden = false;
 
@@ -64,6 +80,12 @@ form.addEventListener('submit', async (evento) => {
     const mensaje = res.error || 'Correo o contraseña incorrectos.';
     presentadorDOM.mostrar(CAMPOS.password, mensaje);
     mostrarToast(mensaje, 'error');
+    return;
+  }
+
+  const destino = destinoSiguiente();
+  if (destino) {
+    window.location.assign(destino);
     return;
   }
 

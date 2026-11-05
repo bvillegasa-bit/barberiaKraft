@@ -85,6 +85,13 @@
             </svg>
             <span class="admin-tabs__texto">Historial</span>
           </button>
+          <button class="admin-tabs__tab" type="button" role="tab" id="tab-reservas" data-tab="reservas"
+                  aria-selected="false" aria-controls="panel-reservas" tabindex="-1">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="../assets/sprite.svg#icon-check"></use>
+            </svg>
+            <span class="admin-tabs__texto">Reservas</span>
+          </button>
         </div>
 
         <div class="admin-sidebar__enlaces">
@@ -176,6 +183,69 @@
         <section id="panel-ocupacion" class="admin-panel" role="tabpanel" aria-labelledby="tab-ocupacion" hidden></section>
         <section id="panel-clientes" class="admin-panel" role="tabpanel" aria-labelledby="tab-clientes" hidden></section>
         <section id="panel-historial" class="admin-panel" role="tabpanel" aria-labelledby="tab-historial" hidden></section>
+        <section id="panel-reservas" class="admin-panel" role="tabpanel" aria-labelledby="tab-reservas" hidden>
+          <div class="admin-panel__herramientas">
+            <h2>Reservas</h2>
+            <button type="button" class="btn btn--secundario btn--sm" id="btn-refrescar-reservas">
+              Refrescar
+            </button>
+          </div>
+
+          <div class="admin-reservas__filtros">
+            <div class="campo">
+              <label for="filtro-fecha-reservas">Fecha</label>
+              <select id="filtro-fecha-reservas">
+                <option value="hoy" selected>Hoy</option>
+                <option value="manana">Mañana</option>
+                <option value="todas">Todas</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label for="filtro-estado-reservas">Estado</label>
+              <select id="filtro-estado-reservas">
+                <option value="todos" selected>Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="atendida">Atendida</option>
+                <option value="cancelada">Cancelada</option>
+              </select>
+            </div>
+            <div class="admin-reservas__kpis">
+              <div class="admin-kpi admin-kpi--compacta">
+                <span class="admin-kpi__label">Reservas hoy</span>
+                <strong class="admin-kpi__valor" id="kpi-reservas-hoy">—</strong>
+              </div>
+              <div class="admin-kpi admin-kpi--compacta">
+                <span class="admin-kpi__label">Pendientes</span>
+                <strong class="admin-kpi__valor" id="kpi-reservas-pendientes">—</strong>
+              </div>
+            </div>
+          </div>
+
+          <div id="alerta-reservas" class="admin-reservas__alerta" role="status" aria-live="polite" hidden></div>
+
+          <div class="admin-reservas__tabla-wrap">
+            <table class="tabla-crud tabla-crud--reservas">
+              <thead>
+                <tr>
+                  <th scope="col">Código</th>
+                  <th scope="col">Cliente</th>
+                  <th scope="col">Teléfono</th>
+                  <th scope="col">Servicio</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Hora</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpo-tabla-reservas"></tbody>
+            </table>
+          </div>
+
+          <p class="admin-reservas__vacio" id="reservas-vacio" hidden>
+            No hay reservas que coincidan con los filtros seleccionados.
+          </p>
+        </section>
       </main>
 
       <footer class="footer admin-footer">

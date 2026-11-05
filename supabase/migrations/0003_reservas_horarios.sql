@@ -210,3 +210,453 @@ grant insert, update, delete on public.feriados to authenticated;
 
 -- Función de horarios: invocable desde la landing (anon) y desde la app.
 grant execute on function public.horario_del_dia(date) to anon, authenticated;
+
+-- =============================================================================
+-- 6. slots_ocupados(p_fecha) — ocupación por hora para la grilla de reservas
+-- =============================================================================
+-- Devuelve SOLO las horas con al menos una reserva activa. El front la combina
+-- con generarSlots(horario_del_dia) y filtrarSlotsDisponibles().
+-- SECURITY DEFINER: el cliente necesita ver la ocupación agregada de OTROS
+-- usuarios, pero RLS solo le deja leer sus propias reservas. Solo se expone
+-- (hora, cantidad), nunca datos personales.
+create or replace function public.slots_ocupados(p_fecha date)
+returns table (hora time, ocupadas bigint)
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select r.hora, count(*)::bigint as ocupadas
+  from public.reservas r
+  where r.fecha = p_fecha
+    and r.estado in ('pendiente', 'confirmada')
+  group by r.hora
+  order by r.hora;
+$$;
+
+-- =============================================================================
+-- 7. crear_reserva(...) — alta atómica de una reserva del cliente
+-- =============================================================================
+-- Validaciones (en orden):
+--   1. auth.uid() no nulo                         -> no_autenticado
+--   2. fecha real, hoy <= fecha <= hoy + 60 días  -> fecha_invalida
+--   3. domingo (local cerrado)                    -> dia_cerrado
+--   4. apertura <= hora < cierre (feriados incluidos)
+--                                                 -> horario_no_permitido
+--   5. hora alineada a la grilla desde apertura   -> horario_no_permitido
+--   6. servicio existente y activo                -> servicio_invalido
+--   7. ocupadas < sillas del local                -> sin_cupo
+--   8. sin reserva activa del mismo usuario       -> reserva_duplicada
+-- La fila se inserta con estado 'pendiente' y snapshot del servicio.
+-- El advisory lock serializa intentos simultáneos sobre el mismo slot.
+-- Zona horaria del negocio: America/Lima (UTC-5, sin DST).
+create or replace function public.crear_reserva(
+  p_servicio_id uuid,
+  p_fecha       date,
+  p_hora        time,
+  p_barbero     text default 'cualquiera'
+)
+returns public.reservas
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_uid        uuid := auth.uid();
+  v_hoy        date := (now() at time zone 'America/Lima')::date;
+  v_apertura   time;
+  v_cierre     time;
+  v_es_feriado boolean;
+  v_intervalo  integer;
+  v_servicio   public.servicios%rowtype;
+  v_sillas     integer;
+  v_ocupadas   bigint;
+  v_duplicadas bigint;
+  v_reserva    public.reservas%rowtype;
+begin
+  if v_uid is null then
+    raise exception using
+      message = 'Debes iniciar sesión para reservar.',
+      errcode = '28000',
+      hint    = 'no_autenticado';
+  end if;
+
+  if p_servicio_id is null then
+    raise exception using
+      message = 'Debes seleccionar un servicio.',
+      errcode = '22023',
+      hint    = 'servicio_invalido';
+  end if;
+
+  if p_fecha is null or p_fecha < v_hoy or p_fecha > (v_hoy + 60) then
+    raise exception using
+      message = 'La fecha no es válida: elige entre hoy y los próximos 60 días.',
+      errcode = '22007',
+      hint    = 'fecha_invalida';
+  end if;
+
+  if p_hora is null then
+    raise exception using
+      message = 'Debes seleccionar una hora.',
+      errcode = '22007',
+      hint    = 'hora_invalida';
+  end if;
+
+  -- Domingo: cerrado (regla del negocio; horario_del_dia no lo modela).
+  if extract(dow from p_fecha) = 0 then
+    raise exception using
+      message = 'Los domingos permanecemos cerrados. Elige otro día.',
+      errcode = '22023',
+      hint    = 'dia_cerrado';
+  end if;
+
+  select h.apertura, h.cierre, h.es_feriado
+    into v_apertura, v_cierre, v_es_feriado
+  from public.horario_del_dia(p_fecha) h;
+
+  v_apertura := coalesce(v_apertura, '08:30'::time);
+  v_cierre   := coalesce(v_cierre, '19:00'::time);
+
+  -- Se acepta [apertura, cierre): el slot igual al cierre no se ofrece.
+  if p_hora < v_apertura or p_hora >= v_cierre then
+    raise exception using
+      message = 'La hora elegida está fuera del horario de atención.',
+      errcode = '22007',
+      hint    = 'horario_no_permitido';
+  end if;
+
+  select coalesce(nullif(valor, '')::integer, 30)
+    into v_intervalo
+  from public.configuracion
+  where clave = 'intervalo_reserva_min';
+
+  v_intervalo := coalesce(v_intervalo, 30);
+  if v_intervalo <= 0 then
+    v_intervalo := 30;
+  end if;
+
+  -- Alineación con la grilla: minutos desde apertura múltiplos del intervalo
+  -- y hora exacta al minuto (sin segundos).
+  if extract(second from p_hora) <> 0
+     or (extract(epoch from (p_hora - v_apertura)) / 60)::numeric % v_intervalo <> 0 then
+    raise exception using
+      message = 'La hora elegida no coincide con los horarios disponibles.',
+      errcode = '22007',
+      hint    = 'horario_no_permitido';
+  end if;
+
+  select s.*
+    into v_servicio
+  from public.servicios s
+  where s.id = p_servicio_id
+    and s.activo = true;
+
+  if not found then
+    raise exception using
+      message = 'El servicio seleccionado no está disponible.',
+      errcode = '22023',
+      hint    = 'servicio_invalido';
+  end if;
+
+  -- Serializa las reservas concurrentes del mismo slot.
+  perform pg_advisory_xact_lock(
+    hashtext(p_fecha::text || ' ' || p_hora::text)::bigint
+  );
+
+  -- Capacidad: total de sillas del local (fallback: configuración heredada).
+  select greatest(
+           (select count(*)::integer from public.sillas),
+           coalesce(
+             (select nullif(valor, '')::integer
+                from public.configuracion
+               where clave = 'sillas_totales'),
+             0
+           )
+         )
+    into v_sillas;
+
+  select count(*)
+    into v_ocupadas
+  from public.reservas r
+  where r.fecha = p_fecha
+    and r.hora = p_hora
+    and r.estado in ('pendiente', 'confirmada');
+
+  if v_sillas <= 0 or v_ocupadas >= v_sillas then
+    raise exception using
+      message = 'No hay cupo para esa hora. Elige otro horario.',
+      errcode = '23514',
+      hint    = 'sin_cupo';
+  end if;
+
+  select count(*)
+    into v_duplicadas
+  from public.reservas r
+  where r.profile_id = v_uid
+    and r.fecha = p_fecha
+    and r.hora = p_hora
+    and r.estado in ('pendiente', 'confirmada');
+
+  if v_duplicadas > 0 then
+    raise exception using
+      message = 'Ya tienes una reserva activa para esa fecha y hora.',
+      errcode = '23505',
+      hint    = 'reserva_duplicada';
+  end if;
+
+  insert into public.reservas (
+    profile_id,
+    servicio_id,
+    servicio_nombre,
+    duracion_min,
+    precio,
+    fecha,
+    hora,
+    silla_id,
+    barbero,
+    estado
+  ) values (
+    v_uid,
+    v_servicio.id,
+    v_servicio.nombre,
+    v_servicio.duracion_min,
+    v_servicio.precio_soles,
+    p_fecha,
+    p_hora,
+    null,
+    coalesce(nullif(btrim(p_barbero), ''), 'cualquiera'),
+    'pendiente'
+  )
+  returning * into v_reserva;
+
+  return v_reserva;
+end;
+$$;
+
+-- =============================================================================
+-- 8. Grants de las RPC de reservas
+-- =============================================================================
+-- crear_reserva: SOLO autenticados (inserta a nombre de auth.uid()).
+-- slots_ocupados: authenticated (grilla) y anon (la landing puede mostrarla).
+revoke all on function public.crear_reserva(uuid, date, time, text) from public;
+revoke all on function public.crear_reserva(uuid, date, time, text) from anon;
+grant execute on function public.crear_reserva(uuid, date, time, text) to authenticated;
+
+revoke all on function public.slots_ocupados(date) from public;
+grant execute on function public.slots_ocupados(date) to anon, authenticated;
+
+-- =============================================================================
+-- 9. RPC de reservas — versión definitiva (reemplaza las secciones 6 y 7)
+-- =============================================================================
+-- Se redefinen aquí con `create or replace function` para dejar una única
+-- fuente de verdad con los códigos de error acordados. Al ejecutarse al final,
+-- sobrescriben las versiones previas del mismo archivo (idempotente).
+
+-- Ocupación agregada por hora para la grilla de reservas.
+-- SECURITY DEFINER: el cliente necesita ver la ocupación de otros usuarios,
+-- pero RLS solo le deja leer sus propias reservas. Solo expone (hora, cantidad).
+create or replace function public.slots_ocupados(p_fecha date)
+returns table (hora time, ocupadas bigint)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select r.hora, count(*)::bigint as ocupadas
+  from public.reservas r
+  where r.fecha = p_fecha
+    and r.estado in ('pendiente', 'confirmada')
+  group by r.hora
+  order by r.hora;
+$$;
+
+grant execute on function public.slots_ocupados(date) to authenticated, anon;
+
+-- Alta atómica de una reserva del cliente autenticado.
+-- Snapshot del servicio: nombre, duración y precio se copian al reservar.
+create or replace function public.crear_reserva(
+  p_servicio_id uuid,
+  p_fecha       date,
+  p_hora        time,
+  p_barbero     text default 'cualquiera'
+)
+returns public.reservas
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_uid        uuid := auth.uid();
+  v_apertura   time;
+  v_cierre     time;
+  v_intervalo  integer;
+  v_servicio   public.servicios%rowtype;
+  v_capacidad  bigint;
+  v_ocupadas   bigint;
+  v_duplicadas bigint;
+  v_reserva    public.reservas%rowtype;
+begin
+  -- 1. Debe haber sesión.
+  if v_uid is null then
+    raise exception using
+      message = 'Debes iniciar sesión para reservar.',
+      errcode = '28000',
+      hint    = 'debes_iniciar_sesion';
+  end if;
+
+  -- 2. Fecha: no nula, no pasada, máximo 60 días.
+  if p_fecha is null or p_fecha < current_date then
+    raise exception using
+      message = 'La fecha no es válida: elige hoy o una fecha futura.',
+      errcode = '22007',
+      hint    = 'fecha_invalida';
+  end if;
+
+  if p_fecha > current_date + 60 then
+    raise exception using
+      message = 'La fecha es demasiado lejana: máximo 60 días de anticipación.',
+      errcode = '22007',
+      hint    = 'fecha_muy_lejana';
+  end if;
+
+  -- 3. Hora obligatoria.
+  if p_hora is null then
+    raise exception using
+      message = 'Debes seleccionar una hora.',
+      errcode = '22007',
+      hint    = 'hora_invalida';
+  end if;
+
+  -- 4. Horario del día (apertura/cierre; considera feriados).
+  select h.apertura, h.cierre
+    into v_apertura, v_cierre
+  from public.horario_del_dia(p_fecha) h;
+
+  v_apertura := coalesce(v_apertura, '08:30'::time);
+  v_cierre   := coalesce(v_cierre, '19:00'::time);
+
+  if p_hora < v_apertura or p_hora >= v_cierre then
+    raise exception using
+      message = 'La hora elegida está fuera del horario de atención.',
+      errcode = '22007',
+      hint    = 'horario_no_permitido';
+  end if;
+
+  -- 5. Hora alineada a la grilla desde la apertura.
+  select coalesce(nullif(valor, '')::integer, 30)
+    into v_intervalo
+  from public.configuracion
+  where clave = 'intervalo_reserva_min';
+
+  v_intervalo := coalesce(v_intervalo, 30);
+  if v_intervalo <= 0 then
+    v_intervalo := 30;
+  end if;
+
+  if extract(epoch from (p_hora - v_apertura)) % (v_intervalo * 60) <> 0 then
+    raise exception using
+      message = 'La hora no coincide con la grilla de reservas.',
+      errcode = '22007',
+      hint    = 'hora_fuera_de_grilla';
+  end if;
+
+  -- 6. Servicio existente y activo (snapshot).
+  select s.*
+    into v_servicio
+  from public.servicios s
+  where s.id = p_servicio_id
+    and s.activo = true;
+
+  if not found then
+    raise exception using
+      message = 'El servicio seleccionado no está disponible.',
+      errcode = '22023',
+      hint    = 'servicio_no_disponible';
+  end if;
+
+  -- Serializa intentos concurrentes sobre el mismo slot.
+  perform pg_advisory_xact_lock(
+    hashtext(p_fecha::text || ' ' || p_hora::text)::bigint
+  );
+
+  -- 7. Sin reserva activa duplicada del mismo usuario.
+  select count(*)
+    into v_duplicadas
+  from public.reservas r
+  where r.profile_id = v_uid
+    and r.fecha = p_fecha
+    and r.hora = p_hora
+    and r.estado in ('pendiente', 'confirmada');
+
+  if v_duplicadas > 0 then
+    raise exception using
+      message = 'Ya tienes una reserva activa para esa fecha y hora.',
+      errcode = '23505',
+      hint    = 'reserva_duplicada';
+  end if;
+
+  -- 8. Capacidad: reservas activas del slot contra sillas libres.
+  select count(*) into v_capacidad
+  from public.sillas
+  where estado = 'libre';
+
+  select count(*)
+    into v_ocupadas
+  from public.reservas r
+  where r.fecha = p_fecha
+    and r.hora = p_hora
+    and r.estado in ('pendiente', 'confirmada');
+
+  if v_ocupadas >= v_capacidad then
+    raise exception using
+      message = 'No hay cupo para esa hora. Elige otro horario.',
+      errcode = '23514',
+      hint    = 'sin_cupo';
+  end if;
+
+  -- 9. Insertar (silla sin asignar) y devolver la fila creada.
+  insert into public.reservas (
+    profile_id,
+    servicio_id,
+    servicio_nombre,
+    duracion_min,
+    precio,
+    fecha,
+    hora,
+    silla_id,
+    barbero,
+    estado
+  ) values (
+    v_uid,
+    v_servicio.id,
+    v_servicio.nombre,
+    v_servicio.duracion_min,
+    v_servicio.precio_soles,
+    p_fecha,
+    p_hora,
+    null,
+    coalesce(nullif(btrim(p_barbero), ''), 'cualquiera'),
+    'pendiente'
+  )
+  returning * into v_reserva;
+
+  return v_reserva;
+end;
+$$;
+
+grant execute on function public.crear_reserva(uuid, date, time, text) to authenticated;
+
+-- =============================================================================
+-- 10. Códigos de error documentados (crear_reserva)
+-- =============================================================================
+-- hint = 'debes_iniciar_sesion'   -> auth.uid() nulo
+-- hint = 'fecha_invalida'         -> fecha nula o anterior a hoy
+-- hint = 'fecha_muy_lejana'       -> fecha > hoy + 60 días
+-- hint = 'hora_invalida'          -> hora nula
+-- hint = 'horario_no_permitido'   -> hora < apertura o >= cierre
+-- hint = 'hora_fuera_de_grilla'   -> hora no alineada a intervalo_reserva_min
+-- hint = 'servicio_no_disponible' -> servicio inexistente o inactivo
+-- hint = 'reserva_duplicada'      -> ya hay reserva activa del usuario en el slot
+-- hint = 'sin_cupo'               -> ocupadas >= sillas con estado 'libre'
+-- Mensajes en español; errcode SQLSTATE estándar (28000, 22007, 22023,
+-- 23505, 23514) para que el front pueda distinguir la causa sin parsear texto.

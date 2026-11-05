@@ -161,7 +161,7 @@ export function cardServicio(servicio) {
       </span>
     </div>
     <div class="card-servicio__acciones">
-      <a class="btn btn--primario btn--sm card-servicio__reservar" href="login.html" data-reserva="servicio">
+      <a class="btn btn--primario btn--sm card-servicio__reservar" href="/reservar" data-reserva="servicio">
         Reservar
       </a>
     </div>

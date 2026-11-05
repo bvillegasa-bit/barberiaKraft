@@ -765,6 +765,162 @@
 }
 
 /* -----------------------------------------------------------------------------
+   Reservas: filtros, KPIs, alertas, tabla y badges de estado
+   ----------------------------------------------------------------------------- */
+.admin-reservas__filtros {
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: 1fr;
+  margin-bottom: var(--sp-4);
+}
+
+.admin-reservas__filtros .campo {
+  display: grid;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+
+.admin-reservas__kpis {
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-kpi--compacta {
+  padding: var(--sp-3) var(--sp-4);
+  gap: 0;
+}
+
+.admin-kpi--compacta .admin-kpi__valor {
+  font-size: 1.35rem;
+}
+
+.admin-kpi--compacta:first-child {
+  background: var(--color-superficie);
+  border-color: var(--color-borde);
+}
+
+.admin-reservas__alerta {
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--color-borde-fuerte);
+  border-radius: var(--radius);
+  background: var(--color-superficie-2);
+  color: var(--color-tinta);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+}
+
+.admin-reservas__alerta--exito {
+  background: #e8f5ee;
+  border-color: #bfe3cf;
+  color: var(--color-exito);
+}
+
+.admin-reservas__alerta--error {
+  background: #fdeaea;
+  border-color: #f2c4c4;
+  color: var(--color-peligro);
+}
+
+.admin-reservas__tabla-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabla-crud--reservas {
+  min-width: 880px;
+}
+
+.reserva-codigo {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.reserva-fecha,
+.reserva-hora {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.reserva-telefono {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.admin-reservas__vacio {
+  margin-top: var(--sp-4);
+  padding: var(--sp-4);
+  text-align: center;
+  color: var(--color-texto-sec);
+  background: var(--color-superficie-2);
+  border: 1px dashed var(--color-borde-fuerte);
+  border-radius: var(--radius);
+}
+
+.admin-reservas__estado-tabla {
+  padding: var(--sp-4);
+  text-align: center;
+  color: var(--color-texto-sec);
+}
+
+.admin-reservas__estado-tabla p {
+  margin-bottom: var(--sp-3);
+}
+
+.tabla-crud--reservas .btn--cancelar {
+  color: var(--color-peligro);
+  border-color: #f2c4c4;
+}
+
+.tabla-crud--reservas .btn--cancelar:hover {
+  background: var(--color-peligro);
+  border-color: var(--color-peligro);
+  color: #ffffff;
+}
+
+.badge-estado.estado--pendiente {
+  background: #fdf3e2;
+  color: #8a5300;
+  border: 1px solid #f0d9b0;
+}
+
+.badge-estado.estado--confirmada {
+  background: #e8f0fb;
+  color: #1f5fa8;
+  border: 1px solid #c3d7f0;
+}
+
+.badge-estado.estado--atendida {
+  background: #e9f5ee;
+  color: #2c6b47;
+  border: 1px solid #c4e2d2;
+}
+
+.badge-estado.estado--cancelada {
+  background: #fdeaea;
+  color: var(--color-peligro);
+  border: 1px solid #f2c4c4;
+}
+
+.badge-estado.estado--desconocido {
+  background: var(--color-superficie-2);
+  color: var(--color-texto-sec);
+  border: 1px solid var(--color-borde);
+}
+
+@media (min-width: 768px) {
+  .admin-reservas__filtros {
+    grid-template-columns: minmax(150px, 200px) minmax(170px, 220px) 1fr;
+    align-items: end;
+  }
+}
+
+/* -----------------------------------------------------------------------------
    Footer del panel
    ----------------------------------------------------------------------------- */
 .admin-footer {

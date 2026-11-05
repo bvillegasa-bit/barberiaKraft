@@ -399,3 +399,96 @@ CP-V49..CP-V56 sí falló por la razón correcta.
 **Contrato de build:** los tests NO se copian a `dist`; el sitio estático
 incluye HTML, CSS y JS de `pages/`.
 
+---
+
+# Ciclo 6 — lógica de reservas y tickets
+
+## 1) ALCANCE
+
+**Archivos de producción nuevos (lógica pura, sin DOM ni Supabase):**
+- `pages/js/logica/horario-logica.js` — `aHoraMinutos`, `aTextoHora`,
+  `esFechaValida`, `generarSlots`, `filtrarSlotsDisponibles`,
+  `esFechaReservable`, `horarioDeFecha`, `siguienteFechaReservable`.
+- `pages/js/logica/reserva-logica.js` — `validarReserva`,
+  `construirPayloadReserva`, `estadoReserva`, `puedeCancelar`.
+- `pages/js/logica/ticket-logica.js` — `formatearCodigoTicket`,
+  `construirTicket`, `textoTicketParaImprimir`.
+
+**Pruebas nuevas:**
+- `tests/horario-logica.test.js` — 14 tests (CP-H01..CP-H14).
+- `tests/reserva-logica.test.js` — 10 tests (CP-R01..CP-R10).
+- `tests/ticket-logica.test.js` — 8 tests (CP-T01..CP-T08).
+
+**Decisiones de zona horaria y reglas:**
+- Fechas como strings `'YYYY-MM-DD'` y horas como `'HH:MM'`; sin zonas horarias.
+- Día de semana y suma de días se calculan con `Date.UTC(...)` (determinista).
+- Domingos cerrados (`diaSemana === 0`); feriados cierran a las 22:00.
+- El slot igual al cierre y el slot igual a "ahora" no se ofrecen.
+
+## 2) FASE ROJA (pruebas primero)
+
+**Comando:** `npm test` (antes de crear los tres módulos).
+
+**BLOQUE DE SALIDA REAL (resumen final del runner):**
+```text
+ℹ tests 153
+ℹ suites 34
+ℹ pass 150
+ℹ fail 3
+ℹ cancelled 0
+```
+
+**Fallos reales observados (motivo correcto: módulos aún no implementados):**
+```text
+✖ tests\horario-logica.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module ...\pages\js\logica\horario-logica.js
+✖ tests\reserva-logica.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module ...\pages\js\logica\reserva-logica.js
+✖ tests\ticket-logica.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module ...\pages\js\logica\ticket-logica.js
+```
+
+## 3) FASE VERDE (implementación mínima)
+
+**Acciones:**
+- Horarios: conversión estricta `HH:MM` ↔ minutos; `generarSlots` excluye el
+  cierre (21 slots normales, 27 en feriado); filtrado de slots pasados/ocupados
+  comparando strings; domingo no reservable; siguiente día hábil con tope de 14
+  iteraciones.
+- Reservas: validación reutilizando `validarNombre` y `validarTelefono`
+  (nombre sin números, teléfono de 9 dígitos); payload con snapshot y defaults;
+  estados con fallback `Desconocido`; cancelación solo en pendiente/confirmada.
+- Tickets: código normalizado `KRAFT-XXXXXXXX`; fecha dd/mm/yyyy sin `Date`
+  local; precio `S/ 00.00`; texto plano de 48 columnas tolerante a nulos.
+
+**Comando:** `npm test`
+
+**BLOQUE DE SALIDA REAL (final):**
+```text
+ℹ tests 182
+ℹ suites 45
+ℹ pass 182
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1984.375
+```
+
+**Tabla resumen ciclo 6:**
+| fase | acción | estado esperado | estado obtenido |
+|---|---|---|---|
+| ROJA | CP-H01..CP-H14, CP-R01..CP-R10, CP-T01..CP-T08 antes de implementar | Fallo por módulos ausentes | **FALLO** (tests 153, pass 150, fail 3) |
+| VERDE | Implementación mínima de los tres módulos puros | Todo verde | **VERDE** (tests 182, pass 182, fail 0) |
+
+## 4) VERIFICACIONES FINALES
+
+**Sintaxis:** `node --check` OK en los tres módulos nuevos:
+```text
+horario-logica: 0
+reserva-logica: 0
+ticket-logica : 0
+```
+
+**Total exacto:** 150 tests previos + 32 nuevos = **182 tests**, `fail 0`.
+

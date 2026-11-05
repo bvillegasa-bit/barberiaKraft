@@ -28,11 +28,12 @@ const MODULOS = {
   promociones: () => import('./admin-promociones.js'),
   ocupacion: () => import('./admin-ocupacion.js'),
   clientes: () => import('./admin-clientes.js'),
-  historial: () => import('./admin-historial.js')
+  historial: () => import('./admin-historial.js'),
+  reservas: () => import('./admin-reservas.js')
 };
 
 /** Orden de tabs navegables por teclado (←/→/↑/↓, Home/End) */
-const TABS_ACTIVOS = ['servicios', 'promociones', 'ocupacion', 'clientes', 'historial'];
+const TABS_ACTIVOS = ['servicios', 'promociones', 'ocupacion', 'clientes', 'historial', 'reservas'];
 const panelesCargados = new Set();
 
 /** Título que refleja la sección activa en la topbar */
@@ -41,7 +42,8 @@ const TITULOS_SECCION = {
   promociones: 'Promociones',
   ocupacion: 'Ocupación del local',
   clientes: 'Clientes',
-  historial: 'Historial'
+  historial: 'Historial',
+  reservas: 'Reservas'
 };
 
 /** Cierre del sidebar móvil (se reasigna en configurarSidebar) */
@@ -78,7 +80,9 @@ async function activarTab(nombre) {
   // Carga perezosa la primera vez que se abre el tab
   if (!panelesCargados.has(nombre)) {
     const panel = $panel(nombre);
-    estadoCarga(panel, 'Cargando…');
+    // Reservas trae su marcado estático en dashboard.html: no se debe borrar
+    // con el estado de carga; el módulo gestiona su propio estado interno.
+    if (nombre !== 'reservas') estadoCarga(panel, 'Cargando…');
     try {
       const modulo = await MODULOS[nombre]();
       await modulo.iniciar(panel);
@@ -96,6 +100,9 @@ async function activarTab(nombre) {
       `;
       panel.appendChild(estado);
     }
+  } else {
+    // Tab ya montado: avisa al módulo para refrescar datos al volver a entrar.
+    $panel(nombre).dispatchEvent(new CustomEvent('admin:tab-activado'));
   }
 }
 
