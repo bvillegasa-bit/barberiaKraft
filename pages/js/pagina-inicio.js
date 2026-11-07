@@ -24,10 +24,12 @@ import { estadoUiSesion } from './logica/sesion-logica.js';
 import { configurarNavbarSesion } from './navbar-sesion.js';
 import { configurarVolverPanel } from './volver-panel.js';
 import { iniciarGaleria } from './galeria.js';
+import { iniciarVideosAutoplay } from './videos-autoplay.js';
 
 iniciarNavbar();
 configurarNavbarSesion();
 iniciarGaleria();
+iniciarVideosAutoplay();
 
 /* -----------------------------------------------------------------------------
    Botón "Cerrar sesión" (CA-RF03-3): oculto sin sesión, visible con sesión.

@@ -75,10 +75,10 @@ componentes existentes.
    por servicio (lleva a `login.html`, `data-reserva="servicio"`).
 4. **Galería** (`#galeria`): grid de 10 cortes generado por `galeria.js` y un
    `<dialog>` de lightbox accesible.
-5. **Catálogo** (`#catalogo`): imagen del catálogo de precios enlazada a tamaño
-   completo, lista de ventajas y CTA de reserva.
-6. **Videos** (`#videos`): tres tarjetas de video con controles nativos,
-   `poster` y `preload="none"`.
+5. **Catálogo** (`#catalogo`): imagen del catálogo de precios como `<img>`
+   simple, lista de ventajas y CTA primario de reserva (sin enlace secundario).
+6. **Videos** (`#videos`): tres tarjetas con autoplay silencioso y en bucle,
+   `poster`, `preload="none"` y sin controles.
 7. **Promociones**: bloque alterno con acento dorado suave.
 8. **Horarios**: grilla clara con días, horas y festivos.
 9. **Barbería**: historia, valores y datos de contacto.
@@ -148,16 +148,21 @@ componentes existentes.
 - `.catalogo__grid` usa una columna hasta `900 px` y dos columnas desde
   `900 px` (imagen + texto).
 - La imagen respeta su proporción, limita a `max-height: 480 px` en móvil y
-  usa `loading="lazy"`; el enlace abre `/assets/img/catalogo.jpeg` en pestaña
-  nueva con `rel="noopener"`.
+  usa `loading="lazy"`. Es un `<img>` simple: sin enlace, sin `target="_blank"`
+  y sin cursor/hover de elemento clicable.
 
 ### Video cards
 
 - `.videos__grid` usa 1 columna hasta `900 px` y 3 columnas desde `900 px`.
 - Cada `<video>` declara `width="720"`, `height="1280"`, `aspect-ratio: 9 / 16`,
-  `controls`, `playsinline` y `preload="none"` (no descarga hasta reproducir).
+  `autoplay muted loop playsinline`, `preload="none"`,
+  `disablepictureinpicture` y `aria-hidden="true"`; no usa `controls`.
+- `pages/js/videos-autoplay.js` fuerza `muted` y reproduce con
+  `IntersectionObserver` (`threshold: 0.35`) solo al estar visible; pausa al
+  salir de pantalla y captura el rechazo de `play()`.
 - El `poster` (corte-02/05/08) mantiene el encuadre vertical y evita un bloque
-  negro mientras el video no se ha cargado.
+  negro mientras el video no se ha cargado. Con
+  `prefers-reduced-motion: reduce` no se reproduce y queda el poster.
 
 ## 6. Componentes clave
 
@@ -232,19 +237,23 @@ componentes existentes.
 - `.catalogo__grid`: una columna centrada hasta **900 px**; dos columnas
   (imagen + texto) desde 900 px. Imagen con `max-height: 480px` en móvil y
   proporción original 1024×1536.
-- Ventajas en lista con separadores suaves; CTA principal + enlace secundario
-  al catálogo completo.
-- Hover/focus: la imagen atenúa levemente el borde y el enlace muestra foco
-  visible; `rel="noopener"` al abrir en pestaña nueva.
+- Ventajas en lista con separadores suaves; solo CTA principal “Reservar cita”
+  (se retiró el enlace secundario “Ver catálogo completo”).
+- La imagen no tiene hover ni foco de enlace: es contenido estático, con
+  `cursor: default` y radio de tarjeta.
 
 ### `#videos` — Clientes satisfechos
 
 - `.videos__grid`: 1 columna hasta **900 px** y 3 columnas desde 900 px; en
   <600 px las tarjetas se apilan a ancho completo.
 - `.video-card`: superficie blanca, radio 16 px, `overflow: hidden`; el video
-  declara `aspect-ratio: 9 / 16`, `controls`, `playsinline` y `preload="none"`.
-- Hover: elevación con `--shadow-md`; focus visible en el `<video>` y en el
-  borde de la tarjeta. El `poster` evita el bloque negro inicial.
+  declara `aspect-ratio: 9 / 16`, `autoplay muted loop playsinline`,
+  `preload="none"`, sin `controls` y con `pointer-events: none`.
+- Sin hover de “clicable” en la tarjeta: el video se reproduce solo cuando está
+  visible (`IntersectionObserver`, `threshold: 0.35`) y se pausa al salir.
+  El `poster` evita el bloque negro inicial.
+- El sonido no se puede activar desde la interfaz: decisión de diseño y de
+  derechos sobre el audio.
 
 ### Estados y movimiento
 

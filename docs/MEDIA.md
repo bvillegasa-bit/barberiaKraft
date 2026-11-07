@@ -59,14 +59,22 @@ imágenes y videos de `pages/index.html`. Todos los assets se publican desde
 
 - `.catalogo__grid`: una columna hasta 900 px, dos columnas (imagen + texto)
   desde 900 px.
-- Imagen `catalogo.jpeg` enlazada a tamaño completo (`target="_blank"`,
-  `rel="noopener"`), lista de ventajas y CTA “Reservar cita”.
+- Imagen `catalogo.jpeg` como `<img>` simple (sin enlace ni `target="_blank"`),
+  lista de ventajas y CTA primario “Reservar cita”. El enlace secundario
+  “Ver catálogo completo” se retiró por redundante: la imagen ya es legible.
 
 ### `#videos` — Clientes satisfechos
 
 - `.videos__grid`: 1 columna hasta 900 px, 3 columnas desde 900 px.
-- Tres tarjetas con `<video controls playsinline preload="none">`,
-  `width="720"`, `height="1280"`, `aspect-ratio: 9 / 16` y `poster` propio.
+- Tres tarjetas con `<video autoplay muted loop playsinline preload="none">`,
+  `disablepictureinpicture`, `aria-hidden="true"`, `width="720"`,
+  `height="1280"`, `aspect-ratio: 9 / 16` y `poster` propio. Sin `controls`.
+- `pages/js/videos-autoplay.js` (importado por `pagina-inicio.js`) fuerza
+  `video.muted = true` y usa `IntersectionObserver` con `threshold: 0.35`:
+  reproduce solo cuando la tarjeta está visible y pausa al salir de pantalla.
+  `play()` se protege con `catch()` para no romper si el navegador bloquea el
+  autoplay. Con `prefers-reduced-motion: reduce` no se reproduce: queda el
+  poster visible.
 
 ---
 
@@ -75,8 +83,9 @@ imágenes y videos de `pages/index.html`. Todos los assets se publican desde
 - Peso total de media ≈ **12 MB** (imágenes + videos).
 - **Hero**: `preload="metadata"` + `autoplay muted loop playsinline` + `poster`
   para pintar el primer frame sin bloquear.
-- **Videos secundarios**: `preload="none"`; no descargan hasta que el usuario
-  reproduce.
+- **Videos secundarios**: `preload="none"`; no descargan hasta que el
+  `IntersectionObserver` los reproduce al entrar en pantalla. Autoplay
+  silencioso y en bucle, sin controles nativos.
 - **Galería**: `loading="lazy"` + `decoding="async"` + `width`/`height`
   (720×1280) para evitar CLS; el logo del footer también es lazy.
 - **Recomendaciones futuras**:
@@ -92,9 +101,14 @@ imágenes y videos de `pages/index.html`. Todos los assets se publican desde
 - **Alt descriptivo** en los 10 cortes de la galería (p. ej. “Degradado con
   líneas de diseño”); el lightbox actualiza `alt` y título.
 - **Hero decorativo**: `aria-hidden="true"`, `tabindex="-1"`, sin controles.
-- **Controles nativos** de video (`controls`) en las tres tarjetas.
+- **Videos de clientes**: autoplay silencioso (`muted`) y en bucle, sin
+  `controls`; el título y la descripción de la tarjeta describen el contenido.
+  `disablepictureinpicture` y `aria-hidden="true"` evitan interacción y
+  duplicidad con el texto. El usuario **no puede activar el sonido**: es una
+  decisión de diseño y de derechos sobre el audio original.
 - **`prefers-reduced-motion: reduce`**: el hero oculta el video y muestra
-  `corte-01.jpeg` como fondo; se reducen transiciones.
+  `corte-01.jpeg` como fondo; los videos de clientes no se reproducen
+  automáticamente y queda su poster. Se reducen transiciones.
 - **Lightbox**: ←/→ navegan, `Esc` cierra y el foco vuelve al botón de origen.
 - **Contador “N de 10”** visible en el pie del lightbox y anunciado con
   `aria-live` cuando cambia la imagen.
@@ -108,6 +122,9 @@ imágenes y videos de `pages/index.html`. Todos los assets se publican desde
 - **Consentimiento de imagen**: si los videos muestran personas identificables,
   se requiere autorización escrita de los clientes antes de publicarlos
   (Ley 29733 de protección de datos personales).
+- **Audio desactivado por diseño**: los videos se reproducen siempre en silencio
+  y la interfaz no ofrece forma de activar el sonido. Esto responde tanto a la
+  experiencia (autoplay no intrusivo) como a los derechos del audio original.
 - **Repositorio**: `resources/` (material original sin editar) está ignorado en
   git; solo se versionan los assets optimizados de `pages/assets/`.
 - **Publicación**: los assets se sirven desde `pages/assets/` y el build los
