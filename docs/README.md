@@ -91,7 +91,8 @@ barberia-kraft/
     ├── TEST-UNIT.md           ← pruebas unitarias HU04/HU13/HU14 (npm test) + refactor
     ├── SOLID.md               ← principios SOLID de la capa de validación
     ├── QA-REPORT-VALIDACION.md ← QA de validación (134 pruebas, benchmark, auditorías)
-    └── QA-AUDIT-CHECKLIST.md  ← checklist de auditoría por características ISO 25010
+    ├── QA-AUDIT-CHECKLIST.md  ← checklist de auditoría por características ISO 25010
+    └── MEDIA.md               ← inventario de imágenes/videos, rendimiento, a11y y criterios legales
 ```
 
 **Convenciones**: archivos en kebab-case; JS en ES modules con imports relativos;
@@ -182,7 +183,8 @@ npm run dev     # build de desarrollo con placeholders
 Documentos de evidencia: [TEST-UNIT.md](./TEST-UNIT.md) (pruebas por HU),
 [SOLID.md](./SOLID.md) (principios y trazabilidad de la capa de validación),
 [QA-REPORT-VALIDACION.md](./QA-REPORT-VALIDACION.md) (134 pruebas, benchmark,
-auditorías de seguridad y usabilidad) y [QUALITY.md](./QUALITY.md) (plan de pruebas).
+auditorías de seguridad y usabilidad), [QUALITY.md](./QUALITY.md) (plan de pruebas)
+y [MEDIA.md](./MEDIA.md) (inventario de imágenes y videos, rendimiento, accesibilidad y aspectos legales).
 
 ---
 

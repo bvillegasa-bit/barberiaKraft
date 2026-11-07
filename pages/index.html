@@ -22,11 +22,8 @@
   <!-- Header sticky: marca, navegación, CTA Reservar y sesión -->
   <header class="navbar">
     <div class="contenedor navbar__interior">
-      <a class="navbar__brand" href="index.html" aria-label="Barbería Kraft — inicio">
-        <svg class="icono" role="img" aria-hidden="true" focusable="false">
-          <use href="assets/sprite.svg#icon-tijeras"></use>
-        </svg>
-        <span class="navbar__logo">KRAFT</span>
+      <a class="navbar__brand" href="/" aria-label="Barbería Kraft — inicio">
+        <img src="/assets/img/logo.jpg" alt="Barbería Kraft" class="marca__logo" width="1408" height="768" decoding="async">
       </a>
 
       <div class="navbar__acciones">
@@ -83,18 +80,8 @@
           </ul>
         </div>
 
-        <div class="hero__visual" aria-hidden="true">
-          <div class="hero__visual-panel">
-            <svg class="icono hero__visual-icono" role="img" focusable="false">
-              <use href="assets/sprite.svg#icon-barber-pole"></use>
-            </svg>
-            <p class="hero__visual-titulo">KRAFT</p>
-            <p class="hero__visual-sub">Cortes clásicos · Afeitado · Estilo</p>
-            <div class="hero__visual-tarjeta">
-              <span>Hoy</span>
-              <strong>8:30 – 19:00</strong>
-            </div>
-          </div>
+        <div class="hero__media">
+          <video class="hero__video" src="/assets/video/principal.mp4" poster="/assets/img/corte-01.jpeg" autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
         </div>
       </div>
 
@@ -133,6 +120,118 @@
         </div>
         <!-- Tarjetas renderizadas por pagina-inicio.js (incluyen botón Reservar) -->
         <div id="contenedor-servicios"></div>
+      </div>
+    </section>
+
+    <!-- Nuestro trabajo: galería de cortes + lightbox accesible -->
+    <section id="galeria" class="seccion" aria-labelledby="titulo-galeria">
+      <div class="contenedor">
+        <div class="seccion__cabecera">
+          <p class="seccion__eyebrow">Nuestro trabajo</p>
+          <h2 class="seccion__titulo" id="titulo-galeria">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="assets/sprite.svg#icon-navaja"></use>
+            </svg>
+            Cortes que hablan
+          </h2>
+          <p class="seccion__desc">Una muestra real de nuestro oficio: diez cortes hechos en la silla de Kraft. Toca cualquiera para verlo en grande.</p>
+        </div>
+
+        <ul class="galeria__grid" id="galeria-grid" aria-label="Galería de cortes"></ul>
+      </div>
+
+      <dialog id="lightbox" class="lightbox" aria-labelledby="lightbox-titulo">
+        <button type="button" class="lightbox__cerrar" id="lightbox-cerrar" aria-label="Cerrar">
+          <span aria-hidden="true">×</span>
+        </button>
+        <button type="button" class="lightbox__nav lightbox__nav--anterior" id="lightbox-anterior" aria-label="Anterior">
+          <span aria-hidden="true">←</span>
+        </button>
+        <figure class="lightbox__figura">
+          <img id="lightbox-img" alt="" width="720" height="1280" decoding="async">
+          <figcaption class="lightbox__pie">
+            <h3 class="lightbox__titulo" id="lightbox-titulo"></h3>
+            <p class="lightbox__contador" id="lightbox-contador"></p>
+          </figcaption>
+        </figure>
+        <button type="button" class="lightbox__nav lightbox__nav--siguiente" id="lightbox-siguiente" aria-label="Siguiente">
+          <span aria-hidden="true">→</span>
+        </button>
+      </dialog>
+    </section>
+
+    <!-- Catálogo y precios -->
+    <section id="catalogo" class="seccion seccion--alt" aria-labelledby="titulo-catalogo">
+      <div class="contenedor">
+        <div class="catalogo__grid">
+          <a class="catalogo__enlace" href="/assets/img/catalogo.jpeg" target="_blank" rel="noopener" aria-label="Abrir catálogo en tamaño completo">
+            <img src="/assets/img/catalogo.jpeg" alt="Catálogo de servicios y precios de Barbería Kraft" width="1024" height="1536" loading="lazy" decoding="async" class="catalogo__img">
+          </a>
+
+          <div class="catalogo__texto">
+            <p class="seccion__eyebrow">Catálogo</p>
+            <h2 class="seccion__titulo" id="titulo-catalogo">Catálogo y precios</h2>
+            <p class="seccion__desc">Todos nuestros servicios en un solo vistazo. Revisa el catálogo completo y reserva el tuyo en segundos.</p>
+
+            <ul class="catalogo__ventajas">
+              <li>Precios claros, sin sorpresas</li>
+              <li>Atención personalizada en cada corte</li>
+              <li>Productos profesionales de barbería</li>
+              <li>Sin esperas: reserva tu turno en línea</li>
+            </ul>
+
+            <div class="catalogo__acciones">
+              <a class="btn btn--primario" href="/reservar" data-reserva="catalogo">Reservar cita</a>
+              <a class="btn btn--secundario" href="/assets/img/catalogo.jpeg" target="_blank" rel="noopener">Ver catálogo completo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Clientes satisfechos: videos de trabajos reales -->
+    <section id="videos" class="seccion" aria-labelledby="titulo-videos">
+      <div class="contenedor">
+        <div class="seccion__cabecera">
+          <p class="seccion__eyebrow">Videos</p>
+          <h2 class="seccion__titulo" id="titulo-videos">Clientes satisfechos</h2>
+          <p class="seccion__desc">Resultados reales grabados en la silla de Kraft. Reproduce cada clip para ver el acabado en movimiento.</p>
+        </div>
+
+        <ul class="videos__grid">
+          <li class="video-card">
+            <video controls preload="none" playsinline poster="/assets/img/corte-02.jpeg" width="720" height="1280" class="video-card__media">
+              <source src="/assets/video/modelo-01.mp4" type="video/mp4">
+              Tu navegador no soporta video.
+            </video>
+            <div class="video-card__cuerpo">
+              <h3 class="video-card__titulo">Fade + diseño</h3>
+              <p class="video-card__desc">Degradado limpio con líneas de diseño a medida.</p>
+            </div>
+          </li>
+
+          <li class="video-card">
+            <video controls preload="none" playsinline poster="/assets/img/corte-05.jpeg" width="720" height="1280" class="video-card__media">
+              <source src="/assets/video/modelo-02.mp4" type="video/mp4">
+              Tu navegador no soporta video.
+            </video>
+            <div class="video-card__cuerpo">
+              <h3 class="video-card__titulo">Corte y barba</h3>
+              <p class="video-card__desc">Corte clásico y perfilado de barba con navaja.</p>
+            </div>
+          </li>
+
+          <li class="video-card">
+            <video controls preload="none" playsinline poster="/assets/img/corte-08.jpeg" width="720" height="1280" class="video-card__media">
+              <source src="/assets/video/modelo-03.mp4" type="video/mp4">
+              Tu navegador no soporta video.
+            </video>
+            <div class="video-card__cuerpo">
+              <h3 class="video-card__titulo">Transformación completa</h3>
+              <p class="video-card__desc">Del look diario a un acabado de barbería.</p>
+            </div>
+          </li>
+        </ul>
       </div>
     </section>
 
@@ -268,7 +367,10 @@
     <div class="contenedor">
       <div class="footer__grid">
         <div class="footer__marca">
-          <span class="footer__logo">BARBERÍA KRAFT</span>
+          <span class="footer__logo">
+            <img src="/assets/img/logo.jpg" alt="" class="marca__logo marca__logo--pie" width="1408" height="768" loading="lazy" decoding="async">
+            Barbería Kraft
+          </span>
           <p>Cortes de cabello y afeitado clásico en Callao, Perú. Oficio y estilo desde el primer día.</p>
         </div>
 

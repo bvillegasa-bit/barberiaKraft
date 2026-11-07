@@ -14,6 +14,10 @@ node_modules/
 # Salida del build — el pipeline (CI o `npm run build`) siempre regenera dist/
 dist/
 
+# Recursos multimedia originales — NO versionar.
+# Los archivos publicados se sirven desde pages/assets/ (img/ y video/).
+resources/
+
 # Configuración generada por build.js — la fuente versionada es
 # pages/js/config.template.js (tokens); el archivo generado NO se versiona
 pages/js/config.js

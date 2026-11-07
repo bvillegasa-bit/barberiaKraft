@@ -73,10 +73,16 @@ componentes existentes.
    un panel con la ocupación en vivo (`#contenedor-ocupacion`).
 3. **Servicios**: grilla de tarjetas con precio, duración y CTA “Reservar”
    por servicio (lleva a `login.html`, `data-reserva="servicio"`).
-4. **Promociones**: bloque alterno con acento dorado suave.
-5. **Horarios**: grilla clara con días, horas y festivos.
-6. **Barbería**: historia, valores y datos de contacto.
-7. **Franja CTA final** y **footer** con dirección, horarios y leyenda.
+4. **Galería** (`#galeria`): grid de 10 cortes generado por `galeria.js` y un
+   `<dialog>` de lightbox accesible.
+5. **Catálogo** (`#catalogo`): imagen del catálogo de precios enlazada a tamaño
+   completo, lista de ventajas y CTA de reserva.
+6. **Videos** (`#videos`): tres tarjetas de video con controles nativos,
+   `poster` y `preload="none"`.
+7. **Promociones**: bloque alterno con acento dorado suave.
+8. **Horarios**: grilla clara con días, horas y festivos.
+9. **Barbería**: historia, valores y datos de contacto.
+10. **Franja CTA final** y **footer** con dirección, horarios y leyenda.
 
 ### Botón “Volver al panel”
 
@@ -117,7 +123,43 @@ componentes existentes.
   `.card-silla`, `.badge-estado`, `.btn-icono`, `.ocupar-mini` y `.inactivo`
   se mantienen y se reestilizan en `admin.css`.
 
-## 5. Componentes clave
+## 5. Componentes de media
+
+### Hero con video
+
+- `<video class="hero__video">` decorativo: `src="/assets/video/principal.mp4"`,
+  `poster="/assets/img/corte-01.jpeg"`, `autoplay muted loop playsinline`,
+  `preload="metadata"`, `aria-hidden="true"` y `tabindex="-1"` (sin controles).
+- `.hero__media` fija `aspect-ratio: 4 / 5` y `max-height: 560px`; el video usa
+  `object-fit: cover`, así el encuadre se recorta sin deformarse.
+- Con `prefers-reduced-motion: reduce` el video se oculta y `.hero__media`
+  muestra `corte-01.jpeg` como fondo.
+
+### Galería y lightbox
+
+- Grid responsive: 2 columnas en móvil, 3 desde `768 px` y 5 desde `1024 px`.
+- Cada celda es un `<button>` con `aspect-ratio: 9 / 16`; la imagen lleva
+  `loading="lazy"`, `decoding="async"` y `width`/`height` (720×1280) para evitar CLS.
+- Lightbox: `<dialog id="lightbox">` con botones anterior/siguiente/cerrar;
+  navegación circular (←/→) y `Esc`; al cerrar, el foco vuelve al botón de origen.
+
+### Catálogo
+
+- `.catalogo__grid` usa una columna hasta `900 px` y dos columnas desde
+  `900 px` (imagen + texto).
+- La imagen respeta su proporción, limita a `max-height: 480 px` en móvil y
+  usa `loading="lazy"`; el enlace abre `/assets/img/catalogo.jpeg` en pestaña
+  nueva con `rel="noopener"`.
+
+### Video cards
+
+- `.videos__grid` usa 1 columna hasta `900 px` y 3 columnas desde `900 px`.
+- Cada `<video>` declara `width="720"`, `height="1280"`, `aspect-ratio: 9 / 16`,
+  `controls`, `playsinline` y `preload="none"` (no descarga hasta reproducir).
+- El `poster` (corte-02/05/08) mantiene el encuadre vertical y evita un bloque
+  negro mientras el video no se ha cargado.
+
+## 6. Componentes clave
 
 | Componente | Reglas |
 | --- | --- |
@@ -130,7 +172,7 @@ componentes existentes.
 | Toast / avisos | Borde de acento, texto legible, cierre accesible |
 | Ocupación | Semáforo con color + texto; sillas con borde izquierdo verde/rojo |
 
-## 6. Accesibilidad
+## 7. Accesibilidad
 
 - `:focus-visible` global de 3 px con `--color-acento` y `offset` de 2 px.
 - Contraste mínimo AA para texto; el acento dorado no se usa para texto
@@ -162,7 +204,55 @@ componentes existentes.
   usuario, x, candado, reloj, bigote, barber-pole, navaja, menú, tijeras).
 - Sin dependencias nuevas ni cambios en `package.json`.
 
-## 9. Archivos
+## 9. Media y nuevas secciones
+
+### Hero con video
+
+- `.hero__cont` a dos columnas en escritorio y una sola columna por debajo de
+  **900 px**; en móvil (<600 px) el texto y los CTAs ocupan todo el ancho.
+- `.hero__media` con `aspect-ratio: 4 / 5` y `max-height: 560px`; el
+  `<video class="hero__video">` usa `object-fit: cover` y queda recortado sin
+  deformarse. Poster `corte-01.jpeg` visible antes de la carga.
+- Estados: en `:hover`/`:focus-within` no hay controles (es decorativo); el
+  foco visible de 3 px aplica solo a los CTAs del hero.
+- Con `prefers-reduced-motion: reduce` el video se oculta y `.hero__media`
+  muestra `corte-01.jpeg` como fondo estático.
+
+### `#galeria` — Nuestro trabajo
+
+- `.galeria__grid`: 2 columnas en móvil, 3 desde 768 px y 5 desde 1024 px;
+  cada celda `<button>` con `aspect-ratio: 9 / 16` y `gap` de 12–16 px.
+- Hover: leve elevación y borde de acento. Focus: anillo de 3 px con
+  `--color-acento` y `offset` de 2 px sobre toda la celda.
+- `<dialog id="lightbox">` centrado, fondo oscurecido; botones anterior,
+  siguiente y cerrar con objetivos ≥44 px, navegación ←/→ y `Esc`.
+
+### `#catalogo` — Catálogo y precios
+
+- `.catalogo__grid`: una columna centrada hasta **900 px**; dos columnas
+  (imagen + texto) desde 900 px. Imagen con `max-height: 480px` en móvil y
+  proporción original 1024×1536.
+- Ventajas en lista con separadores suaves; CTA principal + enlace secundario
+  al catálogo completo.
+- Hover/focus: la imagen atenúa levemente el borde y el enlace muestra foco
+  visible; `rel="noopener"` al abrir en pestaña nueva.
+
+### `#videos` — Clientes satisfechos
+
+- `.videos__grid`: 1 columna hasta **900 px** y 3 columnas desde 900 px; en
+  <600 px las tarjetas se apilan a ancho completo.
+- `.video-card`: superficie blanca, radio 16 px, `overflow: hidden`; el video
+  declara `aspect-ratio: 9 / 16`, `controls`, `playsinline` y `preload="none"`.
+- Hover: elevación con `--shadow-md`; focus visible en el `<video>` y en el
+  borde de la tarjeta. El `poster` evita el bloque negro inicial.
+
+### Estados y movimiento
+
+- Transiciones de 150–250 ms en sombras y elevación; se anulan con
+  `prefers-reduced-motion: reduce`.
+- Ningún estado depende solo del color: siempre hay texto o icono asociado.
+
+## 10. Archivos
 
 - `pages/css/base.css` — tokens, reset, tipografía, foco, utilidades.
 - `pages/css/components.css` — landing, navbar, hero, tarjetas, footer,

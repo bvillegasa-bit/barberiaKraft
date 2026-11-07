@@ -44,18 +44,35 @@
 }
 
 .pagina-inicio .navbar__brand {
-  font-family: var(--font-marca);
-  font-weight: 600;
-  font-size: 1.25rem;
-  letter-spacing: 0.16em;
-  color: var(--color-tinta);
+  display: inline-flex;
+  align-items: center;
   gap: var(--sp-2);
+  color: var(--color-tinta);
+  text-decoration: none;
 }
 
-.pagina-inicio .navbar__brand .icono {
-  width: 1.6rem;
-  height: 1.6rem;
-  color: var(--color-acento-texto);
+.pagina-inicio .marca__logo-caja {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  padding: 4px 10px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-xs);
+}
+
+.pagina-inicio .marca__logo {
+  display: block;
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  background: #fff;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+.pagina-inicio .marca__logo--pie {
+  height: 32px;
+  background: transparent;
 }
 
 .pagina-inicio .navbar__enlace {
@@ -255,96 +272,47 @@
   color: var(--color-exito);
 }
 
-/* Bloque visual: composición CSS, sin imágenes externas */
-.pagina-inicio .hero__visual {
-  width: 100%;
-}
-
-.pagina-inicio .hero__visual-panel {
+/* Bloque visual: video principal con poster de respaldo */
+.pagina-inicio .hero__media {
   position: relative;
-  isolation: isolate;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: var(--sp-3);
-  min-height: 340px;
-  padding: var(--sp-7) var(--sp-5) var(--sp-8);
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 560px;
   overflow: hidden;
-  text-align: center;
-  border: 1px solid var(--color-acento-borde);
-  border-radius: var(--radius-xl);
-  background:
-    radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.95), transparent 58%),
-    linear-gradient(155deg, #f9f3e5 0%, #f2e8d3 52%, #eadfc7 100%);
+  border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
+  background: var(--color-superficie-2);
+  isolation: isolate;
 }
 
-.pagina-inicio .hero__visual-panel::before {
+.pagina-inicio .hero__media::after {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: -1;
-  background-image:
-    repeating-linear-gradient(135deg, rgba(122, 90, 22, 0.05) 0 1px, transparent 1px 16px);
-  opacity: 0.55;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.55));
 }
 
-.pagina-inicio .hero__visual-panel::after {
-  content: '';
+.pagina-inicio .hero__video,
+.pagina-inicio .hero__poster {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pagina-inicio .hero__poster {
+  display: none;
+}
+
+.pagina-inicio .hero__overlay {
   position: absolute;
-  inset: auto -22% -52% -22%;
-  height: 72%;
-  z-index: -1;
-  border-radius: 50%;
-  background: rgba(185, 138, 46, 0.13);
-}
-
-.pagina-inicio .hero__visual-icono {
-  width: 3.6rem;
-  height: 3.6rem;
-  color: var(--color-acento-texto);
-}
-
-.pagina-inicio .hero__visual-titulo {
-  margin: 0;
-  font-family: var(--font-marca);
-  font-size: 1.6rem;
-  letter-spacing: 0.18em;
-  color: var(--color-tinta);
-}
-
-.pagina-inicio .hero__visual-sub {
-  margin: 0;
-  font-size: var(--texto-sm);
-  font-weight: 600;
-  color: var(--color-acento-texto);
-}
-
-.pagina-inicio .hero__visual-tarjeta {
-  position: absolute;
-  right: var(--sp-4);
-  bottom: var(--sp-4);
-  display: grid;
-  gap: 2px;
-  padding: var(--sp-3) var(--sp-4);
-  text-align: left;
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-}
-
-.pagina-inicio .hero__visual-tarjeta span {
-  font-size: var(--texto-xs);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-texto-sec);
-}
-
-.pagina-inicio .hero__visual-tarjeta strong {
-  font-size: var(--texto-base);
-  color: var(--color-tinta);
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(17, 17, 17, 0.18) 0%, transparent 38%, rgba(17, 17, 17, 0.28) 100%);
 }
 
 /* Franja de confianza bajo el hero */
@@ -783,6 +751,9 @@
 }
 
 .pagina-inicio .footer__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
   font-family: var(--font-marca);
   font-size: 1.15rem;
   letter-spacing: 0.16em;
@@ -909,7 +880,7 @@
     gap: clamp(40px, 5vw, 72px);
   }
 
-  .pagina-inicio .hero__visual-panel {
+  .pagina-inicio .hero__media {
     min-height: 430px;
   }
 
@@ -939,7 +910,11 @@
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 600px) {
+  .pagina-inicio .marca__logo {
+    height: 34px;
+  }
+
   .pagina-inicio .hero__acciones {
     flex-direction: column;
     align-items: stretch;
@@ -979,6 +954,408 @@
 
   .pagina-inicio .card-servicio:hover,
   .pagina-inicio .btn:active {
+    transform: none;
+  }
+
+  .pagina-inicio .hero__video {
+    display: none;
+  }
+
+  .pagina-inicio .hero__media {
+    background: url('/assets/img/corte-01.jpeg') center / cover no-repeat;
+  }
+
+  .pagina-inicio .hero__poster {
+    display: block;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   13. Nuestro trabajo - galeria de cortes (render de galeria.js)
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .galeria__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pagina-inicio .galeria__celda {
+  min-width: 0;
+}
+
+.pagina-inicio .galeria__item {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  padding: 0;
+  overflow: hidden;
+  background: var(--color-superficie-2);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-xs);
+  cursor: zoom-in;
+  transition: border-color var(--transicion-suave), box-shadow var(--transicion-suave);
+}
+
+.pagina-inicio .galeria__item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transicion-suave);
+}
+
+.pagina-inicio .galeria__item:hover {
+  border-color: var(--color-acento-borde);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.pagina-inicio .galeria__item:hover img {
+  transform: scale(1.04);
+}
+
+.pagina-inicio .galeria__item:focus-visible img {
+  transform: scale(1.04);
+}
+
+.pagina-inicio .galeria__overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  align-items: flex-end;
+  min-height: 42%;
+  padding: var(--sp-4);
+  background: linear-gradient(180deg, rgba(17, 17, 17, 0) 0%, rgba(17, 17, 17, 0.78) 100%);
+  pointer-events: none;
+}
+
+.pagina-inicio .galeria__titulo {
+  color: #ffffff;
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+/* -----------------------------------------------------------------------------
+   14. Lightbox (<dialog>) - solo estilos, la logica vive en galeria.js
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .lightbox {
+  width: min(92vw, 560px);
+  max-width: none;
+  max-height: 92vh;
+  padding: 0;
+  overflow: hidden;
+  background: var(--color-tinta);
+  border: 0;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-lg);
+}
+
+.pagina-inicio .lightbox::backdrop {
+  background: rgba(17, 17, 17, 0.82);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.pagina-inicio .lightbox__figura {
+  display: block;
+  margin: 0;
+}
+
+.pagina-inicio .lightbox__figura img {
+  display: block;
+  width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  background: #111111;
+}
+
+.pagina-inicio .lightbox__pie {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--color-tinta);
+}
+
+.pagina-inicio .lightbox__titulo {
+  margin: 0;
+  color: #ffffff;
+  font-size: var(--texto-base);
+  letter-spacing: -0.01em;
+}
+
+.pagina-inicio .lightbox__contador {
+  margin: 0;
+  color: #d3ccc0;
+  font-size: var(--texto-sm);
+  white-space: nowrap;
+}
+
+.pagina-inicio .lightbox__cerrar,
+.pagina-inicio .lightbox__nav {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: #ffffff;
+  background: rgba(17, 17, 17, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--transicion), border-color var(--transicion);
+}
+
+.pagina-inicio .lightbox__cerrar:hover,
+.pagina-inicio .lightbox__nav:hover {
+  background: rgba(17, 17, 17, 0.85);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.pagina-inicio .lightbox__cerrar {
+  top: var(--sp-2);
+  right: var(--sp-2);
+}
+
+.pagina-inicio .lightbox__nav {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.pagina-inicio .lightbox__nav--anterior {
+  left: var(--sp-2);
+}
+
+.pagina-inicio .lightbox__nav--siguiente {
+  right: var(--sp-2);
+}
+
+.pagina-inicio .lightbox :focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* -----------------------------------------------------------------------------
+   15. Galeria responsive y preferencias
+   ----------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .pagina-inicio .galeria__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-4);
+  }
+}
+
+@media (min-width: 1024px) {
+  .pagina-inicio .galeria__grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pagina-inicio .galeria__item,
+  .pagina-inicio .galeria__item img,
+  .pagina-inicio .lightbox__cerrar,
+  .pagina-inicio .lightbox__nav {
+    transition: none;
+  }
+
+  .pagina-inicio .galeria__item:hover img,
+  .pagina-inicio .galeria__item:focus-visible img {
+    transform: none;
+  }
+}
+
+@media print {
+  .pagina-inicio .lightbox {
+    display: none !important;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   16. Catálogo y precios
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .catalogo__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-6);
+  align-items: start;
+}
+
+.pagina-inicio .catalogo__enlace {
+  display: block;
+  overflow: hidden;
+  background: var(--color-superficie-2);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.pagina-inicio .catalogo__img {
+  display: block;
+  width: 100%;
+  max-height: 560px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: var(--radius-card);
+  transition: transform var(--transicion-suave);
+}
+
+.pagina-inicio .catalogo__enlace:hover .catalogo__img,
+.pagina-inicio .catalogo__enlace:focus-visible .catalogo__img {
+  transform: scale(1.02);
+}
+
+.pagina-inicio .catalogo__texto {
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: var(--sp-4);
+}
+
+.pagina-inicio .catalogo__ventajas {
+  display: grid;
+  gap: var(--sp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pagina-inicio .catalogo__ventajas li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+.pagina-inicio .catalogo__ventajas li::before {
+  content: '\2713';
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-acento-suave);
+  color: var(--color-acento-texto);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+}
+
+.pagina-inicio .catalogo__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+/* -----------------------------------------------------------------------------
+   17. Videos de clientes
+   ----------------------------------------------------------------------------- */
+.pagina-inicio .videos__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pagina-inicio .video-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transicion-suave), border-color var(--transicion-suave),
+              transform var(--transicion-suave);
+}
+
+.pagina-inicio .video-card:hover {
+  border-color: var(--color-acento-borde);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.pagina-inicio .video-card__media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  background: #000000;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+
+.pagina-inicio .video-card__cuerpo {
+  display: grid;
+  gap: var(--sp-1);
+  padding: var(--sp-4) var(--sp-5);
+}
+
+.pagina-inicio .video-card__titulo {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: -0.015em;
+  color: var(--color-tinta);
+}
+
+.pagina-inicio .video-card__desc {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-sec);
+}
+
+/* -----------------------------------------------------------------------------
+   18. Catálogo y videos responsive
+   ----------------------------------------------------------------------------- */
+@media (min-width: 900px) {
+  .pagina-inicio .catalogo__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(40px, 6vw, 72px);
+    align-items: center;
+  }
+
+  .pagina-inicio .videos__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .pagina-inicio .catalogo__grid {
+    grid-template-columns: 1fr;
+    gap: var(--sp-5);
+  }
+
+  .pagina-inicio .catalogo__img {
+    max-height: 480px;
+  }
+
+  .pagina-inicio .videos__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pagina-inicio .catalogo__img,
+  .pagina-inicio .video-card {
+    transition: none;
+  }
+
+  .pagina-inicio .catalogo__enlace:hover .catalogo__img,
+  .pagina-inicio .catalogo__enlace:focus-visible .catalogo__img,
+  .pagina-inicio .video-card:hover {
     transform: none;
   }
 }
