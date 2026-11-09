@@ -112,6 +112,9 @@ imágenes y videos de `pages/index.html`. Todos los assets se publican desde
 - **Lightbox**: ←/→ navegan, `Esc` cierra y el foco vuelve al botón de origen.
 - **Contador “N de 10”** visible en el pie del lightbox y anunciado con
   `aria-live` cuando cambia la imagen.
+- **Paleta derivada de la marca**: los tokens de color se calcularon muestreando
+  las imágenes del sitio y su contraste AA está verificado automáticamente por
+  `tests/paleta-contraste.test.js`.
 
 ---
 

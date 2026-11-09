@@ -6,7 +6,7 @@
 
 .pagina-ticket {
   background:
-    radial-gradient(70rem 34rem at 88% -12%, rgba(185, 138, 46, 0.10), transparent 62%),
+    radial-gradient(70rem 34rem at 88% -12%, rgba(var(--color-acento-rgb), 0.10), transparent 62%),
     var(--color-fondo);
   background-repeat: no-repeat;
 }

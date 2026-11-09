@@ -20,25 +20,40 @@
    ----------------------------------------------------------------------------- */
 :root {
   /* --- Superficies y tinta --- */
-  --color-fondo:        #FAFAF8;
+  /* Paleta derivada por muestreo del logo (carbón/bronce), catálogo (vino) y cortes cálidos. */
+  --color-fondo:        #FAF8F4;
   --color-superficie:   #FFFFFF;   /* alias heredado: inputs y hover (se afina abajo) */
-  --color-superficie-2: #F4F1EA;   /* inputs, hover, chips suaves */
-  --color-borde:        #E7E2D8;
+  --color-superficie-2: #F2EDE4;   /* inputs, hover, chips suaves */
+  --color-borde:        #E3DCD0;
   --color-borde-fuerte: #D6CFC1;
-  --color-tinta:        #111111;
-  --color-tinta-suave:  #3D3A35;
+  --color-tinta:        #16191A;
+  --color-tinta-suave:  #4B4E4C;
 
-  /* --- Acento cálido (ámbar/dorado sobrio) --- */
-  --color-acento:        #B98A2E;
-  --color-acento-texto:  #7A5A16;
+  /* --- Acento cálido (bronce sobrio) --- */
+  --color-acento:        #B08A4A;
+  --color-acento-texto:  #7A5C25;
   --color-acento-hover:  #96701F;
-  --color-acento-suave:  #F6EEDC;
+  --color-acento-suave:  #F3E8D5;
   --color-acento-borde:  #E8D8B6;
+
+  /* --- Canales RGB para composición con alfa: rgba(var(--x-rgb), a) --- */
+  --color-acento-rgb:    176, 138, 74;
+  --color-tinta-rgb:     22, 25, 26;
+  --color-vino-rgb:      142, 27, 34;
+  --color-fondo-rgb:     250, 248, 244;
 
   /* --- Semánticos --- */
   --color-muted:        #57544D;
   --color-superficie-alta: #FFFFFF;
   --color-overlay:      rgba(17, 17, 17, 0.48);
+
+  /* --- Tokens de paleta muestreada (alias, sin duplicar valores) --- */
+  --color-bg:           var(--color-fondo);
+  --color-acento-fuerte: var(--color-acento-texto);
+  --color-oscuro:       #14181A;
+  --color-oscuro-2:     #1F2628;
+  --color-vino:         #8E1B22;
+  --color-error:        var(--color-peligro);
 
   /* --- Alias heredados (compatibilidad total con CSS/JS existente) --- */
   --color-negro:        var(--color-fondo);        /* antes fondo oscuro */

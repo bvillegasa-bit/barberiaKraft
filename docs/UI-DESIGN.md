@@ -46,6 +46,44 @@ Los alias heredados (`--color-negro`, `--color-rojo`, `--color-rojo-texto`,
 `--color-plomo`) se conservan mapeados a los tokens nuevos para no romper
 componentes existentes.
 
+### Paleta derivada de la marca
+
+La paleta no se eligió a ojo: se calculó muestreando las imágenes reales del
+sitio con una rejilla de 120×120 puntos y cuantización RGB:
+
+- `logo.jpg` → carbón (`#202020`, `#303030`), bronce `#60543C` y un matiz frío
+  `#182424`.
+- `catalogo.jpeg` → negro, azul profundo `#001830` y rojo vino `#B40000`.
+- Fotos de cortes → cálidos `#B48454` y rojo `#CC0024` en detalles.
+
+| Token | Hex | Uso |
+| --- | --- | --- |
+| `--color-fondo` | `#FAF8F4` | Fondo general |
+| `--color-superficie` | `#FFFFFF` | Tarjetas, paneles, sidebar |
+| `--color-superficie-2` | `#F2EDE4` | Footer y secciones alternas |
+| `--color-borde` | `#E3DCD0` | Bordes y divisores |
+| `--color-tinta` | `#16191A` | Texto principal |
+| `--color-tinta-suave` | `#4B4E4C` | Texto secundario |
+| `--color-acento` | `#B08A4A` | **SOLO decorativo**: contraste 3.19:1 sobre blanco |
+| `--color-acento-texto` | `#7A5C25` | Texto, enlaces y hover: contraste 5.86:1 (AA) |
+| `--color-acento-suave` | `#F3E8D5` | Fondos de estado activo |
+| `--color-oscuro` / `--color-oscuro-2` | `#14181A` / `#1F2628` | Secciones oscuras |
+| `--color-vino` | `#8E1B22` | Detalle de marca; los **errores** usan `--color-peligro #B42318` |
+| `--color-exito` | `#1B7F4B` | Éxito, silla libre |
+
+Reglas de uso:
+
+- El texto **nunca** usa `--color-acento` (3.19:1 no alcanza AA); para texto
+  sobre blanco o dorado suave se usa `--color-acento-texto`.
+- El color vino es marca, no semántica: no se usa como color de error.
+- Cada token de color tiene alias `--color-*-rgb` para construir `rgba()`
+  con transparencia (sombras, overlays, focos).
+
+El test `tests/paleta-contraste.test.js` (11 casos) verifica los ratios WCAG
+y falla si se cambia la paleta rompiendo AA. Ratios clave: tinta/fondo 16.67,
+tinta-suave/fondo 7.94, acento-texto/fondo 5.86, blanco/vino 9.01,
+blanco/oscuro 17.86.
+
 ### Tipografía
 
 - `--font-cuerpo` y `--font-titulos`: **Inter**, con fallback de sistema.
