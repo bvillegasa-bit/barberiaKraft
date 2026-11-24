@@ -32,7 +32,7 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(var(--color-fondo-rgb), 0.88);
+  background: rgba(var(--color-fondo-rgb), 0.92);
   border-bottom: 1px solid var(--color-borde);
   -webkit-backdrop-filter: saturate(160%) blur(14px);
   backdrop-filter: saturate(160%) blur(14px);
@@ -72,7 +72,9 @@
 
 .pagina-inicio .marca__logo--pie {
   height: 32px;
-  background: transparent;
+  background: var(--color-superficie);
+  padding: 3px 8px;
+  border-radius: 10px;
 }
 
 .pagina-inicio .navbar__enlace {
@@ -127,16 +129,21 @@
 }
 
 .pagina-inicio .btn--primario {
-  background-color: var(--color-tinta);
-  border-color: var(--color-tinta);
+  background-color: var(--color-acento-texto);
+  border-color: var(--color-acento-texto);
   color: #ffffff;
 }
 
 .pagina-inicio .btn--primario:hover {
-  background-color: var(--color-tinta);
-  border-color: var(--color-tinta);
+  background-color: #66491D;
+  border-color: #66491D;
   color: #ffffff;
   box-shadow: var(--shadow-sm);
+}
+
+.pagina-inicio .btn--primario:focus-visible {
+  outline: 3px solid var(--color-acento-texto);
+  outline-offset: 2px;
 }
 
 .pagina-inicio .btn--secundario {
@@ -198,6 +205,7 @@
   color: var(--color-acento-texto);
   font-size: var(--texto-sm);
   font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
 .pagina-inicio .hero__eyebrow::before {
@@ -269,7 +277,7 @@
 .pagina-inicio .hero__puntos li::before {
   content: '✓';
   font-weight: 700;
-  color: var(--color-exito);
+  color: var(--color-acento-texto);
 }
 
 /* Bloque visual: video principal con poster de respaldo */
@@ -357,6 +365,16 @@
   border-block: 1px solid var(--color-borde);
 }
 
+.pagina-inicio .seccion--alt .tarjeta,
+.pagina-inicio .seccion--alt .card-servicio,
+.pagina-inicio .seccion--alt .card-promo,
+.pagina-inicio .seccion--alt .horario-panel,
+.pagina-inicio .seccion--alt .valor,
+.pagina-inicio .seccion--alt .video-card {
+  background: var(--color-superficie);
+  box-shadow: var(--shadow-card);
+}
+
 .pagina-inicio .seccion__cabecera {
   display: grid;
   gap: var(--sp-2);
@@ -379,6 +397,16 @@
   margin: 0;
   font-size: var(--texto-h2);
   letter-spacing: -0.03em;
+}
+
+.pagina-inicio .seccion__titulo::after {
+  content: '';
+  display: block;
+  flex-shrink: 0;
+  width: 44px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-vino);
 }
 
 .pagina-inicio .seccion__titulo .icono {
@@ -692,7 +720,9 @@
    9. Franja CTA final
    ----------------------------------------------------------------------------- */
 .pagina-inicio .franja-cta {
-  background: linear-gradient(135deg, var(--color-oscuro) 0%, var(--color-vino) 68%, var(--color-acento) 100%);
+  background: var(--color-oscuro-2);
+  border-left: 4px solid var(--color-vino);
+  box-shadow: inset 0 3px 0 0 var(--color-vino);
 }
 
 .pagina-inicio .franja-cta__interior {
@@ -711,19 +741,24 @@
 
 .pagina-inicio .franja-cta p {
   margin: var(--sp-2) 0 0;
-  color: var(--color-borde);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .pagina-inicio .franja-cta .btn--primario {
-  background: var(--color-superficie);
-  border-color: var(--color-superficie);
-  color: var(--color-tinta);
+  background: var(--color-acento-texto);
+  border-color: var(--color-acento-texto);
+  color: #ffffff;
 }
 
 .pagina-inicio .franja-cta .btn--primario:hover {
-  background: var(--color-acento-suave);
-  border-color: var(--color-acento-suave);
-  color: var(--color-tinta);
+  background: #66491D;
+  border-color: #66491D;
+  color: #ffffff;
+}
+
+.pagina-inicio .franja-cta .btn--primario:focus-visible {
+  outline: 3px solid var(--color-acento-texto);
+  outline-offset: 2px;
 }
 
 /* -----------------------------------------------------------------------------
@@ -732,8 +767,9 @@
 .pagina-inicio .footer {
   margin-top: auto;
   padding: clamp(40px, 6vw, 72px) 0 var(--sp-5);
-  background: var(--color-superficie-2);
-  border-top: 1px solid var(--color-borde);
+  background: var(--color-oscuro);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
   text-align: left;
 }
 
@@ -757,12 +793,13 @@
   font-family: var(--font-marca);
   font-size: 1.15rem;
   letter-spacing: 0.16em;
-  color: var(--color-tinta);
+  color: #ffffff;
 }
 
 .pagina-inicio .footer__marca p {
   margin: 0;
   font-size: var(--texto-sm);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .pagina-inicio .footer__titulo {
@@ -771,7 +808,7 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-texto-sec);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .pagina-inicio .footer__lista {
@@ -781,18 +818,18 @@
   padding: 0;
   list-style: none;
   font-size: var(--texto-sm);
-  color: var(--color-texto-sec);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .pagina-inicio .footer__lista a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: var(--color-texto-sec);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .pagina-inicio .footer__lista a:hover {
-  color: var(--color-acento-texto);
+  color: rgba(var(--color-acento-rgb), 0.95);
 }
 
 .pagina-inicio .footer__legal {
@@ -803,9 +840,9 @@
   gap: var(--sp-3);
   margin-top: var(--sp-6);
   padding-top: var(--sp-4);
-  border-top: 1px solid var(--color-borde);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
   font-size: var(--texto-sm);
-  color: var(--color-texto-sec);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .pagina-inicio .leyenda {
@@ -822,7 +859,7 @@
   align-items: center;
   gap: var(--sp-2);
   font-size: var(--texto-xs);
-  color: var(--color-texto-sec);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .pagina-inicio .leyenda__punto {

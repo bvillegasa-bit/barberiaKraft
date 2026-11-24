@@ -19,7 +19,7 @@
    ============================================================================= */
 
 import { getSupabase } from './supabase-client.js';
-import { $, estadoCarga, escaparHtml } from './ui.js';
+import { $, mostrarToast, estadoCarga, escaparHtml } from './ui.js';
 import { mensajeErrorAdmin } from './api.js';
 import { svgUse, estadoVacioAdmin, estadoErrorAdmin } from './admin-ui.js';
 import { filtrarClientesNoAdmin } from './logica/clientes-logica.js';
@@ -27,16 +27,23 @@ import {
   ordenarAtencionesDesc,
   formatearImporte,
   etiquetaServicio,
-  formatearFechaHora
+  formatearFechaHora,
+  aCsv,
+  nombreArchivoCsv
 } from './logica/historial-logica.js';
 
 let clientes = [];
+let atencionesVisibles = [];
+let clienteActualId = '';
 
 const PLANTILLA = `
   <div class="admin-panel__herramientas">
     <h2>Historial de atención</h2>
     <button type="button" class="btn btn--secundario" id="historial-refrescar">
       ${svgUse('icon-reloj')} Refrescar
+    </button>
+    <button type="button" class="btn btn--secundario" id="btn-exportar-historial">
+      Exportar CSV
     </button>
   </div>
 
@@ -55,6 +62,7 @@ export async function iniciar(contenedor) {
   contenedor.innerHTML = PLANTILLA;
 
   $('#historial-refrescar').addEventListener('click', cargarClientes);
+  $('#btn-exportar-historial').addEventListener('click', exportarCsv);
   $('#historial-cliente').addEventListener('change', (evento) => {
     const id = evento.target.value;
     if (id) cargarHistorial(id);
@@ -71,6 +79,8 @@ async function cargarClientes() {
   const select = $('#historial-cliente');
   const zona = $('#historial-listado');
 
+  atencionesVisibles = [];
+  clienteActualId = '';
   select.disabled = true;
   select.innerHTML = '<option value="">Cargando clientes…</option>';
   $('#historial-cliente-actual').textContent = '';
@@ -131,6 +141,8 @@ function poblarSelector(select) {
 async function cargarHistorial(clienteId) {
   const zona = $('#historial-listado');
   const cliente = clientes.find((c) => c.id === clienteId);
+  clienteActualId = clienteId;
+  atencionesVisibles = [];
 
   // Identificación del cliente seleccionado (HU14-2)
   identificarCliente(cliente);
@@ -158,6 +170,7 @@ async function cargarHistorial(clienteId) {
 function renderizarHistorial(atenciones) {
   const zona = $('#historial-listado');
   zona.innerHTML = '';
+  atencionesVisibles = atenciones;
 
   if (atenciones.length === 0) {
     estadoVacioAdmin(zona, 'Este cliente aún no tiene atenciones registradas.', 'icon-reloj');
@@ -172,6 +185,7 @@ function renderizarHistorial(atenciones) {
         <th scope="col">Fecha</th>
         <th scope="col">Servicio</th>
         <th scope="col">Importe</th>
+        <th scope="col">Acciones</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -198,10 +212,74 @@ function renderizarHistorial(atenciones) {
       <td>${servicio}${notas}</td>
       <td>${importe}</td>
     `;
+
+    const acciones = document.createElement('td');
+    const botonEliminar = document.createElement('button');
+    botonEliminar.type = 'button';
+    botonEliminar.className = 'btn btn--sm btn--peligro';
+    botonEliminar.textContent = 'Eliminar';
+    botonEliminar.setAttribute('aria-label', `Eliminar registro ${atencion.id}`);
+    botonEliminar.addEventListener('click', () => eliminarAtencion(atencion.id));
+    acciones.appendChild(botonEliminar);
+    fila.appendChild(acciones);
+
     cuerpo.appendChild(fila);
   });
 
   zona.appendChild(tabla);
+}
+
+/* -----------------------------------------------------------------------------
+   Gestión: borrado (RLS `historial_admin_all`) y exportación de las filas
+   actualmente visibles (mismo filtro por cliente que la lista).
+   ----------------------------------------------------------------------------- */
+async function eliminarAtencion(id) {
+  const confirmado = window.confirm(
+    `¿Eliminar el registro de atención ${id}? Esta acción no se puede deshacer.`
+  );
+  if (!confirmado) return;
+
+  try {
+    const supabase = getSupabase();
+    const { error } = await supabase
+      .from('historial_atencion')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+
+    await cargarHistorial(clienteActualId);
+    mostrarToast('Registro de atención eliminado.', 'exito');
+  } catch (error) {
+    console.error('admin-historial.js — eliminarAtencion:', error);
+    mostrarToast(mensajeErrorAdmin(error), 'error', 5000);
+  }
+}
+
+function exportarCsv() {
+  if (atencionesVisibles.length === 0) {
+    mostrarToast('No hay atenciones para exportar.', 'info');
+    return;
+  }
+
+  const url = URL.createObjectURL(
+    new Blob([aCsv(atencionesVisibles)], { type: 'text/csv;charset=utf-8' })
+  );
+  const enlace = document.createElement('a');
+  enlace.href = url;
+  enlace.download = nombreArchivoCsv(fechaLocalParaArchivo());
+  document.body.appendChild(enlace);
+  enlace.click();
+  enlace.remove();
+  URL.revokeObjectURL(url);
+
+  mostrarToast(`Historial exportado (${atencionesVisibles.length} registros).`, 'exito');
+}
+
+function fechaLocalParaArchivo() {
+  const hoy = new Date();
+  const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+  const dia = String(hoy.getDate()).padStart(2, '0');
+  return `${hoy.getFullYear()}-${mes}-${dia}`;
 }
 
 /* -----------------------------------------------------------------------------
@@ -219,6 +297,8 @@ function identificarCliente(cliente) {
 
 function limpiarHistorial() {
   $('#historial-cliente-actual').textContent = '';
+  atencionesVisibles = [];
+  clienteActualId = '';
   const zona = $('#historial-listado');
   zona.innerHTML = '';
   const aviso = document.createElement('p');

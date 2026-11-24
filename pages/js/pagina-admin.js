@@ -3,9 +3,9 @@
    Shell del panel de administración (S-RF03-6 / design §8.3.8):
    - GUARD: sin sesión → login.html · cliente → ../index.html · admin → sigue
    - <main> permanece hidden hasta que el guard confirma rol admin (CA-RF03-5)
-   - Tabs: Servicios | Promociones | Ocupación | Clientes | Historial (carga
-     perezosa por módulo admin-servicios.js / admin-promociones.js /
-     admin-ocupacion.js / admin-clientes.js / admin-historial.js)
+   - Tabs: Servicios | Promociones | Ocupación | Clientes | Historial |
+     Reservas | Feriados (carga perezosa por módulo admin-*.js; sincronización
+     de aria-selected/aria-current del sidebar en activarTab)
    - Navegación por teclado de tabs: flechas ←/→, Home/End (RNF08)
    ============================================================================= */
 
@@ -29,11 +29,15 @@ const MODULOS = {
   ocupacion: () => import('./admin-ocupacion.js'),
   clientes: () => import('./admin-clientes.js'),
   historial: () => import('./admin-historial.js'),
-  reservas: () => import('./admin-reservas.js')
+  reservas: () => import('./admin-reservas.js'),
+  feriados: () => import('./admin-feriados.js')
 };
 
+/** Paneles con marcado estático en dashboard.html: no se borran al cargar. */
+const PANELES_ESTATICOS = new Set(['reservas', 'feriados']);
+
 /** Orden de tabs navegables por teclado (←/→/↑/↓, Home/End) */
-const TABS_ACTIVOS = ['servicios', 'promociones', 'ocupacion', 'clientes', 'historial', 'reservas'];
+const TABS_ACTIVOS = ['servicios', 'promociones', 'ocupacion', 'clientes', 'historial', 'reservas', 'feriados'];
 const panelesCargados = new Set();
 
 /** Título que refleja la sección activa en la topbar */
@@ -43,7 +47,8 @@ const TITULOS_SECCION = {
   ocupacion: 'Ocupación del local',
   clientes: 'Clientes',
   historial: 'Historial',
-  reservas: 'Reservas'
+  reservas: 'Reservas',
+  feriados: 'Feriados'
 };
 
 /** Cierre del sidebar móvil (se reasigna en configurarSidebar) */
@@ -80,9 +85,9 @@ async function activarTab(nombre) {
   // Carga perezosa la primera vez que se abre el tab
   if (!panelesCargados.has(nombre)) {
     const panel = $panel(nombre);
-    // Reservas trae su marcado estático en dashboard.html: no se debe borrar
-    // con el estado de carga; el módulo gestiona su propio estado interno.
-    if (nombre !== 'reservas') estadoCarga(panel, 'Cargando…');
+    // Reservas y Feriados traen su marcado estático en dashboard.html: no se
+    // debe borrar con el estado de carga; cada módulo gestiona su estado.
+    if (!PANELES_ESTATICOS.has(nombre)) estadoCarga(panel, 'Cargando…');
     try {
       const modulo = await MODULOS[nombre]();
       await modulo.iniciar(panel);

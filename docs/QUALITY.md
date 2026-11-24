@@ -175,6 +175,8 @@ Esperado: **8 PASS y exit code 0**.
 4. Cierra sesión → `index.html`.
 5. Login admin → `admin/dashboard.html` → CRUD servicio, CRUD promo, toggle sillas.
 6. Cliente autenticado intenta `/admin/…` → redirigido (S-RF03-6).
+7. Admin → Historial → "Eliminar" en una fila → confirmar → **CA**: el `confirm()` incluye el id; se ejecuta `delete()` sobre `historial_atencion` filtrando por `id`; la fila desaparece tras recargar la lista y aparece toast de éxito; cancelar no borra nada.
+8. Admin → Historial → (cliente seleccionado) "Exportar CSV" → **CA**: descarga `historial-atenciones-YYYY-MM-DD.csv` con BOM UTF-8, separador `;`, encabezados en español, comillas/nuevas líneas escapadas y SOLO las filas actualmente filtradas; sin filas hay aviso y no se descarga archivo.
 
 ---
 

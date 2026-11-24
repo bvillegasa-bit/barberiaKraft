@@ -78,6 +78,7 @@ Reglas de uso:
 - El color vino es marca, no semántica: no se usa como color de error.
 - Cada token de color tiene alias `--color-*-rgb` para construir `rgba()`
   con transparencia (sombras, overlays, focos).
+- Zonas saturadas: footer y CTA oscuros (`--color-oscuro` / `--color-oscuro-2`, detalle en `--color-vino`), botones primarios bronce (`--color-acento-texto`, hover `#66491D`) y secciones alternas beige (`--color-superficie-2`).
 
 El test `tests/paleta-contraste.test.js` (11 casos) verifica los ratios WCAG
 y falla si se cambia la paleta rompiendo AA. Ratios clave: tinta/fondo 16.67,

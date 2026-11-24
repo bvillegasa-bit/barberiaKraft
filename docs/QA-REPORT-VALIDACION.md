@@ -21,6 +21,7 @@ unitarias, benchmark y auditorías de seguridad y usabilidad.
 | Tamaño de la capa de validación | **26 173 B (25.6 KB)** en 12 archivos | Aprobado |
 | Build de desarrollo | 53 archivos, 527.2 KB, placeholders correctos | Aprobado |
 | Hallazgos de seguridad corregidos | 3 (XSS en estados, normalización de email, atributo sin escapar) | Corregido |
+| Campos nombre de persona sin números | Regla `validarNombre` (rechaza dígitos) + supresión en vivo `limpiarNombre`; 2 campos cubiertos (registro `#nombre`, admin `name="barbero_nombre"`) con 12 pruebas nuevas (`quitar-numeros.test.js`) | Aprobado |
 | Hallazgos críticos/altos abiertos | 0 | Aprobado |
 
 Riesgos residuales: los campos de texto libre aceptan HTML **como dato** (se

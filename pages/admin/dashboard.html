@@ -93,6 +93,13 @@
             </svg>
             <span class="admin-tabs__texto">Reservas</span>
           </button>
+          <button class="admin-tabs__tab" type="button" role="tab" id="tab-feriados" data-tab="feriados"
+                  aria-selected="false" aria-controls="panel-feriados" tabindex="-1">
+            <svg class="icono" role="img" aria-hidden="true" focusable="false">
+              <use href="../assets/sprite.svg#icon-candado"></use>
+            </svg>
+            <span class="admin-tabs__texto">Feriados</span>
+          </button>
         </div>
 
         <div class="admin-sidebar__enlaces">
@@ -247,6 +254,58 @@
             No hay reservas que coincidan con los filtros seleccionados.
           </p>
         </section>
+
+        <section id="panel-feriados" class="admin-panel" role="tabpanel" aria-labelledby="tab-feriados" hidden>
+          <div class="admin-panel__herramientas">
+            <h2>Feriados</h2>
+            <button type="button" class="btn btn--secundario btn--sm" id="btn-refrescar-feriados">
+              Refrescar
+            </button>
+          </div>
+
+          <form id="form-feriado" class="admin-feriados__form" novalidate>
+            <div class="campo">
+              <label for="feriado-fecha">Fecha</label>
+              <input type="date" id="feriado-fecha" required>
+            </div>
+            <div class="campo admin-feriados__campo-descripcion">
+              <label for="feriado-descripcion">Descripción</label>
+              <input type="text" id="feriado-descripcion" maxlength="120" placeholder="Ej. Fiestas Patrias">
+            </div>
+            <div class="campo">
+              <label for="feriado-cierre">Cierre</label>
+              <select id="feriado-cierre">
+                <option value="19:00">19:00</option>
+                <option value="20:00">20:00</option>
+                <option value="21:00">21:00</option>
+                <option value="22:00" selected>22:00</option>
+              </select>
+            </div>
+            <div class="admin-feriados__acciones">
+              <button type="submit" class="btn btn--primario" id="btn-guardar-feriado">Guardar feriado</button>
+            </div>
+          </form>
+
+          <div id="alerta-feriados" class="admin-feriados__alerta" role="alert" aria-live="polite" hidden></div>
+
+          <div class="admin-feriados__tabla-wrap">
+            <table class="tabla-crud tabla-crud--feriados">
+              <thead>
+                <tr>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">Cierre</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpo-tabla-feriados"></tbody>
+            </table>
+          </div>
+
+          <p class="admin-feriados__vacio" id="feriados-vacio" hidden>
+            No hay feriados registrados.
+          </p>
+        </section>
       </main>
 
       <footer class="footer admin-footer">
@@ -260,5 +319,6 @@
   <!-- SDK de Supabase (UMD global) ANTES de los módulos -->
   <script src="../js/vendor/supabase.js"></script>
   <script type="module" src="../js/pagina-admin.js"></script>
+  <script type="module" src="../js/nombre-input.js"></script>
 </body>
 </html>
