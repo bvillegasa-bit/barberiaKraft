@@ -263,6 +263,8 @@ trazabilidad de principios: [SOLID.md](./SOLID.md).
 | Q-VAL-3 | Revisión de XSS en estados de UI y tablas admin | 0 hallazgos críticos | 3 hallazgos corregidos (S-01…S-03), 0 abiertos | Aprobado |
 | Q-VAL-4 | Auditoría a11y de registro/login/admin | labels, autocomplete, `aria-live`, foco en primer error | Verificado, sin cambios requeridos | Aprobado |
 | Q-VAL-5 | `npm run dev` + medición de artefactos | build correcto con placeholders | 53 archivos, 527.2 KB; validación 25.6 KB | Aprobado |
+| CP-27 | Ocupar silla con `name="barbero_nombre"` = "Juan Pérez" (válido tras `limpiarNombre` + `validarNombre`) | **CA**: `payloadOcuparSilla` devuelve `ok:true` y un PATCH sin nulls en columnas NOT NULL (`barbero_nombre: 'Juan Pérez'`, `nombre` conservado, `estado: 'ocupada'`); Supabase responde 200, sin error 23502 | | |
+| CP-28 | Ocupar silla con el input `barbero_nombre` vacío o solo espacios | **CA**: `payloadOcuparSilla` devuelve `ok:false`, `payload:null` y errores; la UI muestra el error de validación, hace foco en el campo y **NO** ejecuta ningún PATCH (0 llamadas a Supabase) | | |
 
 ---
 

@@ -4,7 +4,7 @@
    - Vista previa con semáforo SIEMPRE desde el rpc obtener_ocupacion
      (fuente de verdad — D4 / CA-RF02-1); si el rpc falla (ej. configuración
      pendiente), cae a calcularOcupacion() local (espejo testeable CA-RNF06-3).
-   - Grid de sillas: ocupar (con servicio + barbero opcional) / liberar.
+    - Grid de sillas: ocupar (servicio + barbero validado) / liberar.
    - Límite de sillas: comprobación en la UI + trigger check_limite_sillas
      como segunda barrera (0001_init.sql → errcode 23514, mapeado en
      mensajeErrorAdmin de api.js).
@@ -16,6 +16,7 @@ import { $, mostrarToast, estadoCarga, renderSemaforo, escaparHtml } from './ui.
 import { calcularOcupacion, fetchOcupacion } from './ocupacion.js';
 import { cargarServiciosActivos, mensajeErrorAdmin } from './api.js';
 import { svgUse, estadoErrorAdmin } from './admin-ui.js';
+import { payloadOcuparSilla, payloadLiberarSilla } from './logica/ocupacion-logica.js';
 
 const DEFAULTS = { sillasTotales: 4, duracionPromedioMin: 30, techoMin: 60 };
 
@@ -244,8 +245,8 @@ function mostrarFormularioOcupar(id) {
       </select>
     </div>
     <div class="campo">
-      <label for="ocupar-barbero-${id}">Barbero (opcional)</label>
-      <input type="text" id="ocupar-barbero-${id}" name="barbero_nombre" maxlength="80" autocomplete="off">
+      <label for="ocupar-barbero-${id}">Barbero</label>
+      <input type="text" id="ocupar-barbero-${id}" name="barbero_nombre" maxlength="80" autocomplete="off" required aria-required="true">
     </div>
     <div class="panel-form__acciones">
       <button type="submit" class="btn btn--primario btn--sm">Ocupar</button>
@@ -269,8 +270,25 @@ async function ocuparSilla(id, formulario) {
   }
 
   const datos = new FormData(formulario);
-  const servicioId = datos.get('servicio_id') || null;
-  const barbero = String(datos.get('barbero_nombre') || '').trim() || null;
+  const silla = sillas.find((s) => s.id === id);
+  const { ok, payload, errores } = payloadOcuparSilla({
+    barberoNombre: datos.get('barbero_nombre'),
+    nombreSilla: silla?.nombre,
+    servicioId: datos.get('servicio_id') || null,
+    ocupadaDesde: new Date().toISOString()
+  });
+
+  if (!ok) {
+    const mensaje = errores.join(' ');
+    const campo = formulario.querySelector('[name="barbero_nombre"]');
+    if (campo) {
+      campo.setAttribute('aria-invalid', 'true');
+      campo.setCustomValidity?.(mensaje);
+      campo.focus();
+    }
+    mostrarToast(mensaje, 'error', 5000);
+    return; // validación fallida: NO se llama a Supabase
+  }
 
   const boton = formulario.querySelector('button[type="submit"]');
   boton.disabled = true;
@@ -279,12 +297,7 @@ async function ocuparSilla(id, formulario) {
     const supabase = getSupabase();
     const { error } = await supabase
       .from('sillas')
-      .update({
-        estado: 'ocupada',
-        servicio_id: servicioId,
-        barbero_nombre: barbero,
-        ocupada_desde: new Date().toISOString()
-      })
+      .update(payload)
       .eq('id', id);
 
     if (error) throw error;
@@ -311,12 +324,7 @@ async function liberarSilla(id) {
     const supabase = getSupabase();
     const { error } = await supabase
       .from('sillas')
-      .update({
-        estado: 'libre',
-        servicio_id: null,
-        barbero_nombre: null,
-        ocupada_desde: null
-      })
+      .update(payloadLiberarSilla({ nombreSilla: silla.nombre }).payload)
       .eq('id', id);
 
     if (error) throw error;
