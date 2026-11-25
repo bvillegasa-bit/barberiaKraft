@@ -67,8 +67,17 @@ function esTablaInexistente(error) {
     /42P01|relation\s+["']?public\.feriados["']?\s+does not exist/i.test(String(error?.message ?? ''));
 }
 
+function sufijoCodigoReal(error) {
+  const partes = [];
+  if (error?.code) partes.push(`[${String(error.code)}]`);
+  const estado = error?.status != null ? String(error.status) : '';
+  if (estado && estado !== String(error?.code ?? '')) partes.push(`[${estado}]`);
+  return partes.length ? ` ${partes.join(' ')}` : '';
+}
+
 function mensajeAmigable(error) {
-  return esTablaInexistente(error) ? AVISO_MIGRACION : mensajeErrorAdmin(error);
+  const texto = esTablaInexistente(error) ? AVISO_MIGRACION : mensajeErrorAdmin(error);
+  return `${texto}${sufijoCodigoReal(error)}`;
 }
 
 /* -----------------------------------------------------------------------------

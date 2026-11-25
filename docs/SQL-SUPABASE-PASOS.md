@@ -28,6 +28,12 @@ interpretar los errores más comunes. No modifica el código fuente.
   **re-ejecuta `0003`**. `0003` está diseñado como idempotente (`if not exists`,
   `on conflict do nothing`, `drop policy if exists`); aun así, revisa lo que ya
   existe antes de repetir y **no dropees** `feriados` ni `reservas`.
+## Promoción de admin y 42501 en `reservas`
+`supabase/migrations/0002_promote_admin.sql` está **commented out** (todo son comentarios): por eso «aplicar 0002» no cambia nada.
+Para promover, ejecuta en el SQL Editor `supabase/migrations/0002_promote_admin_ejecutable.sql` (0002 desactiva y reactiva `trg_prevent_role_change`).
+Comando exacto: `update public.profiles set rol = 'admin' where email = 'TU_EMAIL@ejemplo.com';` — reemplaza el correo por el que usas al iniciar sesión.
+`reservas` devuelve `42501` para `anon` **a propósito**: exige `authenticated` y `public.is_admin()`; no es un fallo del SQL.
+Inicia sesión con ese usuario promovido en `login.html` (`/admin/dashboard.html`) para consultar reservas.
 
 ## Qué significa cada código de error
 
