@@ -21,7 +21,7 @@ import {
   etiquetaCierre
 } from './logica/admin-feriados-logica.js';
 
-const AVISO_MIGRACION = 'Ejecuta la migración 0003 en Supabase SQL Editor para habilitar feriados';
+const AVISO_MIGRACION = 'Faltan tablas base. Ejecuta 0001_repair_idempotente.sql en el SQL Editor de Supabase y luego vuelve a ejecutar 0003_reservas_horarios.sql.';
 const CLASES_CIERRE = {
   '19:00': 'badge-cierre--19',
   '20:00': 'badge-cierre--20',
